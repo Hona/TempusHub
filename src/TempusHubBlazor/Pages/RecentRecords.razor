@@ -1,0 +1,44 @@
+﻿@page "/recentrecords"
+
+@using TempusHubBlazor.Data
+@using TempusHubBlazor.Models.Tempus.Activity
+@using TempusHubBlazor.Utilities
+@inject TempusDataService TempusDataService
+
+<h1>Recent Records</h1>
+
+@if (records == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Map</th>
+                <th>Player</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var record in records)
+            {
+                <tr>
+                    <td>@record.MapInfo.Name</td>
+                    <td>@record.PlayerInfo.Name</td>
+                    <td>@TempusUtilities.TicksToFormattedTime((long)record.RecordInfo.Duration)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    MapWr[] records;
+
+    protected override async Task OnInitializedAsync()
+    {
+        records = (await TempusDataService.GetRecentActivityAsync()).MapRecords.ToArray();
+    }
+}

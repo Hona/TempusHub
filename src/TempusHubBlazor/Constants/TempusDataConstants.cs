@@ -8,5 +8,6 @@ namespace TempusHubBlazor.Constants
     public static class TempusDataConstants
     {
         public const int FullMapOverviewCacheSize = 50;
+        public const int RoundingSize = 2;
     }
 }
