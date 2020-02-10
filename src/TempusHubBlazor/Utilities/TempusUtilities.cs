@@ -20,7 +20,13 @@ namespace TempusHubBlazor.Utilities
                     return id.ToString();
             }
         }
-
+        public static string FormattedDuration(double duration)
+        {
+            var seconds = (int)Math.Truncate(duration);
+            var milliseconds = (duration - (int)Math.Truncate(duration)) * 1000;
+            var timespan = new TimeSpan(0, 0, 0, seconds, (int)Math.Truncate(milliseconds));
+            return timespan.Days > 0 ? timespan.ToString(@"dd\:hh\:mm\:ss\.ff") : timespan.ToString(timespan.Hours > 0 ? @"hh\:mm\:ss\.ff" : @"mm\:ss\.ff");
+        }
         public static string TicksToFormattedTime(long ticks)
         {
             var timeSpan = TicksToTimeSpan(ticks);
