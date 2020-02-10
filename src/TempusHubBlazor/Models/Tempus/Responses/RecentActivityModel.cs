@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using LambdaUI.Models.Tempus.Activity;
 using Newtonsoft.Json;
+using TempusHubBlazor.Models.Tempus.Activity;
 
 namespace TempusHubBlazor.Models.Tempus.Responses
 {

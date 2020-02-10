@@ -8,7 +8,10 @@ using System.Text;
 using System.Threading.Tasks;
 using TempusHubBlazor.Constants;
 using TempusHubBlazor.Models.Tempus.DetailedMapList;
+using TempusHubBlazor.Models.Tempus.Rank;
 using TempusHubBlazor.Models.Tempus.Responses;
+using TempusHubBlazor.Logging;
+using Newtonsoft.Json;
 
 namespace TempusHubBlazor.Data
 {
@@ -75,7 +78,7 @@ namespace TempusHubBlazor.Data
                     response.Close();
                 }
                 Stopwatch.Stop();
-                Logger.LogInfo("Tempus", "/api" + request + " " + Stopwatch.ElapsedMilliseconds + "ms");
+                Logger.LogInfo("Tempus /api" + request + " " + Stopwatch.ElapsedMilliseconds + "ms");
                 // If T is a string, don't deserialise
                 return typeof(T) == typeof(string)
                     ? (T)stringValue
