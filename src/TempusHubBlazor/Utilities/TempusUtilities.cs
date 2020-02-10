@@ -25,7 +25,7 @@ namespace TempusHubBlazor.Utilities
             var seconds = (int)Math.Truncate(duration);
             var milliseconds = (duration - (int)Math.Truncate(duration)) * 1000;
             var timespan = new TimeSpan(0, 0, 0, seconds, (int)Math.Truncate(milliseconds));
-            return timespan.Days > 0 ? timespan.ToString(@"dd\:hh\:mm\:ss\.ff") : timespan.ToString(timespan.Hours > 0 ? @"hh\:mm\:ss\.ff" : @"mm\:ss\.ff");
+            return timespan.Days > 0 ? timespan.ToString(@"dd\:hh\:mm\:ss\.fff") : timespan.ToString(timespan.Hours > 0 ? @"hh\:mm\:ss\.fff" : @"mm\:ss\.fff");
         }
         public static string TicksToFormattedTime(long ticks)
         {
