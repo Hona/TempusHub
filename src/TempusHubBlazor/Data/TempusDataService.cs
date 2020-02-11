@@ -173,9 +173,13 @@ namespace TempusHubBlazor.Data
 
         public async Task<Rank> GetUserRankAsync(string id) => await GetResponseAsync<Rank>($"/players/id/{id}/rank");
 
-
         private string ParseMapName(string map)
         {
+            if (string.IsNullOrWhiteSpace(map))
+            {
+                return string.Empty;
+            }
+
             map = map.ToLower();
             if (MapNameList.Contains(map)) return map;
 
