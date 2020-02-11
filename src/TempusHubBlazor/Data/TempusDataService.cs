@@ -137,7 +137,7 @@ namespace TempusHubBlazor.Data
                         ClassId = map.RecordInfo.Class,
                         ZoneType = map.ZoneInfo.Type,
                         OldWRDuration = null,
-                        ZoneId = map.RecordInfo.ZoneId
+                        ZoneId = map.ZoneInfo.Zoneindex
                     };
 
                     await TempusHubMySqlService.UpdateCachedRecordAsync(tempNewCache);
@@ -152,7 +152,7 @@ namespace TempusHubBlazor.Data
                         OldWRDuration = cached.CurrentWRDuration,
                         ClassId = map.RecordInfo.Class,
                         ZoneType = map.ZoneInfo.Type,
-                        ZoneId = map.RecordInfo.ZoneId
+                        ZoneId = map.ZoneInfo.Zoneindex
                     };
 
                     await TempusHubMySqlService.UpdateCachedRecordAsync(tempNewCache);
