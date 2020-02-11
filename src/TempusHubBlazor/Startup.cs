@@ -29,6 +29,7 @@ namespace TempusHubBlazor
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<TempusDataService>();
+            services.AddSingleton<TempusHubMySqlService>(new TempusHubMySqlService(Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

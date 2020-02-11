@@ -12,11 +12,13 @@ using TempusHubBlazor.Models.Tempus.Rank;
 using TempusHubBlazor.Models.Tempus.Responses;
 using TempusHubBlazor.Logging;
 using Newtonsoft.Json;
+using TempusHubBlazor.Models.MySQL;
 
 namespace TempusHubBlazor.Data
 {
     public class TempusDataService
     {
+        public TempusHubMySqlService TempusHubMySqlService { get; set; }
         private static readonly Stopwatch Stopwatch = new Stopwatch();
         private List<DetailedMapOverviewModel> _mapList;
         private List<MapFullOverviewModel> _fullOverviewCache = new List<MapFullOverviewModel>(TempusDataConstants.FullMapOverviewCacheSize);
@@ -87,7 +89,7 @@ namespace TempusHubBlazor.Data
             catch (Exception e)
             {
                 Logger.LogException(e);
-                return default(T);
+                return default;
             }
         }
 
@@ -104,13 +106,49 @@ namespace TempusHubBlazor.Data
                     GetResponseAsync<MapFullOverviewModel>($"/maps/name/{ParseMapName(map)}/fullOverview");
                 AddMapOverviewCacheItem(overview);
                 return overview;
-
             }
 
         }
 
-        public async Task<RecentActivityModel> GetRecentActivityAsync() =>
-            await GetResponseAsync<RecentActivityModel>("/activity");
+        public async Task<RecentActivityModel> GetRecentActivityAsync()
+        {
+            var activity = await GetResponseAsync<RecentActivityModel>("/activity");
+            foreach (var map in activity.MapRecords)
+            {
+                MapRecordCache tempNewCache = null;
+
+                // Fetch the latest cache
+                var cached = await TempusHubMySqlService.GetCachedRecordsAsync(map.MapInfo.Id);
+
+                // Check for no data
+                if (cached == null || !cached.CurrentWRDuration.HasValue && !cached.OldWRDuration.HasValue)
+                {
+                    // No data
+                    tempNewCache = new MapRecordCache
+                    {
+                        MapId = map.MapInfo.Id,
+                        CurrentWRDuration = map.RecordInfo.Duration
+                    };
+
+                    await TempusHubMySqlService.UpdateCachedRecordAsync(tempNewCache);
+                }
+
+                // Check if the cached wr duration is different to the new record
+                if (cached.CurrentWRDuration.Value != map.RecordInfo.Duration)
+                {
+                    tempNewCache = new MapRecordCache
+                    {
+                        MapId = map.MapInfo.Id,
+                        CurrentWRDuration = map.RecordInfo.Duration,
+                        OldWRDuration = cached.CurrentWRDuration
+                    };
+
+                    await TempusHubMySqlService.UpdateCachedRecordAsync(tempNewCache);
+                }
+                map.CachedTime = tempNewCache;
+            }
+            return activity;
+        }
 
         public async Task<List<ServerStatusModel>> GetServerStatusAsync() =>
             await GetResponseAsync<List<ServerStatusModel>>("/servers/statusList");

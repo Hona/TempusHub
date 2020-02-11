@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TempusHubBlazor.Constants;
+using TempusHubBlazor.Models.MySQL;
 
 namespace TempusHubBlazor.Utilities
 {
@@ -20,6 +21,22 @@ namespace TempusHubBlazor.Utilities
                     return id.ToString();
             }
         }
+        public static string GetWRSplitString(MapRecordCache cache)
+        {
+            // If the current wr doesn't have a value, it can be assumed there is no old duration
+            if (cache == null || !cache.CurrentWRDuration.HasValue)
+            {
+                return "N/A";
+            }
+
+            var timeSplit = cache.OldWRDuration.Value - cache.CurrentWRDuration.Value;
+            return "-"+FormattedDuration(timeSplit);
+        }
+        /// <summary>
+        /// Returns a nice string of the duration
+        /// </summary>
+        /// <param name="duration">Duration is in seconds</param>
+        /// <returns></returns>
         public static string FormattedDuration(double duration)
         {
             var seconds = (int)Math.Truncate(duration);
