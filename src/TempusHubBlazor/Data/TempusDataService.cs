@@ -122,7 +122,7 @@ namespace TempusHubBlazor.Data
                 MapRecordCache tempNewCache = null;
 
                 // Fetch the latest cache
-                var cached = await TempusHubMySqlService.GetCachedRecordsAsync(map.MapInfo.Id);
+                var cached = await TempusHubMySqlService.GetCachedRecordsAsync(map.MapInfo.Id, map.RecordInfo.Class, map.ZoneInfo.Type);
 
                 // Check for no data
                 if (cached == null || !cached.CurrentWRDuration.HasValue && !cached.OldWRDuration.HasValue)
@@ -131,7 +131,9 @@ namespace TempusHubBlazor.Data
                     tempNewCache = new MapRecordCache
                     {
                         MapId = map.MapInfo.Id,
-                        CurrentWRDuration = map.RecordInfo.Duration
+                        CurrentWRDuration = map.RecordInfo.Duration,
+                        ClassId = map.RecordInfo.Class,
+                        ZoneType = map.ZoneInfo.Type
                     };
 
                     await TempusHubMySqlService.UpdateCachedRecordAsync(tempNewCache);
@@ -143,7 +145,9 @@ namespace TempusHubBlazor.Data
                     {
                         MapId = map.MapInfo.Id,
                         CurrentWRDuration = map.RecordInfo.Duration,
-                        OldWRDuration = cached.CurrentWRDuration
+                        OldWRDuration = cached.CurrentWRDuration,
+                        ClassId = map.RecordInfo.Class,
+                        ZoneType = map.ZoneInfo.Type
                     };
 
                     await TempusHubMySqlService.UpdateCachedRecordAsync(tempNewCache);

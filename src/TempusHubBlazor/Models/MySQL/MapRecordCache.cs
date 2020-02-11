@@ -8,6 +8,8 @@ namespace TempusHubBlazor.Models.MySQL
     public class MapRecordCache
     {
         public int MapId { get; set; }
+        public int ClassId { get; set; }
+        public string ZoneType { get; set; }
         public double? CurrentWRDuration { get; set; }
         public double? OldWRDuration { get; set; }
     }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TempusHubBlazor.Constants;
 using TempusHubBlazor.Models.MySQL;
+using TempusHubBlazor.Models.Tempus.Responses;
 
 namespace TempusHubBlazor.Utilities
 {
@@ -21,16 +22,19 @@ namespace TempusHubBlazor.Utilities
                     return id.ToString();
             }
         }
-        public static string GetWRSplitString(MapRecordCache cache)
+        public static string GetWRSplitString(MapRecordCache cache, MapFullOverviewModel mapOverview)
         {
+            double timeSplit;
+
             // If the current wr doesn't have a value, it can be assumed there is no old duration
             if (cache == null || !cache.CurrentWRDuration.HasValue)
             {
-                return "N/A";
+                // We don't have cached times yet, so just use #2 time as the WR split.
+                
             }
 
-            var timeSplit = cache.OldWRDuration.Value - cache.CurrentWRDuration.Value;
-            return "WR -"+FormattedDuration(timeSplit);
+            timeSplit = cache.OldWRDuration.Value - cache.CurrentWRDuration.Value;
+            return "WR -" + FormattedDuration(timeSplit);
         }
         /// <summary>
         /// Returns a nice string of the duration

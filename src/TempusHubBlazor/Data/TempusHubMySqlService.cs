@@ -18,14 +18,16 @@ namespace TempusHubBlazor.Data
             });
         }
 
-        internal async Task<MapRecordCache> GetCachedRecordsAsync(int mapId)
+        internal async Task<MapRecordCache> GetCachedRecordsAsync(int mapId, int classId, string zoneType)
         {
             var query =
-                @"select * from `worldRecordCache` where `mapId`=@MapId";
+                @"select * from `worldRecordCache` where `mapId`=@MapId, `classId`=@ClassId, `zoneType`=@ZoneType";
 
             var param = new
             {
-                MapId = mapId
+                MapId = mapId,
+                ClassId = classId,
+                ZoneType = zoneType
             };
 
             var result = (await QueryAsync<MapRecordCache>(query, param)).ToList();
@@ -36,7 +38,6 @@ namespace TempusHubBlazor.Data
         {
             var query =
                 @"INSERT INTO `worldRecordCache` VALUES (@MapId, @CurrentRecordDuration, @OldRecordDuration) ON DUPLICATE KEY UPDATE `currentWrDuration`=@CurrentRecordDuration, `oldWrDuration`=@OldRecordDuration";
-
 
             var param = new
             {
