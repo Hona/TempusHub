@@ -21,7 +21,7 @@ namespace TempusHubBlazor.Data
         internal async Task<MapRecordCache> GetCachedRecordsAsync(int mapId, int classId, string zoneType)
         {
             var query =
-                @"select * from `worldRecordCache` where `mapId`=@MapId, `classId`=@ClassId, `zoneType`=@ZoneType";
+                @"select * from `worldRecordCache` where `mapId`=@MapId AND `classId`=@ClassId AND `zoneType`=@ZoneType";
 
             var param = new
             {
