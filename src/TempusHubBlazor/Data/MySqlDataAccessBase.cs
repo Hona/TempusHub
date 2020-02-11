@@ -15,7 +15,11 @@ namespace TempusHubBlazor.Data
         private readonly string _connectionString;
         private MySqlConnection _connection;
 
-        protected MySqlDataAccessBase(string connectionString) => _connectionString = connectionString;
+        protected MySqlDataAccessBase(string connectionString)
+        {
+            _connectionString = connectionString;
+            CheckConnectionAsync().GetAwaiter().GetResult();
+        }
 
         private async Task OpenConnectionAsync()
         {
