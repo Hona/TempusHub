@@ -12,6 +12,8 @@ namespace TempusHubBlazor.Data.Mapping
         public MapRecordCacheMap()
         {
             Map(config => config.MapId).ToColumn("mapId");
+            Map(config => config.ClassId).ToColumn("classId");
+            Map(config => config.ZoneType).ToColumn("zoneType");
             Map(config => config.CurrentWRDuration).ToColumn("currentWrDuration");
             Map(config => config.OldWRDuration).ToColumn("oldWrDuration");
         }
