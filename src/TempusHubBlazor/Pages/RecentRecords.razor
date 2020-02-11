@@ -4,6 +4,7 @@
 @using TempusHubBlazor.Models.Tempus.Activity
 @using TempusHubBlazor.Models.Tempus.Responses
 @using TempusHubBlazor.Utilities
+@using TempusHubBlazor.Logging
 @inject TempusDataService TempusDataService
 
 <h1>Recent Records</h1>
@@ -50,6 +51,7 @@ else
 
     private ZonedRecordsModel GetZonedRecords(MapWr record)
     {
+        Logger.LogInfo(record.MapInfo.Name + " " + record.ZoneInfo.Type + " " + record.ZoneInfo.Zoneindex);
         return TempusDataService.GetTopZonedTimes(record.MapInfo.Name, record.ZoneInfo.Type, record.ZoneInfo.Zoneindex).GetAwaiter().GetResult();
     }
 }
