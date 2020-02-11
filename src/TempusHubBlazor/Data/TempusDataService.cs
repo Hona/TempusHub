@@ -114,6 +114,8 @@ namespace TempusHubBlazor.Data
 
         }
 
+        public async Task<ZonedRecordsModel> GetTopZonedTimes(string mapName, string zoneType, int zoneId = 1) 
+            => await GetResponseAsync<ZonedRecordsModel>($"/maps/name/{ParseMapName(mapName)}/zones/typeindex/{zoneType}/{zoneId}/records/list");
         public async Task<RecentActivityModel> GetRecentActivityAsync()
         {
             var activity = await GetResponseAsync<RecentActivityModel>("/activity");
@@ -134,7 +136,8 @@ namespace TempusHubBlazor.Data
                         CurrentWRDuration = map.RecordInfo.Duration,
                         ClassId = map.RecordInfo.Class,
                         ZoneType = map.ZoneInfo.Type,
-                        OldWRDuration = null
+                        OldWRDuration = null,
+                        ZoneId = map.RecordInfo.ZoneId
                     };
 
                     await TempusHubMySqlService.UpdateCachedRecordAsync(tempNewCache);
@@ -148,7 +151,8 @@ namespace TempusHubBlazor.Data
                         CurrentWRDuration = map.RecordInfo.Duration,
                         OldWRDuration = cached.CurrentWRDuration,
                         ClassId = map.RecordInfo.Class,
-                        ZoneType = map.ZoneInfo.Type
+                        ZoneType = map.ZoneInfo.Type,
+                        ZoneId = map.RecordInfo.ZoneId
                     };
 
                     await TempusHubMySqlService.UpdateCachedRecordAsync(tempNewCache);

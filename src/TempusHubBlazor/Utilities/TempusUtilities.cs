@@ -22,18 +22,22 @@ namespace TempusHubBlazor.Utilities
                     return id.ToString();
             }
         }
-        public static string GetWRSplitString(MapRecordCache cache, MapFullOverviewModel mapOverview)
+        public static string GetWRSplitString(MapRecordCache cache, ZonedRecordsModel zonedResults)
         {
-            double timeSplit;
+            double oldRecord;
 
             // If the current wr doesn't have a value, it can be assumed there is no old duration
             if (cache == null || !cache.CurrentWRDuration.HasValue)
             {
-                // We don't have cached times yet, so just use #2 time as the WR split.
-                
+                oldRecord = cache.ClassId == 4 ? zonedResults.Runs.DemomanRuns.OrderBy(x => x.Duration).ToArray()[1].Duration 
+                    : zonedResults.Runs.SoldierRuns.OrderBy(x => x.Duration).ToArray()[1].Duration;
+            }
+            else
+            {
+                oldRecord = cache.OldWRDuration.Value;
             }
 
-            timeSplit = cache.OldWRDuration.Value - cache.CurrentWRDuration.Value;
+            var timeSplit = oldRecord - cache.CurrentWRDuration.Value;
             return "WR -" + FormattedDuration(timeSplit);
         }
         /// <summary>

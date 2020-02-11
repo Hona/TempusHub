@@ -24,5 +24,7 @@ namespace TempusHubBlazor.Models.Tempus.Activity
 
         [JsonProperty(PropertyName = "id")]
         public int Id { get; set; }
+        [JsonProperty(PropertyName = "rank")]
+        public int? Rank { get; set; }
     }
 }

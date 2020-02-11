@@ -32,7 +32,7 @@ else
                 <tr>
                     <td>@record.MapInfo.Name</td>
                     <td>@record.PlayerInfo.Name</td>
-                    <td>@TempusUtilities.FormattedDuration(record.RecordInfo.Duration) (@TempusUtilities.GetWRSplitString(record.CachedTime))</td>
+                    <td>@TempusUtilities.FormattedDuration(record.RecordInfo.Duration) (@TempusUtilities.GetWRSplitString(record.CachedTime, await TempusDataService.GetTopZonedTimes(record.MapInfo.Name, record.ZoneInfo.Type, record.ZoneInfo.Zoneindex)))</td>
                 </tr>
             }
         </tbody>
