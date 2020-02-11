@@ -30,7 +30,6 @@ namespace TempusHubBlazor.Data
 
         private async Task CheckConnectionAsync()
         {
-            Logger.LogInfo("Checking MySQL connection");
             if (_connection == null || _connection.State == ConnectionState.Closed ||
                 _connection.State == ConnectionState.Broken)
                 await OpenConnectionAsync();
