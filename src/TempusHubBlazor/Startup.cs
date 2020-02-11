@@ -28,7 +28,6 @@ namespace TempusHubBlazor
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<TempusDataService>();
         }
 
