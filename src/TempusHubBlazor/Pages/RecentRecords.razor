@@ -2,6 +2,7 @@
 
 @using TempusHubBlazor.Data
 @using TempusHubBlazor.Models.Tempus.Activity
+@using TempusHubBlazor.Models.Tempus.Responses
 @using TempusHubBlazor.Utilities
 @inject TempusDataService TempusDataService
 
@@ -32,7 +33,7 @@ else
                 <tr>
                     <td>@record.MapInfo.Name</td>
                     <td>@record.PlayerInfo.Name</td>
-                    <td>@TempusUtilities.FormattedDuration(record.RecordInfo.Duration) (@TempusUtilities.GetWRSplitString(record.CachedTime, await TempusDataService.GetTopZonedTimes(record.MapInfo.Name, record.ZoneInfo.Type, record.ZoneInfo.Zoneindex)))</td>
+                    <td>@TempusUtilities.FormattedDuration(record.RecordInfo.Duration) (@TempusUtilities.GetWRSplitString(record.CachedTime, GetZonedRecords(record)))</td>
                 </tr>
             }
         </tbody>
@@ -45,5 +46,10 @@ else
     protected override async Task OnInitializedAsync()
     {
         records = (await TempusDataService.GetRecentActivityAsync()).MapRecords.ToArray();
+    }
+
+    private ZonedRecordsModel GetZonedRecords(MapWr record)
+    {
+        return TempusDataService.GetTopZonedTimes(record.MapInfo.Name, record.ZoneInfo.Type, record.ZoneInfo.Zoneindex).GetAwaiter().GetResult();
     }
 }
