@@ -19,12 +19,14 @@ namespace TempusHubBlazor.Data
 
         private async Task OpenConnectionAsync()
         {
+            Logger.LogInfo("Openning MySQL connection");
             if (_connection == null) _connection = new MySqlConnection(_connectionString);
             await _connection.OpenAsync();
         }
 
         private async Task CheckConnectionAsync()
         {
+            Logger.LogInfo("Checking MySQL connection");
             if (_connection == null || _connection.State == ConnectionState.Closed ||
                 _connection.State == ConnectionState.Broken)
                 await OpenConnectionAsync();
