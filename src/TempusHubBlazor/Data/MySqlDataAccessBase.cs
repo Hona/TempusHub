@@ -47,7 +47,6 @@ namespace TempusHubBlazor.Data
             {
                 await CheckConnectionAsync();
                 var result = (await _connection.QueryAsync<T>(query)).ToList();
-                await CloseAsync();
                 return result;
             }
             catch (Exception e)
@@ -63,7 +62,6 @@ namespace TempusHubBlazor.Data
             {
                 await CheckConnectionAsync();
                 var result = (await _connection.QueryAsync<T>(query, param)).ToList();
-                await CloseAsync();
                 return result;
             }
             catch (Exception e)
@@ -79,7 +77,6 @@ namespace TempusHubBlazor.Data
             {
                 await CheckConnectionAsync();
                 await _connection.ExecuteAsync(query, param);
-                await CloseAsync();
             }
             catch (Exception e)
             {
@@ -92,7 +89,6 @@ namespace TempusHubBlazor.Data
             if (_connection != null && _connection.State != ConnectionState.Closed)
             {
                 _connection.Dispose();
-
             }
             FluentMapper.EntityMaps.Clear();
         }
