@@ -133,7 +133,8 @@ namespace TempusHubBlazor.Data
                         MapId = map.MapInfo.Id,
                         CurrentWRDuration = map.RecordInfo.Duration,
                         ClassId = map.RecordInfo.Class,
-                        ZoneType = map.ZoneInfo.Type
+                        ZoneType = map.ZoneInfo.Type,
+                        OldWRDuration = null
                     };
 
                     await TempusHubMySqlService.UpdateCachedRecordAsync(tempNewCache);
