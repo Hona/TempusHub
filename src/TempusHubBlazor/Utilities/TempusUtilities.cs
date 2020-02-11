@@ -30,7 +30,7 @@ namespace TempusHubBlazor.Utilities
             }
 
             var timeSplit = cache.OldWRDuration.Value - cache.CurrentWRDuration.Value;
-            return "-"+FormattedDuration(timeSplit);
+            return "WR -"+FormattedDuration(timeSplit);
         }
         /// <summary>
         /// Returns a nice string of the duration
