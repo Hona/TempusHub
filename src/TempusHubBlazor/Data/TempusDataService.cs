@@ -62,6 +62,7 @@ namespace TempusHubBlazor.Data
 
         private static async Task<T> GetResponseAsync<T>(string request)
         {
+            Logger.LogInfo("Attempting: " + request);
             Stopwatch.Restart();
             try
             {
