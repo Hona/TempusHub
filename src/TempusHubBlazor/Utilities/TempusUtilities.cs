@@ -27,7 +27,7 @@ namespace TempusHubBlazor.Utilities
             double oldRecord;
 
             // If the current wr doesn't have a value, it can be assumed there is no old duration
-            if (cache == null || !cache.CurrentWRDuration.HasValue)
+            if (cache == null || !cache.CurrentWRDuration.HasValue || !cache.OldWRDuration.HasValue)
             {
                 oldRecord = cache.ClassId == 4 ? zonedResults.Runs.DemomanRuns.OrderBy(x => x.Duration).ToArray()[1].Duration 
                     : zonedResults.Runs.SoldierRuns.OrderBy(x => x.Duration).ToArray()[1].Duration;
