@@ -18,6 +18,10 @@ namespace TempusHubBlazor.Data
 {
     public class TempusDataService
     {
+        public TempusDataService(TempusHubMySqlService dataService)
+        {
+            TempusHubMySqlService = dataService;
+        }
         public TempusHubMySqlService TempusHubMySqlService { get; set; }
         private static readonly Stopwatch Stopwatch = new Stopwatch();
         private List<DetailedMapOverviewModel> _mapList;
