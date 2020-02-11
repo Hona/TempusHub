@@ -31,8 +31,8 @@ namespace TempusHubBlazor.Data
                 ZoneId = zoneId
             };
 
-            var result = (await QueryAsync<MapRecordCache>(query, param)).ToList();
-            return result.FirstOrDefault();
+            var result = (await QueryAsync<MapRecordCache>(query, param));
+            return result?.FirstOrDefault();
         }
 
         internal async Task UpdateCachedRecordAsync(MapRecordCache newCache)
