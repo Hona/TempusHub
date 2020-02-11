@@ -37,7 +37,7 @@ namespace TempusHubBlazor.Data
         internal async Task UpdateCachedRecordAsync(MapRecordCache newCache)
         {
             var query =
-                @"INSERT INTO `worldRecordCache` (`mapId`, `classId`, `zoneType`, `currentWrDuration`, `oldWrDuration`) VALUES (@MapId, @ClassId, @ZoneType, @CurrentRecordDuration, @OldRecordDuration) ON DUPLICATE KEY UPDATE `currentWrDuration`=@CurrentRecordDuration, `oldWrDuration`=@OldRecordDuration";
+                @"INSERT INTO `worldRecordCache` VALUES (@MapId, @ClassId, @ZoneType, @CurrentRecordDuration, @OldRecordDuration) ON DUPLICATE KEY UPDATE `currentWrDuration`=@CurrentRecordDuration, `oldWrDuration`=@OldRecordDuration";
 
             var param = new
             {
