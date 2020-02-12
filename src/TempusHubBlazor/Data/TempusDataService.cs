@@ -62,6 +62,7 @@ namespace TempusHubBlazor.Data
 
                 if (response.IsSuccessStatusCode)
                 {
+                    Logger.LogInfo("Response success code");
                     object stringValue = await response.Content.ReadAsStringAsync();
                     
                     Stopwatch.Stop();
