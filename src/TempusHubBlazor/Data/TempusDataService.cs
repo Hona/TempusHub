@@ -58,13 +58,24 @@ namespace TempusHubBlazor.Data
             Stopwatch.Restart();
             try
             {
-                object stringValue = await _httpClient.GetStringAsync(GetFullAPIPath(request));
-                Stopwatch.Stop();
-                Logger.LogInfo("Tempus /api" + request + " " + Stopwatch.ElapsedMilliseconds + "ms");
-                // If T is a string, don't deserialise
-                return typeof(T) == typeof(string)
-                    ? (T)stringValue
-                    : JsonConvert.DeserializeObject<T>((string)stringValue);
+                var response = await _httpClient.GetAsync(GetFullAPIPath(request));
+
+                if (response.IsSuccessStatusCode)
+                {
+                    object stringValue = await response.Content.ReadAsStringAsync();
+                    
+                    Stopwatch.Stop();
+                    Logger.LogInfo("Tempus /api" + request + " " + Stopwatch.ElapsedMilliseconds + "ms");
+                    // If T is a string, don't deserialise
+                    return typeof(T) == typeof(string)
+                        ? (T)stringValue
+                        : JsonConvert.DeserializeObject<T>((string)stringValue);
+                }
+                else
+                {
+                    Logger.LogError("Couldn't get Tempus API request");
+                    return default;
+                }
             }
             catch (Exception e)
             {
