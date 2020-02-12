@@ -54,11 +54,12 @@ namespace TempusHubBlazor.Data
         private static string GetFullAPIPath(string partial) => "https://tempus.xyz/api" + partial;
         private static async Task<T> GetResponseAsync<T>(string request)
         {
-            Logger.LogInfo("Attempting: " + request);
+            var fullPath = GetFullAPIPath(request);
+            Logger.LogInfo("Attempting: " + fullPath);
             Stopwatch.Restart();
             try
             {
-                var response = await _httpClient.GetAsync(GetFullAPIPath(request));
+                var response = await _httpClient.GetAsync(fullPath);
 
                 if (response.IsSuccessStatusCode)
                 {
