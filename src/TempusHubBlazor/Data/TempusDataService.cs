@@ -20,7 +20,7 @@ namespace TempusHubBlazor.Data
 {
     public class TempusDataService
     {
-        private static readonly HttpClient _httpClient = new HttpClient();
+        private static readonly HttpClient _httpClient = new HttpClient("https://tempus.xyz");
         public TempusDataService(TempusHubMySqlService dataService)
         {
             TempusHubMySqlService = dataService;
@@ -50,7 +50,7 @@ namespace TempusHubBlazor.Data
 
         }
         public List<string> MapNameList { get; set; }
-        private static string GetFullAPIPath(string partial) => "https://tempus.xyz/api" + partial;
+        private static string GetFullAPIPath(string partial) => "/api/" + partial;
         private static async Task<T> GetResponseAsync<T>(string request)
         {
             var fullPath = GetFullAPIPath(request);
