@@ -13,14 +13,18 @@ using TempusHubBlazor.Models.Tempus.Responses;
 using TempusHubBlazor.Logging;
 using Newtonsoft.Json;
 using TempusHubBlazor.Models.MySQL;
+using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace TempusHubBlazor.Data
 {
     public class TempusDataService
     {
+        private static readonly HttpClient _httpClient = new HttpClient();
         public TempusDataService(TempusHubMySqlService dataService)
         {
             TempusHubMySqlService = dataService;
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
         public TempusHubMySqlService TempusHubMySqlService { get; set; }
         private static readonly Stopwatch Stopwatch = new Stopwatch();
@@ -47,43 +51,14 @@ namespace TempusHubBlazor.Data
 
         }
         public List<string> MapNameList { get; set; }
-
-        private static HttpWebRequest CreateWebRequest(string path) => (HttpWebRequest)WebRequest.Create(
-            "https://tempus.xyz/api" + path);
-
-        private static HttpWebRequest BuildWebRequest(string relativePath)
-        {
-            var httpWebRequest = CreateWebRequest(relativePath);
-            httpWebRequest.Method = WebRequestMethods.Http.Get;
-            httpWebRequest.Accept = "application/json";
-            return httpWebRequest;
-        }
-
-
+        private static string GetFullAPIPath(string partial) => "https://tempus.xyz/api" + partial;
         private static async Task<T> GetResponseAsync<T>(string request)
         {
             Logger.LogInfo("Attempting: " + request);
             Stopwatch.Restart();
             try
             {
-                object stringValue;
-                using (var response = (HttpWebResponse)await BuildWebRequest(request).GetResponseAsync())
-                {
-                    using (var stream = response.GetResponseStream())
-                    {
-                        stringValue = null;
-                        if (stream != null)
-                        {
-                            using (var sr = new StreamReader(stream, Encoding.UTF8))
-                            {
-                                stringValue = sr.ReadToEnd();
-                                sr.Close();
-                            }
-                            stream.Close();
-                        }
-                    }
-                    response.Close();
-                }
+                object stringValue = await _httpClient.GetStringAsync(GetFullAPIPath(request));
                 Stopwatch.Stop();
                 Logger.LogInfo("Tempus /api" + request + " " + Stopwatch.ElapsedMilliseconds + "ms");
                 // If T is a string, don't deserialise
