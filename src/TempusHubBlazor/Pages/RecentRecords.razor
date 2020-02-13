@@ -49,13 +49,14 @@ else
         var records = (await TempusDataService.GetRecentActivityAsync()).MapRecords.ToArray();
         foreach (var record in records)
         {
-            recordsWithZonedData.Add(new Tuple<MapWr, ZonedRecordsModel>(record, GetZonedRecords(record)));
+            Logger.LogInfo(record.MapInfo.Name + " " + record.ZoneInfo.Type + " " + record.ZoneInfo.Zoneindex);
+            var zonedData = await TempusDataService.GetTopZonedTimes(record.MapInfo.Name, record.ZoneInfo.Type, record.ZoneInfo.Zoneindex);
+            recordsWithZonedData.Add(new Tuple<MapWr, ZonedRecordsModel>(record, zonedData));
         }
     }
 
     private ZonedRecordsModel GetZonedRecords(MapWr record)
     {
-        Logger.LogInfo(record.MapInfo.Name + " " + record.ZoneInfo.Type + " " + record.ZoneInfo.Zoneindex);
-        return (TempusDataService.GetTopZonedTimes(record.MapInfo.Name, record.ZoneInfo.Type, record.ZoneInfo.Zoneindex).GetAwaiter().GetResult());
+
     }
 }
