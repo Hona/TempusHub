@@ -24,9 +24,11 @@ else
         </colgroup>
         <thead>
             <tr>
+                <th>Class</th>
                 <th>Map</th>
                 <th>Player</th>
                 <th>Time</th>
+                <th>Date</th>
             </tr>
         </thead>
         <tbody>
@@ -37,6 +39,7 @@ else
                     <td>@record.Record.MapInfo.Name</td>
                     <td>@record.Record.PlayerInfo.Name</td>
                     <td>@TempusUtilities.FormattedDuration(record.Record.RecordInfo.Duration) (@TempusUtilities.GetWRSplitString(record.Record.CachedTime, record.ZonedData))</td>
+                    <td>@TempusUtilities.GetDateFromSeconds(record.Record.RecordInfo.Date)</td>
                 </tr>
             }
         </tbody>

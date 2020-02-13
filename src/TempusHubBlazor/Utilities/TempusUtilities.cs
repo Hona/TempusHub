@@ -10,6 +10,8 @@ namespace TempusHubBlazor.Utilities
 {
     public static class TempusUtilities
     {
+        private static DateTime UnixEpoch = new DateTime(1970, 1, 1);
+        public static DateTime GetDateFromSeconds(double seconds) => UnixEpoch.AddSeconds(seconds);
         public static string GetClass(int id)
         {
             switch (id)
