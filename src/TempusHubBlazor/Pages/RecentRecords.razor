@@ -53,12 +53,8 @@ else
     protected override async Task OnInitializedAsync()
     {
         var records = (await TempusDataService.GetRecentActivityAsync()).MapRecords.ToArray();
-
-        Parallel.ForEach(records, async (record) => 
-        {
-            recordsWithZonedData.Add(await TempusDataService.PopulateRecordDataAsync(record));
-        });
-
+        var tasks = records.Select(async x => recordsWithZonedData.Add(await TempusDataService.PopulateRecordDataAsync(x)));
+        await Task.WhenAll(tasks);
         this.StateHasChanged();
     }
 }
