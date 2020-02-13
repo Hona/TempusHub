@@ -20,7 +20,10 @@ namespace TempusHubBlazor.Data
 {
     public class TempusDataService
     {
-        private static readonly HttpClient _httpClient = new HttpClient("https://tempus.xyz");
+        private static readonly HttpClient _httpClient = new HttpClient
+        {
+            BaseAddress = new Uri("https://tempus.xyz")
+        };
         public TempusDataService(TempusHubMySqlService dataService)
         {
             TempusHubMySqlService = dataService;
