@@ -40,7 +40,7 @@ else
                     <td>@record.Record.MapInfo.Name</td>
                     <td>@record.Record.PlayerInfo.Name</td>
                     <td>@TempusUtilities.FormattedDuration(record.Record.RecordInfo.Duration) (@TempusUtilities.GetWRSplitString(record.Record.CachedTime, record.ZonedData))</td>
-                    <td>@TempusUtilities.GetDateFromSeconds(record.Record.RecordInfo.Date)</td>
+                    <td>@TempusUtilities.GetDateFromSeconds(record.Record.RecordInfo.Date).GetTimeStringSinceDateTime()</td>
                 </tr>
             }
         </tbody>
