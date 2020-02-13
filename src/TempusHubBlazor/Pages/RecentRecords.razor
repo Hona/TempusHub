@@ -9,7 +9,7 @@
 
 <h1>Recent Records</h1>
 
-@if (records == null)
+@if (recordsWithZonedData == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -53,10 +53,5 @@ else
             var zonedData = await TempusDataService.GetTopZonedTimes(record.MapInfo.Name, record.ZoneInfo.Type, record.ZoneInfo.Zoneindex);
             recordsWithZonedData.Add(new Tuple<MapWr, ZonedRecordsModel>(record, zonedData));
         }
-    }
-
-    private ZonedRecordsModel GetZonedRecords(MapWr record)
-    {
-
     }
 }
