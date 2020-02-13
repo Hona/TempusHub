@@ -53,7 +53,7 @@ namespace TempusHubBlazor.Data
 
         }
         public List<string> MapNameList { get; set; }
-        private static string GetFullAPIPath(string partial) => "/api/" + partial;
+        private static string GetFullAPIPath(string partial) => "/api" + partial;
         private static async Task<T> GetResponseAsync<T>(string request)
         {
             var fullPath = GetFullAPIPath(request);
