@@ -29,12 +29,12 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var record in records)
+            @foreach (var record in recordsWithZonedData)
             {
                 <tr>
-                    <td>@record.MapInfo.Name</td>
-                    <td>@record.PlayerInfo.Name</td>
-                    <td>@TempusUtilities.FormattedDuration(record.RecordInfo.Duration) (@TempusUtilities.GetWRSplitString(record.CachedTime, GetZonedRecords(record)))</td>
+                    <td>@record.Item1.MapInfo.Name</td>
+                    <td>@record.Item1.PlayerInfo.Name</td>
+                    <td>@TempusUtilities.FormattedDuration(record.Item1.RecordInfo.Duration) (@TempusUtilities.GetWRSplitString(record.Item1.CachedTime, record.Item2))</td>
                 </tr>
             }
         </tbody>
@@ -42,11 +42,15 @@ else
 }
 
 @code {
-    MapWr[] records;
+    List<Tuple<MapWr, ZonedRecordsModel>> recordsWithZonedData;
 
     protected override async Task OnInitializedAsync()
     {
-        records = (await TempusDataService.GetRecentActivityAsync()).MapRecords.ToArray();
+        var records = (await TempusDataService.GetRecentActivityAsync()).MapRecords.ToArray();
+        foreach (var record in records)
+        {
+            recordsWithZonedData.Add(new Tuple<MapWr, ZonedRecordsModel>(record, GetZonedRecords(record)));
+        }
     }
 
     private ZonedRecordsModel GetZonedRecords(MapWr record)
