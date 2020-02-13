@@ -16,6 +16,7 @@ using TempusHubBlazor.Models.MySQL;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using TempusHubBlazor.Models.Tempus.Activity;
+using TempusHubBlazor.Models;
 
 namespace TempusHubBlazor.Data
 {
@@ -171,6 +172,16 @@ namespace TempusHubBlazor.Data
             await GetResponseAsync<List<DetailedMapOverviewModel>>("/maps/detailedList");
 
         public async Task<Rank> GetUserRankAsync(string id) => await GetResponseAsync<Rank>($"/players/id/{id}/rank");
+        public async Task<RecordWithZonedData> PopulateRecordDataAsync(TempusRecordBase recordBase)
+        {
+            var zonedData = await GetTopZonedTimes(recordBase.MapInfo.Name, recordBase.ZoneInfo.Type, recordBase.ZoneInfo.Zoneindex);
+
+            return new RecordWithZonedData
+            {
+                Record = recordBase,
+                ZonedData = zonedData
+            };     
+        }
 
         private string ParseMapName(string map)
         {

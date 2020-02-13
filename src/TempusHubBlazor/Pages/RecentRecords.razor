@@ -4,14 +4,14 @@
 @using TempusHubBlazor.Models.Tempus.Activity
 @using TempusHubBlazor.Models.Tempus.Responses
 @using TempusHubBlazor.Utilities
-@using TempusHubBlazor.Logging
+@using TempusHubBlazor.Models
 @inject TempusDataService TempusDataService
 
 <h1>Recent Records</h1>
 
-@if (recordsWithZonedData == null)
+@if (recordsWithZonedData == null || recordsWithZonedData.Count == 0)
 {
-    <p><em>Loading...</em></p>
+    <p><em>Getting activity data...</em></p>
 }
 else
 {
@@ -42,16 +42,14 @@ else
 }
 
 @code {
-    List<Tuple<MapWr, ZonedRecordsModel>> recordsWithZonedData = new List<Tuple<MapWr, ZonedRecordsModel>>();
+    List<RecordWithZonedData> recordsWithZonedData = new List<RecordWithZonedData>();
 
     protected override async Task OnInitializedAsync()
     {
         var records = (await TempusDataService.GetRecentActivityAsync()).MapRecords.ToArray();
         foreach (var record in records)
         {
-            Logger.LogInfo(record.MapInfo.Name + " " + record.ZoneInfo.Type + " " + record.ZoneInfo.Zoneindex);
-            var zonedData = await TempusDataService.GetTopZonedTimes(record.MapInfo.Name, record.ZoneInfo.Type, record.ZoneInfo.Zoneindex);
-            recordsWithZonedData.Add(new Tuple<MapWr, ZonedRecordsModel>(record, zonedData));
+            recordsWithZonedData.Add(await TempusDataService.PopulateRecordDataAsync(record));
         }
     }
 }
