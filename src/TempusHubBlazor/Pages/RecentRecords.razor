@@ -55,6 +55,7 @@ else
         var records = (await TempusDataService.GetRecentActivityAsync()).MapRecords.ToArray();
         var tasks = records.Select(async x => recordsWithZonedData.Add(await TempusDataService.PopulateRecordDataAsync(x)));
         await Task.WhenAll(tasks);
+        recordsWithZonedData = recordsWithZonedData.OrderByDescending(x => x.Record.RecordInfo.Date).ToList();
         this.StateHasChanged();
     }
 }
