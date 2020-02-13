@@ -6,6 +6,6 @@ namespace TempusHubBlazor.Models.Tempus.Activity
 {
     public class MapWr : TempusRecordBase
     {
-        public MapRecordCache CachedTime { get; set; }
+
     }
 }

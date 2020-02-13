@@ -15,6 +15,7 @@ using Newtonsoft.Json;
 using TempusHubBlazor.Models.MySQL;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using TempusHubBlazor.Models.Tempus.Activity;
 
 namespace TempusHubBlazor.Data
 {
@@ -110,7 +111,14 @@ namespace TempusHubBlazor.Data
         public async Task<RecentActivityModel> GetRecentActivityAsync()
         {
             var activity = await GetResponseAsync<RecentActivityModel>("/activity");
-            foreach (var map in activity.MapRecords)
+            var worldRecordActivity = new List<TempusRecordBase>();
+
+            // We are basically excluding the map top times
+            worldRecordActivity.AddRange(activity.BonusRecords);
+            worldRecordActivity.AddRange(activity.CourseRecords);
+            worldRecordActivity.AddRange(activity.MapRecords);
+
+            foreach (var map in worldRecordActivity)
             {
                 MapRecordCache tempNewCache = null;
 
