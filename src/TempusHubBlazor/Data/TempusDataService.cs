@@ -159,6 +159,12 @@ namespace TempusHubBlazor.Data
                 }
                 map.CachedTime = tempNewCache;
             }
+
+            // Just apply the map wr to top time
+            foreach (var record in activity.MapTopTimes)
+            {
+                record.CachedTime = await TempusHubMySqlService.GetCachedRecordsAsync(record.MapInfo.Id, record.RecordInfo.Class, record.ZoneInfo.Type);
+            }
             return activity;
         }
 
