@@ -10,8 +10,18 @@ namespace TempusHubBlazor.Utilities
     {
         public static string GetTimeStringSinceDateTime(this DateTime dateTime)
         {
-            var timeSpan = DateTime.Now - dateTime;
-            return timeSpan.ToPrettyFormat() + " ago";
+            TimeSpan deltaTime;
+            if (dateTime.Ticks < DateTime.Now.Ticks)
+            {
+                deltaTime = DateTime.Now - dateTime;
+                return deltaTime.ToPrettyFormat() + " ago";
+            }
+            else
+            {
+                deltaTime = dateTime - DateTime.Now;
+                return deltaTime.ToPrettyFormat() + " ago";
+
+            }
         }
         public static string ToPrettyFormat(this TimeSpan span)
         {

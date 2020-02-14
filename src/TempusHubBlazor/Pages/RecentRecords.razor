@@ -1,4 +1,5 @@
 ﻿@page "/recentrecords"
+@page "/recentrecords/{type}"
 
 @using TempusHubBlazor.Data
 @using TempusHubBlazor.Models.Tempus.Activity
@@ -39,7 +40,17 @@ else
                     <td>@TempusUtilities.GetClass(record.Record.RecordInfo.Class)</td>
                     <td>@record.Record.MapInfo.Name</td>
                     <td>@record.Record.PlayerInfo.Name</td>
-                    <td>@TempusUtilities.FormattedDuration(record.Record.RecordInfo.Duration) (@TempusUtilities.GetWRSplitString(record.Record.CachedTime, record.ZonedData))</td>
+                    <td>
+                        @TempusUtilities.FormattedDuration(record.Record.RecordInfo.Duration) (
+                        @if (record.Record is MapTop mapTopRecord)
+                        {
+                            @("#" + mapTopRecord.Rank + " WR +" + TempusUtilities.FormattedDuration(mapTopRecord.CachedTime.CurrentWRDuration - mapTopRecord.RecordInfo.Duration););
+                        }
+                        else
+                        {
+                            @TempusUtilities.GetWRSplitString(record.Record.CachedTime, record.ZonedData)
+                        })
+                    </td>
                     <td>@TempusUtilities.GetDateFromSeconds(record.Record.RecordInfo.Date).GetTimeStringSinceDateTime()</td>
                 </tr>
             }
@@ -48,14 +59,38 @@ else
 }
 
 @code {
-    List<RecordWithZonedData> recordsWithZonedData = new List<RecordWithZonedData>();
+    [Parameter]
+    public string RecentRecordType { get; set;} = "map";
+
+    List<RecordWithZonedData> recordsWithZonedData = new List<RecordWithZonedData>
+    ();
 
     protected override async Task OnInitializedAsync()
     {
-        var records = (await TempusDataService.GetRecentActivityAsync()).MapRecords.ToArray();
-        var tasks = records.Select(async x => recordsWithZonedData.Add(await TempusDataService.PopulateRecordDataAsync(x)));
+        var allActivity = (await TempusDataService.GetRecentActivityAsync());
+        TempusRecordBase[] selectedRecords;
+
+        switch (RecentRecordType.ToLower())
+        {
+            case "map":
+                selectedRecords = allActivity.MapRecords.ToArray();
+                break;
+            case "course":
+                selectedRecords = allActivity.CourseRecords.ToArray();
+                break;
+            case "bonus":
+                selectedRecords = allActivity.BonusRecords.ToArray();
+                break;
+            case "maptop":
+                selectedRecords = allActivity.MapTopTimes.ToArray();
+                break;
+            default:
+                throw new Exception("No activity data for that type.");
+        }
+
+        var tasks = selectedRecords.Select(async x => recordsWithZonedData.Add(await TempusDataService.PopulateRecordDataAsync(x)));
         await Task.WhenAll(tasks);
         recordsWithZonedData = recordsWithZonedData.OrderByDescending(x => x.Record.RecordInfo.Date).ToList();
         this.StateHasChanged();
     }
-}
+    }
