@@ -19,7 +19,7 @@ namespace TempusHubBlazor.Utilities
             else
             {
                 deltaTime = dateTime - DateTime.Now;
-                return deltaTime.ToPrettyFormat() + " ago";
+                return deltaTime.ToPrettyFormat() + " in the future";
 
             }
         }
