@@ -16,7 +16,7 @@
         <BSDropdownItem Href="/recentrecords/map" OnClick="OnInitializedAsync">Map WR</BSDropdownItem>
         <BSDropdownItem Href="/recentrecords/course" OnClick="OnInitializedAsync">Course WR</BSDropdownItem>
         <BSDropdownItem Href="/recentrecords/bonus" OnClick="OnInitializedAsync">Bonus WR</BSDropdownItem>
-        <BSDropdownItem Href="/recentrecords/maptop" OnClick="OnInitializedAsync">Map Top</BSDropdownItem>
+        <BSDropdownItem Href="/recentrecords/map_top" OnClick="OnInitializedAsync">Map Top</BSDropdownItem>
     </BSDropdownMenu>
 </BSDropdown>
 
@@ -98,7 +98,7 @@ else
             case "bonus":
                 selectedRecords = allActivity.BonusRecords.ToArray();
                 break;
-            case "maptop":
+            case "map_top":
                 selectedRecords = allActivity.MapTopTimes.ToArray();
                 break;
             default:

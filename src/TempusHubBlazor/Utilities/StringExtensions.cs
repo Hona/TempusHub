@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace TempusHubBlazor.Utilities
@@ -13,8 +14,15 @@ namespace TempusHubBlazor.Utilities
             {
                 return input;
             }
+            var inputParts = input.Split(' ', '_', '-');
 
-            return char.ToUpper(input[0]) + input.Substring(1).ToLower();
+            var stringBuilder = new StringBuilder();
+            foreach (var part in inputParts)
+            {
+                stringBuilder.Append(char.ToUpper(part[0]) + part.Substring(1).ToLower() + " ");
+            }
+
+            return stringBuilder.ToString().TrimEnd(' ');
         }
     }
 }
