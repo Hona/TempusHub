@@ -62,11 +62,12 @@ else
     [Parameter]
     public string RecentRecordType { get; set; }
 
-    List<RecordWithZonedData> recordsWithZonedData = new List<RecordWithZonedData>
-    ();
+    List<RecordWithZonedData> recordsWithZonedData = new List<RecordWithZonedData>();
+
 
     protected override async Task OnInitializedAsync()
     {
+        List<RecordWithZonedData> recordsWithZonedDataTemp = new List<RecordWithZonedData>();
         if(string.IsNullOrWhiteSpace(RecentRecordType))
         {
             RecentRecordType = "map";
@@ -92,9 +93,8 @@ else
                 throw new Exception("No activity data for that type.");
         }
 
-        var tasks = selectedRecords.Select(async x => recordsWithZonedData.Add(await TempusDataService.PopulateRecordDataAsync(x)));
+        var tasks = selectedRecords.Select(async x => recordsWithZonedDataTemp.Add(await TempusDataService.PopulateRecordDataAsync(x)));
         await Task.WhenAll(tasks);
-        recordsWithZonedData = recordsWithZonedData.OrderByDescending(x => x.Record.RecordInfo.Date).ToList();
-        this.StateHasChanged();
+        recordsWithZonedData = recordsWithZonedDataTemp.OrderByDescending(x => x.Record.RecordInfo.Date).ToList();
     }
     }
