@@ -42,96 +42,117 @@ namespace TempusHubBlazor.Data
                     // Cache map wr
                     var fullOverview = await GetFullMapOverViewAsync(map.Name);
                     double duration;
-                    if (classId == 4)
+                    try
                     {
-                        duration = fullOverview.DemomanRuns.OrderBy(x => x.Duration).First().Duration;
-                    }
-                    else
-                    {
-                        duration = fullOverview.SoldierRuns.OrderBy(x => x.Duration).First().Duration;
-                    }
-                    await UpdateCachedWRDataAsync(null, new TempusRecordBase
-                    {
-                        CachedTime = null,
-                        MapInfo = new MapInfo
+                        
+                        if (classId == 4)
                         {
-                            Id = map.Id
-                        },
-                        RecordInfo = new RecordInfoShort
-                        {
-                            Class = classId,
-                            Duration = duration
-                        },
-                        ZoneInfo = new Models.Tempus.Activity.ZoneInfo
-                        {
-                            Type = "map",
-                            Zoneindex = 1
+                            duration = fullOverview.DemomanRuns.OrderBy(x => x.Duration).First().Duration;
                         }
-                    });
+                        else
+                        {
+                            duration = fullOverview.SoldierRuns.OrderBy(x => x.Duration).First().Duration;
+                        }
+                        await UpdateCachedWRDataAsync(null, new TempusRecordBase
+                        {
+                            CachedTime = null,
+                            MapInfo = new MapInfo
+                            {
+                                Id = map.Id
+                            },
+                            RecordInfo = new RecordInfoShort
+                            {
+                                Class = classId,
+                                Duration = duration
+                            },
+                            ZoneInfo = new Models.Tempus.Activity.ZoneInfo
+                            {
+                                Type = "map",
+                                Zoneindex = 1
+                            }
+                        });
+                    }
+                    catch {}
+
 
                     // Cache all course records
                     for (int j = 1; j <= map.ZoneCounts.Course; j++)
                     {
-                        var runs = (await GetTopZonedTimes(map.Name, "course", j)).Runs;
-                        if (classId == 4)
+                        try
                         {
-                            duration = runs.DemomanRuns.OrderBy(x => x.Duration).First().Duration;
-                        }
-                        else
-                        {
-                            duration = runs.SoldierRuns.OrderBy(x => x.Duration).First().Duration;
-                        }
-                        await UpdateCachedWRDataAsync(null, new TempusRecordBase
-                        {
-                            CachedTime = null,
-                            MapInfo = new MapInfo
+                            var runs = (await GetTopZonedTimes(map.Name, "course", j)).Runs;
+                            if (classId == 4)
                             {
-                                Id = map.Id
-                            },
-                            RecordInfo = new RecordInfoShort
-                            {
-                                Class = classId,
-                                Duration = duration
-                            },
-                            ZoneInfo = new Models.Tempus.Activity.ZoneInfo
-                            {
-                                Type = "course",
-                                Zoneindex = j
+                                duration = runs.DemomanRuns.OrderBy(x => x.Duration).First().Duration;
                             }
-                        });
+                            else
+                            {
+                                duration = runs.SoldierRuns.OrderBy(x => x.Duration).First().Duration;
+                            }
+                            await UpdateCachedWRDataAsync(null, new TempusRecordBase
+                            {
+                                CachedTime = null,
+                                MapInfo = new MapInfo
+                                {
+                                    Id = map.Id
+                                },
+                                RecordInfo = new RecordInfoShort
+                                {
+                                    Class = classId,
+                                    Duration = duration
+                                },
+                                ZoneInfo = new Models.Tempus.Activity.ZoneInfo
+                                {
+                                    Type = "course",
+                                    Zoneindex = j
+                                }
+                            });
+                        }
+                        catch { }
+                        
                     }
+
+
 
                     // Cache all bonus records
                     for (int j = 1; j <= map.ZoneCounts.Bonus; j++)
                     {
-                        var runs = (await GetTopZonedTimes(map.Name, "bonus", j)).Runs;
-                        if (classId == 4)
+                        try
                         {
-                            duration = runs.DemomanRuns.OrderBy(x => x.Duration).First().Duration;
-                        }
-                        else
-                        {
-                            duration = runs.SoldierRuns.OrderBy(x => x.Duration).First().Duration;
-                        }
-                        await UpdateCachedWRDataAsync(null, new TempusRecordBase
-                        {
-                            CachedTime = null,
-                            MapInfo = new MapInfo
+                            var runs = (await GetTopZonedTimes(map.Name, "bonus", j)).Runs;
+                            if (classId == 4)
                             {
-                                Id = map.Id
-                            },
-                            RecordInfo = new RecordInfoShort
-                            {
-                                Class = classId,
-                                Duration = duration
-                            },
-                            ZoneInfo = new Models.Tempus.Activity.ZoneInfo
-                            {
-                                Type = "bonus",
-                                Zoneindex = j
+                                duration = runs.DemomanRuns.OrderBy(x => x.Duration).First().Duration;
                             }
-                        });
+                            else
+                            {
+                                duration = runs.SoldierRuns.OrderBy(x => x.Duration).First().Duration;
+                            }
+                            await UpdateCachedWRDataAsync(null, new TempusRecordBase
+                            {
+                                CachedTime = null,
+                                MapInfo = new MapInfo
+                                {
+                                    Id = map.Id
+                                },
+                                RecordInfo = new RecordInfoShort
+                                {
+                                    Class = classId,
+                                    Duration = duration
+                                },
+                                ZoneInfo = new Models.Tempus.Activity.ZoneInfo
+                                {
+                                    Type = "bonus",
+                                    Zoneindex = j
+                                }
+                            });
+                        }
+                        catch { }
+                        
                     }
+
+
+                    
                 }
             
             }
