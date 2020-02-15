@@ -10,16 +10,15 @@
 
 <h1>Recent Records</h1>
 <div class="dropdown">
-    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         @RecentRecordType.ToStandardCasing()
-        <span class="caret"></span>
     </button>
-    <ul class="dropdown-menu">
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
         <li><a href="/recentrecords/map">Map</a></li>
         <li><a href="/recentrecords/course">Course</a></li>
         <li><a href="/recentrecords/bonus">Bonus</a></li>
         <li><a href="/recentrecords/maptop">Map Top</a></li>
-    </ul>
+    </div>
 </div>
 
 @if (recordsWithZonedData == null || recordsWithZonedData.Count == 0)
