@@ -25,6 +25,7 @@ namespace TempusHubBlazor.Data
         public async Task CacheAllWRsAsync()
         {
             Logger.LogInfo($"Caching all {MapList.Count} maps");
+            var tasks = new List<Task>();
             foreach (var map in MapList)
             {
                 /*
