@@ -319,6 +319,25 @@ namespace TempusHubBlazor.Data
         {
             var zonedData = await GetTopZonedTimes(recordBase.MapInfo.Name, recordBase.ZoneInfo.Type, recordBase.ZoneInfo.Zoneindex);
 
+            if (recordBase.CachedTime == null || !recordBase.CachedTime.CurrentWRDuration.HasValue)
+            {
+                recordBase.CachedTime = new MapRecordCache
+                {
+                    ClassId = recordBase.RecordInfo.Class,
+                    MapId = recordBase.MapInfo.Id,
+                    ZoneId = recordBase.ZoneInfo.Zoneindex,
+                    ZoneType = recordBase.ZoneInfo.Type,
+                };
+                if (recordBase.RecordInfo.Class == 4)
+                {
+                    recordBase.CachedTime.CurrentWRDuration = zonedData.Runs.DemomanRuns.OrderBy(x => x.Duration).First().Duration;
+                }
+                else
+                {
+                    recordBase.CachedTime.CurrentWRDuration = zonedData.Runs.SoldierRuns.OrderBy(x => x.Duration).First().Duration;
+                }
+            }
+
             return new RecordWithZonedData
             {
                 Record = recordBase,
