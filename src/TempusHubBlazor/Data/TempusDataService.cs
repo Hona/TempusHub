@@ -22,8 +22,9 @@ namespace TempusHubBlazor.Data
 {
     public class TempusDataService
     {
-        private async Task CacheAllWRsAsync()
+        public async Task CacheAllWRsAsync()
         {
+            Logger.LogInfo($"Caching all {MapList.Count} maps");
             foreach (var map in MapList)
             {
                 /*
@@ -142,7 +143,6 @@ namespace TempusHubBlazor.Data
         public TempusDataService(TempusHubMySqlService dataService)
         {
             TempusHubMySqlService = dataService;
-            CacheAllWRsAsync().GetAwaiter().GetResult();
         }
         public TempusHubMySqlService TempusHubMySqlService { get; set; }
         private static readonly Stopwatch Stopwatch = new Stopwatch();
