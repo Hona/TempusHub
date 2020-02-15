@@ -52,14 +52,14 @@ else
                     <td>@((record.Record.ZoneInfo.Type == "map" ? "" : record.Record.ZoneInfo.Type == "course" ? "C" + record.Record.ZoneInfo.Zoneindex + " " : "B" + record.Record.ZoneInfo.Zoneindex + " ") + record.Record.MapInfo.Name)</td>
                     <td>@record.Record.PlayerInfo.Name</td>
                     <td>
-                        @(TempusUtilities.FormattedDuration(record.Record.RecordInfo.Duration)) (
+                        @(TempusUtilities.FormattedDuration(record.Record.RecordInfo.Duration))
                         @if (record.Record is MapTop mapTopRecord)
                         {
-                            @("#" + mapTopRecord.Rank + " WR +" + ((record.Record.CachedTime != null && record.Record.CachedTime.CurrentWRDuration.HasValue) ? TempusUtilities.FormattedDuration(record.Record.CachedTime.CurrentWRDuration.Value - record.Record.RecordInfo.Duration) : "N/A"));
+                            @("(#" + mapTopRecord.Rank + " WR +" + ((record.Record.CachedTime != null && record.Record.CachedTime.CurrentWRDuration.HasValue) ? TempusUtilities.FormattedDuration(record.Record.CachedTime.CurrentWRDuration.Value - record.Record.RecordInfo.Duration) : "N/A"));
                         }
                         else
                         {
-                            @TempusUtilities.GetWRSplitString(record.Record.CachedTime, record.ZonedData)
+                            @("("+TempusUtilities.GetWRSplitString(record.Record.CachedTime, record.ZonedData))
                         })
                     </td>
                     <td>@TempusUtilities.GetDateFromSeconds(record.Record.RecordInfo.Date).GetTimeStringSinceDateTime()</td>
