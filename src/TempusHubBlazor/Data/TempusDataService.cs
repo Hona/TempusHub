@@ -22,6 +22,13 @@ namespace TempusHubBlazor.Data
 {
     public class TempusDataService
     {
+        private void CacheAllWRs()
+        {
+            foreach (var map in MapList)
+            {
+                
+            }
+        }
         private static readonly HttpClient _httpClient = new HttpClient
         {
             BaseAddress = new Uri("https://tempus.xyz")
@@ -106,7 +113,43 @@ namespace TempusHubBlazor.Data
             }
 
         }
+        public async Task<MapRecordCache> UpdateCachedWRDataAsync(MapRecordCache cached, TempusRecordBase map)
+        {
+            MapRecordCache tempNewCache = null;
+            // Check for no data
+            if (cached == null || !cached.CurrentWRDuration.HasValue && !cached.OldWRDuration.HasValue)
+            {
+                // No data
+                tempNewCache = new MapRecordCache
+                {
+                    MapId = map.MapInfo.Id,
+                    CurrentWRDuration = map.RecordInfo.Duration,
+                    ClassId = map.RecordInfo.Class,
+                    ZoneType = map.ZoneInfo.Type,
+                    OldWRDuration = null,
+                    ZoneId = map.ZoneInfo.Zoneindex
+                };
 
+                await TempusHubMySqlService.UpdateCachedRecordAsync(tempNewCache);
+            }
+            // Check if the cached wr duration is different to the new record
+            else if (cached.CurrentWRDuration.HasValue && cached.CurrentWRDuration.Value != map.RecordInfo.Duration)
+            {
+                tempNewCache = new MapRecordCache
+                {
+                    MapId = map.MapInfo.Id,
+                    CurrentWRDuration = map.RecordInfo.Duration,
+                    OldWRDuration = cached.CurrentWRDuration,
+                    ClassId = map.RecordInfo.Class,
+                    ZoneType = map.ZoneInfo.Type,
+                    ZoneId = map.ZoneInfo.Zoneindex
+                };
+
+                await TempusHubMySqlService.UpdateCachedRecordAsync(tempNewCache);
+            }
+
+            return tempNewCache;
+        }
         public async Task<ZonedRecordsModel> GetTopZonedTimes(string mapName, string zoneType, int zoneId = 1) 
             => await GetResponseAsync<ZonedRecordsModel>($"/maps/name/{mapName}/zones/typeindex/{zoneType}/{zoneId}/records/list");
         public async Task<RecentActivityModel> GetRecentActivityAsync()
@@ -121,43 +164,9 @@ namespace TempusHubBlazor.Data
 
             foreach (var map in worldRecordActivity)
             {
-                MapRecordCache tempNewCache = null;
-
                 // Fetch the latest cache
                 var cached = await TempusHubMySqlService.GetCachedRecordsAsync(map.MapInfo.Id, map.RecordInfo.Class, map.ZoneInfo.Type);
-
-                // Check for no data
-                if (cached == null || !cached.CurrentWRDuration.HasValue && !cached.OldWRDuration.HasValue)
-                {
-                    // No data
-                    tempNewCache = new MapRecordCache
-                    {
-                        MapId = map.MapInfo.Id,
-                        CurrentWRDuration = map.RecordInfo.Duration,
-                        ClassId = map.RecordInfo.Class,
-                        ZoneType = map.ZoneInfo.Type,
-                        OldWRDuration = null,
-                        ZoneId = map.ZoneInfo.Zoneindex
-                    };
-
-                    await TempusHubMySqlService.UpdateCachedRecordAsync(tempNewCache);
-                }
-                // Check if the cached wr duration is different to the new record
-                else if (cached.CurrentWRDuration.HasValue && cached.CurrentWRDuration.Value != map.RecordInfo.Duration)
-                {
-                    tempNewCache = new MapRecordCache
-                    {
-                        MapId = map.MapInfo.Id,
-                        CurrentWRDuration = map.RecordInfo.Duration,
-                        OldWRDuration = cached.CurrentWRDuration,
-                        ClassId = map.RecordInfo.Class,
-                        ZoneType = map.ZoneInfo.Type,
-                        ZoneId = map.ZoneInfo.Zoneindex
-                    };
-
-                    await TempusHubMySqlService.UpdateCachedRecordAsync(tempNewCache);
-                }
-                map.CachedTime = tempNewCache;
+                map.CachedTime = await UpdateCachedWRDataAsync(cached, map);
             }
 
             // Just apply the map wr to top time
