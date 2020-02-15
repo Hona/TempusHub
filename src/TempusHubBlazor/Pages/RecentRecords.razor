@@ -6,20 +6,19 @@
 @using TempusHubBlazor.Models.Tempus.Responses
 @using TempusHubBlazor.Utilities
 @using TempusHubBlazor.Models
+@using BlazorStrap
 @inject TempusDataService TempusDataService
 
 <h1>Recent Records</h1>
-<div class="dropdown">
-    <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        @RecentRecordType.ToStandardCasing()
-    </button>
-    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-        <li><a href="/recentrecords/map">Map</a></li>
-        <li><a href="/recentrecords/course">Course</a></li>
-        <li><a href="/recentrecords/bonus">Bonus</a></li>
-        <li><a href="/recentrecords/maptop">Map Top</a></li>
-    </div>
-</div>
+<BSDropdown>
+    <BSDropdownToggle>@RecentRecordType.ToStandardCasing()</BSDropdownToggle>
+    <BSDropdownMenu>
+        <BSDropdownItem Href="/recentrecords/map">Map WR</BSDropdownItem>
+        <BSDropdownItem Href="/recentrecords/course">Course WR</BSDropdownItem>
+        <BSDropdownItem Href="/recentrecords/bonus">Bonus WR</BSDropdownItem>
+        <BSDropdownItem Href="/recentrecords/maptop">Map Top</BSDropdownItem>
+    </BSDropdownMenu>
+</BSDropdown>
 
 @if (recordsWithZonedData == null || recordsWithZonedData.Count == 0)
 {
@@ -49,7 +48,7 @@ else
             {
                 <tr>
                     <td>@TempusUtilities.GetClass(record.Record.RecordInfo.Class)</td>
-                    <td>@((record.Record.ZoneInfo.Type == "map" ? "" : record.Record.ZoneInfo.Type ==  "course" ? "C" + record.Record.ZoneInfo.Zoneindex + " " : "B" + record.Record.ZoneInfo.Zoneindex + " ") + record.Record.MapInfo.Name)</td>
+                    <td>@((record.Record.ZoneInfo.Type == "map" ? "" : record.Record.ZoneInfo.Type == "course" ? "C" + record.Record.ZoneInfo.Zoneindex + " " : "B" + record.Record.ZoneInfo.Zoneindex + " ") + record.Record.MapInfo.Name)</td>
                     <td>@record.Record.PlayerInfo.Name</td>
                     <td>
                         @TempusUtilities.FormattedDuration(record.Record.RecordInfo.Duration) (
@@ -79,7 +78,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         List<RecordWithZonedData> recordsWithZonedDataTemp = new List<RecordWithZonedData>();
-        if(string.IsNullOrWhiteSpace(RecentRecordType))
+        if (string.IsNullOrWhiteSpace(RecentRecordType))
         {
             RecentRecordType = "Map";
         }
@@ -108,4 +107,9 @@ else
         await Task.WhenAll(tasks);
         recordsWithZonedData = recordsWithZonedDataTemp.OrderByDescending(x => x.Record.RecordInfo.Date).ToList();
     }
+
+    void ToggleDropDown()
+    {
+
     }
+}
