@@ -31,7 +31,7 @@ namespace TempusHubBlazor
             var tempusHubMySqlService = new TempusHubMySqlService(Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING"));
             services.AddSingleton(tempusHubMySqlService);
             var tempusDataService = new TempusDataService(tempusHubMySqlService);
-            tempusDataService.CacheAllWRsAsync().GetAwaiter().GetResult();
+            //tempusDataService.CacheAllWRsAsync().GetAwaiter().GetResult();
             services.AddSingleton(tempusDataService);
         }
 

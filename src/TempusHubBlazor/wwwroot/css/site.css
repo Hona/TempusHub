@@ -12,10 +12,14 @@ h1 {
     display: inline !important;
 }
 
+.bsDropDown{
+    float: right;
+}
+
 .btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
 }
 
 app {

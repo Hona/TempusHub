@@ -54,7 +54,7 @@ namespace TempusHubBlazor.Data
                         {
                             duration = fullOverview.SoldierRuns.OrderBy(x => x.Duration).First().Duration;
                         }
-                        await UpdateCachedWRDataAsync(null, new TempusRecordBase
+                        tasks.Add(UpdateCachedWRDataAsync(null, new TempusRecordBase
                         {
                             CachedTime = null,
                             MapInfo = new MapInfo
@@ -71,7 +71,7 @@ namespace TempusHubBlazor.Data
                                 Type = "map",
                                 Zoneindex = 1
                             }
-                        });
+                        }));
                     }
                     catch {}
 
@@ -90,7 +90,7 @@ namespace TempusHubBlazor.Data
                             {
                                 duration = runs.SoldierRuns.OrderBy(x => x.Duration).First().Duration;
                             }
-                            await UpdateCachedWRDataAsync(null, new TempusRecordBase
+                            tasks.Add(UpdateCachedWRDataAsync(null, new TempusRecordBase
                             {
                                 CachedTime = null,
                                 MapInfo = new MapInfo
@@ -107,7 +107,7 @@ namespace TempusHubBlazor.Data
                                     Type = "course",
                                     Zoneindex = j
                                 }
-                            });
+                            }));
                         }
                         catch { }
                         
@@ -129,7 +129,7 @@ namespace TempusHubBlazor.Data
                             {
                                 duration = runs.SoldierRuns.OrderBy(x => x.Duration).First().Duration;
                             }
-                            await UpdateCachedWRDataAsync(null, new TempusRecordBase
+                            tasks.Add(UpdateCachedWRDataAsync(null, new TempusRecordBase
                             {
                                 CachedTime = null,
                                 MapInfo = new MapInfo
@@ -146,7 +146,7 @@ namespace TempusHubBlazor.Data
                                     Type = "bonus",
                                     Zoneindex = j
                                 }
-                            });
+                            }));
                         }
                         catch { }
                         

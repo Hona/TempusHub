@@ -9,8 +9,7 @@
 @using BlazorStrap
 @inject TempusDataService TempusDataService
 
-<h1>Recent Records</h1>
-<BSDropdown>
+<h1>Recent Records</h1><BSDropdown Class="bsDropDown">
     <BSDropdownToggle Color="Color.Primary">@RecentRecordType.ToStandardCasing()</BSDropdownToggle>
     <BSDropdownMenu>
         <BSDropdownItem Href="/recentrecords/map" OnClick="OnInitializedAsync">Map WR</BSDropdownItem>
