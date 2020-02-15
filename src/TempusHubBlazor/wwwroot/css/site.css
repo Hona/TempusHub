@@ -9,7 +9,7 @@ a, .btn-link {
 }
 
 h1 {
-    display: inline;
+    display: inline !important;
 }
 
 .btn-primary {
