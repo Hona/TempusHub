@@ -9,6 +9,18 @@
 @inject TempusDataService TempusDataService
 
 <h1>Recent Records</h1>
+<div class="dropdown">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+        @RecentRecordType.ToStandardCasing()
+        <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+        <li><a href="/recentrecords/map">Map</a></li>
+        <li><a href="/recentrecords/course">Course</a></li>
+        <li><a href="/recentrecords/bonus">Bonus</a></li>
+        <li><a href="/recentrecords/maptop">Map Top</a></li>
+    </ul>
+</div>
 
 @if (recordsWithZonedData == null || recordsWithZonedData.Count == 0)
 {
@@ -70,7 +82,7 @@ else
         List<RecordWithZonedData> recordsWithZonedDataTemp = new List<RecordWithZonedData>();
         if(string.IsNullOrWhiteSpace(RecentRecordType))
         {
-            RecentRecordType = "map";
+            RecentRecordType = "Map";
         }
         var allActivity = (await TempusDataService.GetRecentActivityAsync());
         TempusRecordBase[] selectedRecords;
