@@ -108,9 +108,4 @@ else
         await Task.WhenAll(tasks);
         recordsWithZonedData = recordsWithZonedDataTemp.OrderByDescending(x => x.Record.RecordInfo.Date).ToList();
     }
-
-    void ToggleDropDown()
-    {
-
-    }
 }
