@@ -301,6 +301,7 @@ namespace TempusHubBlazor.Data
             {
                 record.CachedTime = await TempusHubMySqlService.GetCachedRecordsAsync(record.MapInfo.Id, record.RecordInfo.Class, record.ZoneInfo.Type);
             }
+
             return activity;
         }
 

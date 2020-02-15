@@ -55,7 +55,7 @@ else
                         @TempusUtilities.FormattedDuration(record.Record.RecordInfo.Duration) (
                         @if (record.Record is MapTop mapTopRecord)
                         {
-                            @("#" + mapTopRecord.Rank + " WR +" + ((mapTopRecord.CachedTime != null && mapTopRecord.CachedTime.CurrentWRDuration.HasValue) ? TempusUtilities.FormattedDuration(mapTopRecord.CachedTime.CurrentWRDuration.Value - mapTopRecord.RecordInfo.Duration) : "N/A"));
+                            @("#" + mapTopRecord.Rank + " WR +" + ((record.Record.CachedTime != null && record.Record.CachedTime.CurrentWRDuration.HasValue) ? TempusUtilities.FormattedDuration(record.Record.CachedTime.CurrentWRDuration.Value - record.Record.RecordInfo.Duration) : "N/A"));
                         }
                         else
                         {
