@@ -18,7 +18,7 @@ namespace TempusHubBlazor.Data
             });
         }
 
-        internal async Task<MapRecordCache> GetCachedRecordsAsync(int mapId, int classId, string zoneType, int? zoneId = null)
+        internal async Task<MapRecordCache> GetCachedRecordsAsync(int mapId, int classId, string zoneType, int zoneId = 1)
         {
             var query =
                 @"select * from `worldRecordCache` where `mapId`=@MapId AND `classId`=@ClassId AND `zoneType`=@ZoneType and `zoneId`=@ZoneId";
@@ -46,8 +46,8 @@ namespace TempusHubBlazor.Data
                 ClassId = newCache.ClassId,
                 ZoneType = newCache.ZoneType,
                 ZoneId = newCache.ZoneId,
-                CurrentRecordDuration = newCache.CurrentWRDuration,
-                OldRecordDuration = newCache.OldWRDuration
+                CurrentRecordDuration = newCache.CurrentWRDuration ?? null,
+                OldRecordDuration = newCache.OldWRDuration ?? null
             };
 
             await ExecuteAsync(query, param);
