@@ -26,20 +26,19 @@ namespace TempusHubBlazor.Utilities
         }
         public static string GetWRSplitString(MapRecordCache cache, ZonedRecordsModel zonedResults)
         {
-            double oldRecord;
-
+            double slowRecord;
             // If the current wr doesn't have a value, it can be assumed there is no old duration
             if (cache == null || !cache.CurrentWRDuration.HasValue || !cache.OldWRDuration.HasValue)
             {
-                oldRecord = cache.ClassId == 4 ? zonedResults.Runs.DemomanRuns.OrderBy(x => x.Duration).ToArray()[1].Duration 
+                slowRecord = cache.ClassId == 4 ? zonedResults.Runs.DemomanRuns.OrderBy(x => x.Duration).ToArray()[1].Duration 
                     : zonedResults.Runs.SoldierRuns.OrderBy(x => x.Duration).ToArray()[1].Duration;
             }
             else
             {
-                oldRecord = cache.OldWRDuration.Value;
+                slowRecord = cache.OldWRDuration.Value;
             }
 
-            var timeSplit = oldRecord - cache.CurrentWRDuration.Value;
+            var timeSplit = slowRecord - cache.CurrentWRDuration.Value;
             return "WR -" + FormattedDuration(timeSplit);
         }
         /// <summary>

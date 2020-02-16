@@ -242,7 +242,8 @@ namespace TempusHubBlazor.Data
         }
         public async Task<MapRecordCache> UpdateCachedWRDataAsync(MapRecordCache cached, TempusRecordBase map)
         {
-            MapRecordCache tempNewCache = null;
+            MapRecordCache tempNewCache = cached;
+
             // Check for no data
             if (cached == null || !cached.CurrentWRDuration.HasValue && !cached.OldWRDuration.HasValue)
             {
