@@ -10,7 +10,7 @@ namespace TempusHubBlazor.Logging
         public static void LogInfo(string message) => LogToConsole(new LogMessage(LogType.Info, message));
         public static void LogWarning(string message) => LogToConsole(new LogMessage(LogType.Warning, message));
         public static void LogError(string message, Exception exception = null) => LogToConsole(new LogMessage(LogType.Error, message, exception));
-        public static void LogException(Exception exception) => LogToConsole(new LogMessage(LogType.Error, "No extra information.", exception));
+        public static void LogException(Exception exception, string message = null) => LogToConsole(new LogMessage(LogType.Error, message ?? "No extra information.", exception));
         public static void LogToConsole(LogMessage logMessage)
         {
             PrintSeverityPrefix(logMessage.Severity);

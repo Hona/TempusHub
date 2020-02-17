@@ -88,7 +88,7 @@ namespace TempusHubBlazor.Data
             }
             catch (Exception e)
             {
-                Logger.LogException(e);
+                Logger.LogException(e, "Failed on: " + fullPath);
                 return default;
             }
         }
