@@ -92,16 +92,16 @@ else
         switch (RecentRecordType.ToLower())
         {
             case "map":
-                RecordsWithZonedData = TempusCacheService.RecentActivityWithZonedData.MapWR;
+                recordsWithZonedDataTemp = TempusCacheService.RecentActivityWithZonedData.MapWR;
                 break;
             case "course":
-                RecordsWithZonedData = TempusCacheService.RecentActivityWithZonedData.CourseWR;
+                recordsWithZonedDataTemp = TempusCacheService.RecentActivityWithZonedData.CourseWR;
                 break;
             case "bonus":
-                RecordsWithZonedData = TempusCacheService.RecentActivityWithZonedData.BonusWR;
+                recordsWithZonedDataTemp = TempusCacheService.RecentActivityWithZonedData.BonusWR;
                 break;
             case "map_top":
-                RecordsWithZonedData = TempusCacheService.RecentActivityWithZonedData.MapTT;
+                recordsWithZonedDataTemp = TempusCacheService.RecentActivityWithZonedData.MapTT;
                 break;
             default:
                 throw new Exception("No activity data for that type.");
