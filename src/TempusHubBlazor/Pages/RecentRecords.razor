@@ -120,7 +120,7 @@ else
         RecordsWithZonedData = recordsWithZonedDataTemp.OrderByDescending(x => x.Record.RecordInfo.Date).ToList();
         if (forceUpdateState)
         {
-            this.StateHasChanged();
+            base.StateHasChanged();
         }
     }
 }
