@@ -38,13 +38,9 @@ namespace TempusHubBlazor.Data
         private async Task CacheAllRecordsOnMapAsync(DetailedMapOverviewModel map)
         {
             var fullOverview = await TempusDataService.GetFullMapOverViewAsync(map.Name);
-            var tasks = new List<Task>
-            {
-                CacheClassRecordAsync(3, map, fullOverview),
-                CacheClassRecordAsync(4, map, fullOverview)
-            };
 
-            await Task.WhenAll(tasks);
+            await CacheClassRecordAsync(3, map, fullOverview);
+            await CacheClassRecordAsync(4, map, fullOverview);
         }
 
     
