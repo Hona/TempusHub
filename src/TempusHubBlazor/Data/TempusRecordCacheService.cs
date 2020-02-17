@@ -30,8 +30,10 @@ namespace TempusHubBlazor.Data
         public async Task CacheAllRecordsAsync()
         {
             Logger.LogInfo($"Caching all {TempusDataService.MapList.Count} maps");
-            var tasks = TempusDataService.MapList.Select(x => CacheAllRecordsOnMapAsync(x));
-            await Task.WhenAll(tasks);
+            foreach (var map in TempusDataService.MapList)
+            {
+                await CacheAllRecordsOnMapAsync(map);
+            }
         }
         private async Task CacheAllRecordsOnMapAsync(DetailedMapOverviewModel map)
         {
