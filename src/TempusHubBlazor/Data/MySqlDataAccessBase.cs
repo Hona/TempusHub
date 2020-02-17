@@ -13,43 +13,34 @@ namespace TempusHubBlazor.Data
     public class MySqlDataAccessBase
     {
         private readonly string _connectionString;
-        private MySqlConnection _connection;
 
         protected MySqlDataAccessBase(string connectionString)
         {
             _connectionString = connectionString;
-            CheckConnectionAsync().GetAwaiter().GetResult();
         }
 
-        private async Task OpenConnectionAsync()
+        private async Task<MySqlConnection> OpenNewConnectionAsync()
         {
             Logger.LogInfo("Openning MySQL connection");
-            if (_connection == null) _connection = new MySqlConnection(_connectionString);
-            await _connection.OpenAsync();
+            var connection = new MySqlConnection(_connectionString);
+            await connection.OpenAsync();
+            return connection;
         }
 
-        private async Task CheckConnectionAsync()
+        private async Task CloseAsync(MySqlConnection connection)
         {
-            if (_connection == null || _connection.State == ConnectionState.Closed ||
-                _connection.State == ConnectionState.Broken)
-                await OpenConnectionAsync();
-        }
-
-        private async Task CloseAsync()
-        {
-            if (_connection == null) return;
-            await _connection.CloseAsync();
-            await _connection.ClearAllPoolsAsync();
-            _connection.Dispose();
-            _connection = null;
+            if (connection == null) return;
+            await connection.CloseAsync();
+            await connection.ClearAllPoolsAsync();
+            connection.Dispose();
         }
 
         protected async Task<List<T>> QueryAsync<T>(string query)
         {
             try
             {
-                await CheckConnectionAsync();
-                var result = (await _connection.QueryAsync<T>(query)).ToList();
+                var connection = await OpenNewConnectionAsync();
+                var result = (await connection.QueryAsync<T>(query)).ToList();
                 return result;
             }
             catch (Exception e)
@@ -63,8 +54,8 @@ namespace TempusHubBlazor.Data
         {
             try
             {
-                await CheckConnectionAsync();
-                var result = (await _connection.QueryAsync<T>(query, param)).ToList();
+                var connection = new MySqlConnection(_connectionString);
+                var result = (await connection.QueryAsync<T>(query, param)).ToList();
                 return result;
             }
             catch (Exception e)
@@ -78,8 +69,8 @@ namespace TempusHubBlazor.Data
         {
             try
             {
-                await CheckConnectionAsync();
-                await _connection.ExecuteAsync(query, param);
+                var connection = new MySqlConnection(_connectionString);
+                await connection.ExecuteAsync(query, param);
             }
             catch (Exception e)
             {
@@ -89,10 +80,6 @@ namespace TempusHubBlazor.Data
 
         public void Dispose()
         {
-            if (_connection != null && _connection.State != ConnectionState.Closed)
-            {
-                _connection.Dispose();
-            }
             FluentMapper.EntityMaps.Clear();
         }
     }
