@@ -157,7 +157,7 @@ namespace TempusHubBlazor.Data
                     }
 
 
-                    
+                    await Task.WhenAll(tasks);
                 }
             
             }
