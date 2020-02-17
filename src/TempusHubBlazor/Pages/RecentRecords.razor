@@ -23,7 +23,7 @@
 
 <br />
 
-@if (recordsWithZonedData == null || recordsWithZonedData.Count == 0)
+@if (RecordsWithZonedData == null || RecordsWithZonedData.Count == 0)
 {
     <p><em>Getting activity data...</em></p>
 }
@@ -47,7 +47,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var record in recordsWithZonedData)
+            @foreach (var record in RecordsWithZonedData)
             {
                 <tr>
                     <td><img width="24" height="24" src="@(record.Record.RecordInfo.Class == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /></td>
@@ -75,7 +75,7 @@ else
     [Parameter]
     public string RecentRecordType { get; set; }
 
-    List<RecordWithZonedData> recordsWithZonedData = new List<RecordWithZonedData>();
+    List<RecordWithZonedData> RecordsWithZonedData = new List<RecordWithZonedData>();
 
 
     protected override async Task OnInitializedAsync()
@@ -86,28 +86,27 @@ else
             RecentRecordType = "Map";
         }
         var allActivity = TempusCacheService.RecentActivity;
+
         TempusRecordBase[] selectedRecords;
 
         switch (RecentRecordType.ToLower())
         {
             case "map":
-                selectedRecords = allActivity.MapRecords.ToArray();
+                RecordsWithZonedData = TempusCacheService.RecentActivityWithZonedData.MapWR;
                 break;
             case "course":
-                selectedRecords = allActivity.CourseRecords.ToArray();
+                RecordsWithZonedData = TempusCacheService.RecentActivityWithZonedData.CourseWR;
                 break;
             case "bonus":
-                selectedRecords = allActivity.BonusRecords.ToArray();
+                RecordsWithZonedData = TempusCacheService.RecentActivityWithZonedData.BonusWR;
                 break;
             case "map_top":
-                selectedRecords = allActivity.MapTopTimes.ToArray();
+                RecordsWithZonedData = TempusCacheService.RecentActivityWithZonedData.MapTT;
                 break;
             default:
                 throw new Exception("No activity data for that type.");
         }
 
-        var tasks = selectedRecords.Select(async x => recordsWithZonedDataTemp.Add(await TempusDataService.PopulateRecordDataAsync(x)));
-        await Task.WhenAll(tasks);
-        recordsWithZonedData = recordsWithZonedDataTemp.OrderByDescending(x => x.Record.RecordInfo.Date).ToList();
+        RecordsWithZonedData = recordsWithZonedDataTemp.OrderByDescending(x => x.Record.RecordInfo.Date).ToList();
     }
 }
