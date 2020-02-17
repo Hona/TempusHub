@@ -25,148 +25,17 @@ namespace TempusHubBlazor.Data
         public TempusDataService(TempusHubMySqlService dataService)
         {
             TempusHubMySqlService = dataService;
+            TempusRecordCacheService = new TempusRecordCacheService(this);
         }
         public async Task CacheAllWRsAsync()
         {
-            Logger.LogInfo($"Caching all {MapList.Count} maps");
-            var tasks = new List<Task>();
-            foreach (var map in MapList)
-            {
-                /*
-                    MapId = map.MapInfo.Id,
-                    CurrentWRDuration = map.RecordInfo.Duration,
-                    ClassId = map.RecordInfo.Class,
-                    ZoneType = map.ZoneInfo.Type,
-                    OldWRDuration = null,
-                    ZoneId = map.ZoneInfo.Zoneindex
-                */
-                for (int i = 0; i < 2; i++)
-                {
-                    var classId = i == 0 ? 4 : 3;
-
-                    // Cache map wr
-                    var fullOverview = await GetFullMapOverViewAsync(map.Name);
-                    double duration;
-                    try
-                    {
-                        
-                        if (classId == 4)
-                        {
-                            duration = fullOverview.DemomanRuns.OrderBy(x => x.Duration).First().Duration;
-                        }
-                        else
-                        {
-                            duration = fullOverview.SoldierRuns.OrderBy(x => x.Duration).First().Duration;
-                        }
-                        tasks.Add(UpdateCachedWRDataAsync(null, new TempusRecordBase
-                        {
-                            CachedTime = null,
-                            MapInfo = new MapInfo
-                            {
-                                Id = map.Id
-                            },
-                            RecordInfo = new RecordInfoShort
-                            {
-                                Class = classId,
-                                Duration = duration
-                            },
-                            ZoneInfo = new Models.Tempus.Activity.ZoneInfo
-                            {
-                                Type = "map",
-                                Zoneindex = 1
-                            }
-                        }));
-                    }
-                    catch {}
-
-
-                    // Cache all course records
-                    for (int j = 1; j <= map.ZoneCounts.Course; j++)
-                    {
-                        try
-                        {
-                            var runs = (await GetTopZonedTimes(map.Name, "course", j)).Runs;
-                            if (classId == 4)
-                            {
-                                duration = runs.DemomanRuns.OrderBy(x => x.Duration).First().Duration;
-                            }
-                            else
-                            {
-                                duration = runs.SoldierRuns.OrderBy(x => x.Duration).First().Duration;
-                            }
-                            tasks.Add(UpdateCachedWRDataAsync(null, new TempusRecordBase
-                            {
-                                CachedTime = null,
-                                MapInfo = new MapInfo
-                                {
-                                    Id = map.Id
-                                },
-                                RecordInfo = new RecordInfoShort
-                                {
-                                    Class = classId,
-                                    Duration = duration
-                                },
-                                ZoneInfo = new Models.Tempus.Activity.ZoneInfo
-                                {
-                                    Type = "course",
-                                    Zoneindex = j
-                                }
-                            }));
-                        }
-                        catch { }
-                        
-                    }
-
-
-
-                    // Cache all bonus records
-                    for (int j = 1; j <= map.ZoneCounts.Bonus; j++)
-                    {
-                        try
-                        {
-                            var runs = (await GetTopZonedTimes(map.Name, "bonus", j)).Runs;
-                            if (classId == 4)
-                            {
-                                duration = runs.DemomanRuns.OrderBy(x => x.Duration).First().Duration;
-                            }
-                            else
-                            {
-                                duration = runs.SoldierRuns.OrderBy(x => x.Duration).First().Duration;
-                            }
-                            tasks.Add(UpdateCachedWRDataAsync(null, new TempusRecordBase
-                            {
-                                CachedTime = null,
-                                MapInfo = new MapInfo
-                                {
-                                    Id = map.Id
-                                },
-                                RecordInfo = new RecordInfoShort
-                                {
-                                    Class = classId,
-                                    Duration = duration
-                                },
-                                ZoneInfo = new Models.Tempus.Activity.ZoneInfo
-                                {
-                                    Type = "bonus",
-                                    Zoneindex = j
-                                }
-                            }));
-                        }
-                        catch { }
-                        
-                    }
-
-
-                    await Task.WhenAll(tasks);
-                }
-            
-            }
+            await TempusRecordCacheService.CacheAllRecordsAsync();
         }
         private static readonly HttpClient _httpClient = new HttpClient
         {
             BaseAddress = new Uri("https://tempus.xyz")
         };
-        
+        private readonly TempusRecordCacheService TempusRecordCacheService;   
         public TempusHubMySqlService TempusHubMySqlService { get; set; }
         private static readonly Stopwatch Stopwatch = new Stopwatch();
         private List<DetailedMapOverviewModel> _mapList;

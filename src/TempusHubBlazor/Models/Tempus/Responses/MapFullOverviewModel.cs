@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace TempusHubBlazor.Models.Tempus.Responses
@@ -25,5 +26,14 @@ namespace TempusHubBlazor.Models.Tempus.Responses
 
         [JsonProperty(PropertyName = "zone_counts")]
         public ZoneCountsModel ZoneCounts { get; set; }
+        public List<RecordModel> GetClassRuns(int id)
+        {
+            return id switch
+            {
+                3 => SoldierRuns,
+                4 => DemomanRuns,
+                _ => throw new ArgumentOutOfRangeException("No such class id exists"),
+            };
+        }
     }
 }
