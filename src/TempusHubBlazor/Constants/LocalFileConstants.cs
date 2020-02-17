@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace TempusHubBlazor.Constants
 {
+    /// <summary>
+    /// Directory starts in project directory ./wwwroot/
+    /// </summary>
     public static class LocalFileConstants
     {
         public static readonly string DemomanIcon = "/img/demoman.png";
