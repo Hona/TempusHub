@@ -7,6 +7,7 @@
 @using TempusHubBlazor.Utilities
 @using TempusHubBlazor.Models
 @using BlazorStrap
+@using Constants
 @inject TempusDataService TempusDataService
 
 <h1>Recent Records</h1><BSDropdown DropdownDirection="DropdownDirection.Left" Class="bsDropDown">
@@ -48,7 +49,7 @@ else
             @foreach (var record in recordsWithZonedData)
             {
                 <tr>
-                    <td>@TempusUtilities.GetClass(record.Record.RecordInfo.Class)</td>
+                    <td><img src="@(record.Record.RecordInfo.Class == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /></td>
                     <td>@((record.Record.ZoneInfo.Type == "map" ? "" : record.Record.ZoneInfo.Type == "course" ? "C" + record.Record.ZoneInfo.Zoneindex + " " : "B" + record.Record.ZoneInfo.Zoneindex + " ") + record.Record.MapInfo.Name)</td>
                     <td>@record.Record.PlayerInfo.Name</td>
                     <td>
