@@ -84,10 +84,10 @@ namespace TempusHubBlazor.Services
             // Sort by the best rank
             var output = rankedUsers.OrderBy(x => x.Value);
 
-
-            foreach (var (player, rank) in output)
+            // Limit it to the best 50 players
+            foreach (var (player, rank) in output.Take(50))
             {
-                if (player == null || rank > 200) continue;
+                if (player == null) continue;
                 var server = servers
                     .FirstOrDefault(x =>
                         x.GameInfo?.Users != null &&
