@@ -14,10 +14,10 @@
 <h1>Recent Records</h1><BSDropdown DropdownDirection="DropdownDirection.Left" Class="bsDropDown">
     <BSDropdownToggle Color="Color.Primary">@RecentRecordType.ToStandardCasing()</BSDropdownToggle>
     <BSDropdownMenu>
-        <BSDropdownItem Href="/recentrecords/map" OnClick="OnInitializedAsync">Map WR</BSDropdownItem>
-        <BSDropdownItem Href="/recentrecords/course" OnClick="OnInitializedAsync">Course WR</BSDropdownItem>
-        <BSDropdownItem Href="/recentrecords/bonus" OnClick="OnInitializedAsync">Bonus WR</BSDropdownItem>
-        <BSDropdownItem Href="/recentrecords/map_top" OnClick="OnInitializedAsync">Map Top</BSDropdownItem>
+        <BSDropdownItem Href="/recentrecords/map" OnClick="LoadData">Map WR</BSDropdownItem>
+        <BSDropdownItem Href="/recentrecords/course" OnClick="LoadData">Course WR</BSDropdownItem>
+        <BSDropdownItem Href="/recentrecords/bonus" OnClick="LoadData">Bonus WR</BSDropdownItem>
+        <BSDropdownItem Href="/recentrecords/map_top" OnClick="LoadData">Map Top</BSDropdownItem>
     </BSDropdownMenu>
 </BSDropdown>
 
@@ -78,7 +78,12 @@ else
     List<RecordWithZonedData> RecordsWithZonedData = new List<RecordWithZonedData>();
 
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
+    {
+        LoadData();
+    }
+
+    void LoadData()
     {
         List<RecordWithZonedData> recordsWithZonedDataTemp = new List<RecordWithZonedData>();
         if (string.IsNullOrWhiteSpace(RecentRecordType))
@@ -87,7 +92,6 @@ else
         }
         var allActivity = TempusCacheService.RecentActivity;
 
-        TempusRecordBase[] selectedRecords;
 
         switch (RecentRecordType.ToLower())
         {
