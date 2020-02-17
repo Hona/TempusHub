@@ -49,7 +49,7 @@ else
             @foreach (var record in recordsWithZonedData)
             {
                 <tr>
-                    <td><img src="@(record.Record.RecordInfo.Class == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /></td>
+                    <td><img width="16" height="16" src="@(record.Record.RecordInfo.Class == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /></td>
                     <td>@((record.Record.ZoneInfo.Type == "map" ? "" : record.Record.ZoneInfo.Type == "course" ? "C" + record.Record.ZoneInfo.Zoneindex + " " : "B" + record.Record.ZoneInfo.Zoneindex + " ") + record.Record.MapInfo.Name)</td>
                     <td>@record.Record.PlayerInfo.Name</td>
                     <td>
