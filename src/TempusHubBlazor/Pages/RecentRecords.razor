@@ -9,6 +9,7 @@
 @using BlazorStrap
 @using Constants
 @inject TempusDataService TempusDataService
+@inject TempusCacheService TempusCacheService
 
 <h1>Recent Records</h1><BSDropdown DropdownDirection="DropdownDirection.Left" Class="bsDropDown">
     <BSDropdownToggle Color="Color.Primary">@RecentRecordType.ToStandardCasing()</BSDropdownToggle>
@@ -31,10 +32,10 @@ else
     <table class="table">
         <colgroup>
             <col width="1*" />
+            <col width="16*" />
             <col width="8*" />
-            <col width="4*" />
-            <col width="4*" />
-            <col width="4*" />
+            <col width="8*" />
+            <col width="8*" />
         </colgroup>
         <thead>
             <tr>
@@ -84,7 +85,7 @@ else
         {
             RecentRecordType = "Map";
         }
-        var allActivity = (await TempusDataService.GetRecentActivityAsync());
+        var allActivity = TempusCacheService.RecentActivity;
         TempusRecordBase[] selectedRecords;
 
         switch (RecentRecordType.ToLower())

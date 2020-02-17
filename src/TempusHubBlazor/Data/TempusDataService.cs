@@ -22,6 +22,10 @@ namespace TempusHubBlazor.Data
 {
     public class TempusDataService
     {
+        public TempusDataService(TempusHubMySqlService dataService)
+        {
+            TempusHubMySqlService = dataService;
+        }
         public async Task CacheAllWRsAsync()
         {
             Logger.LogInfo($"Caching all {MapList.Count} maps");
@@ -162,15 +166,11 @@ namespace TempusHubBlazor.Data
         {
             BaseAddress = new Uri("https://tempus.xyz")
         };
-        public TempusDataService(TempusHubMySqlService dataService)
-        {
-            TempusHubMySqlService = dataService;
-        }
+        
         public TempusHubMySqlService TempusHubMySqlService { get; set; }
         private static readonly Stopwatch Stopwatch = new Stopwatch();
         private List<DetailedMapOverviewModel> _mapList;
         private List<MapFullOverviewModel> _fullOverviewCache = new List<MapFullOverviewModel>(TempusDataConstants.FullMapOverviewCacheSize);
-
         public List<DetailedMapOverviewModel> MapList
         {
             get
