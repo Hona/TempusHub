@@ -8,11 +8,27 @@ using TempusHubBlazor.Models.Tempus.Responses;
 
 namespace TempusHubBlazor.Utilities
 {
+    /// <summary>
+    /// Manipulates data provided from the tempus API for code usage
+    /// </summary>
     public static class TempusUtilities
     {
+        /// <summary>
+        /// The time that the API uses as 0 seconds
+        /// </summary>
         private static DateTime UnixEpoch = new DateTime(1970, 1, 1);
+        /// <summary>
+        /// Returns DateTime from tempus API seconds
+        /// </summary>
+        /// <param name="seconds">Tempus API seconds (from Unix Epoch)</param>
+        /// <returns></returns>
         public static DateTime GetDateFromSeconds(double seconds) => UnixEpoch.AddSeconds(seconds);
-        public static string GetClass(int id)
+        /// <summary>
+        /// Returns the first character of the class name
+        /// </summary>
+        /// <param name="id">Class ID</param>
+        /// <returns></returns>
+        public static string GetClassChar(int id)
         {
             switch (id)
             {
@@ -24,6 +40,12 @@ namespace TempusHubBlazor.Utilities
                     return id.ToString();
             }
         }
+        /// <summary>
+        /// Returns the world record split string using activity data, as well as map API times
+        /// </summary>
+        /// <param name="cache">The locally stored (MySQL) stored times</param>
+        /// <param name="zonedResults">API request for the record</param>
+        /// <returns>Formatted string showing the true WR time save</returns>
         public static string GetWRSplitString(MapRecordCache cache, ZonedRecordsModel zonedResults)
         {
             double slowRecord;
@@ -45,7 +67,6 @@ namespace TempusHubBlazor.Utilities
         /// Returns a nice string of the duration
         /// </summary>
         /// <param name="duration">Duration is in seconds</param>
-        /// <returns></returns>
         public static string FormattedDuration(double duration)
         {
             var seconds = (int)Math.Truncate(duration);
@@ -53,27 +74,20 @@ namespace TempusHubBlazor.Utilities
             var timespan = new TimeSpan(0, 0, 0, seconds, (int)Math.Truncate(milliseconds));
             return timespan.Days > 0 ? timespan.ToString(@"dd\:hh\:mm\:ss\.fff") : timespan.ToString(timespan.Hours > 0 ? @"hh\:mm\:ss\.fff" : @"mm\:ss\.fff");
         }
+        /// <summary>
+        /// Returns a formatted string of the tick duration
+        /// </summary>
+        /// <param name="ticks">TF2 game ticks</param>
         public static string TicksToFormattedTime(long ticks)
         {
             var timeSpan = TicksToTimeSpan(ticks);
-            return TimeSpanToFormattedTime(timeSpan);
+            return FormattedDuration(timeSpan.TotalSeconds);
         }
-
-        public static string TimeSpanToFormattedTime(TimeSpan timeSpan)
-        {
-            var factor = (int)Math.Pow(10, 7 - TempusDataConstants.RoundingSize);
-            var roundedTimeSpan = new TimeSpan((long)Math.Round(1.0 * timeSpan.Ticks / factor) * factor);
-            return
-                $"{roundedTimeSpan.Days}:{roundedTimeSpan.Hours}:{roundedTimeSpan.Minutes}:{roundedTimeSpan.Seconds}.{Math.Round((double)roundedTimeSpan.Milliseconds)}"
-                    .Trim('0', ':', '.');
-        }
-
+        /// <summary>
+        /// Converts TF2 game ticks into a TimeSpan
+        /// </summary>
+        /// <param name="ticks">TF2 game ticks</param>
         public static TimeSpan TicksToTimeSpan(long ticks) => new TimeSpan(ticks * 149998);
-        public static string GetMapUrl(string name) => "https://tempus.xyz/maps/" + name;
-        public static string GetRecordUrl(int id) => "https://tempus.xyz/records/" + id;
-        public static string GetPlayerUrl(int id) => "https://tempus.xyz/players/" + id;
-        public static string GetDemoUrl(int id) => "https://tempus.xyz/demos/" + id;
-        public static string GetServerUrl(int id) => "https://tempus.xyz/servers/" + id;
-        public static string GetYoutubeUrl(string id) => "https://youtube.com/watch?v=" + id;
+        public static string GetYoutubeUrl(string id) => "https://youtubehub.com/watch?v=" + id;
     }
 }
