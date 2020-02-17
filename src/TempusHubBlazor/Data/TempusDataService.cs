@@ -22,6 +22,7 @@ namespace TempusHubBlazor.Data
 {
     public class TempusDataService
     {
+        private DateTime _lastApiCallDateTime = DateTime.Now;
         public TempusDataService(TempusHubMySqlService dataService)
         {
             TempusHubMySqlService = dataService;
@@ -61,8 +62,13 @@ namespace TempusHubBlazor.Data
         }
         public List<string> MapNameList { get; set; }
         private static string GetFullAPIPath(string partial) => "/api" + partial;
-        private static async Task<T> GetResponseAsync<T>(string request)
+        private async Task<T> GetResponseAsync<T>(string request)
         {
+            var deltaTime = DateTime.Now - _lastApiCallDateTime;
+            if (deltaTime.Ticks <= 1000000)
+            {
+                await Task.Delay(deltaTime);
+            }
             var fullPath = GetFullAPIPath(request);
             Stopwatch.Restart();
             try
