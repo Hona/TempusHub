@@ -80,9 +80,15 @@ else
 
     protected override void OnInitialized()
     {
-        LoadData(forceUpdateState:false);
+        LoadData(forceUpdateState: false);
+
     }
-    void LoadData() => LoadData(forceUpdateState: true);
+
+    void LoadData()
+    {
+        LoadData(forceUpdateState: true);
+    }
+
     void LoadData(bool forceUpdateState)
     {
         List<RecordWithZonedData> recordsWithZonedDataTemp = new List<RecordWithZonedData>();
