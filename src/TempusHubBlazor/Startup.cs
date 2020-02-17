@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TempusHubBlazor.Data;
+using TempusHubBlazor.Services;
 
 namespace TempusHubBlazor
 {
