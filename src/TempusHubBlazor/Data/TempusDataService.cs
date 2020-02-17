@@ -75,7 +75,6 @@ namespace TempusHubBlazor.Data
                     
                     Stopwatch.Stop();
                     Logger.LogInfo("Tempus /api" + request + " " + Stopwatch.ElapsedMilliseconds + "ms");
-                    _lastApiCallDateTime = DateTime.Now;
                     // If T is a string, don't deserialise
                     return typeof(T) == typeof(string)
                         ? (T)stringValue
