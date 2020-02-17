@@ -80,10 +80,10 @@ else
 
     protected override void OnInitialized()
     {
-        LoadData();
+        LoadData(forceUpdateState:false);
     }
-
-    void LoadData()
+    void LoadData() => LoadData(forceUpdateState: true);
+    void LoadData(bool forceUpdateState)
     {
         List<RecordWithZonedData> recordsWithZonedDataTemp = new List<RecordWithZonedData>();
         if (string.IsNullOrWhiteSpace(RecentRecordType))
@@ -112,5 +112,9 @@ else
         }
 
         RecordsWithZonedData = recordsWithZonedDataTemp.OrderByDescending(x => x.Record.RecordInfo.Date).ToList();
+        if (forceUpdateState)
+        {
+            this.StateHasChanged();
+        }
     }
 }
