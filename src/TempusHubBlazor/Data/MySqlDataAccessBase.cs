@@ -37,45 +37,35 @@ namespace TempusHubBlazor.Data
 
         protected async Task<List<T>> QueryAsync<T>(string query)
         {
-            try
-            {
-                var connection = await OpenNewConnectionAsync();
-                var result = (await connection.QueryAsync<T>(query)).ToList();
-                return result;
-            }
-            catch (Exception e)
-            {
-                Logger.LogException(e);
-                return null;
-            }
+            var connection = await OpenNewConnectionAsync();
+
+            var result = (await connection.QueryAsync<T>(query)).ToList();
+
+            await CloseAsync(connection);
+            return result;
+
         }
 
         protected async Task<List<T>> QueryAsync<T>(string query, object param)
         {
-            try
-            {
-                var connection = new MySqlConnection(_connectionString);
-                var result = (await connection.QueryAsync<T>(query, param)).ToList();
-                return result;
-            }
-            catch (Exception e)
-            {
-                Logger.LogException(e);
-                return null;
-            }
+            var connection = new MySqlConnection(_connectionString);
+
+            List<T> result;
+            result = (await connection.QueryAsync<T>(query, param)).ToList();
+
+            await CloseAsync(connection);
+            return result;
+            
         }
 
         protected async Task ExecuteAsync(string query, object param)
         {
-            try
-            {
-                var connection = new MySqlConnection(_connectionString);
-                await connection.ExecuteAsync(query, param);
-            }
-            catch (Exception e)
-            {
-                Logger.LogException(e);
-            }
+            var connection = new MySqlConnection(_connectionString);
+
+            await connection.ExecuteAsync(query, param);
+
+            await CloseAsync(connection);
+            
         }
 
         public void Dispose()
