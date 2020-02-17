@@ -293,7 +293,7 @@ namespace TempusHubBlazor.Data
             foreach (var map in worldRecordActivity)
             {
                 // Fetch the latest cache
-                var cached = await TempusHubMySqlService.GetCachedRecordsAsync(map.MapInfo.Id, map.RecordInfo.Class, map.ZoneInfo.Type);
+                var cached = await TempusHubMySqlService.GetCachedRecordsAsync(map.MapInfo.Id, map.RecordInfo.Class, map.ZoneInfo.Type, map.ZoneInfo.Zoneindex);
                 map.CachedTime = await UpdateCachedWRDataAsync(cached, map);
             }
 
