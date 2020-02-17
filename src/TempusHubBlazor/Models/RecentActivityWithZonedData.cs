@@ -7,6 +7,13 @@ namespace TempusHubBlazor.Models
 {
     public class RecentActivityWithZonedData
     {
+        public RecentActivityWithZonedData()
+        {
+            MapWR = new List<RecordWithZonedData>();
+            CourseWR = new List<RecordWithZonedData>();
+            BonusWR = new List<RecordWithZonedData>();
+            MapTT = new List<RecordWithZonedData>();
+        }
         public List<RecordWithZonedData> MapWR { get; set; }
         public List<RecordWithZonedData> CourseWR { get; set; }
 
