@@ -14,10 +14,10 @@
 <h1>Recent Records</h1><BSDropdown DropdownDirection="DropdownDirection.Left" Class="bsDropDown">
     <BSDropdownToggle Color="Color.Primary">@RecentRecordType.ToStandardCasing()</BSDropdownToggle>
     <BSDropdownMenu>
-        <BSDropdownItem Href="/recentrecords/map" OnClick=@(() => { RecentRecordType = "Map"; })>Map WR</BSDropdownItem>
-        <BSDropdownItem Href="/recentrecords/course" OnClick=@(() => { RecentRecordType = "Course"; })>Course WR</BSDropdownItem>
-        <BSDropdownItem Href="/recentrecords/bonus" OnClick=@(() => { RecentRecordType = "Bonus"; })>Bonus WR</BSDropdownItem>
-        <BSDropdownItem Href="/recentrecords/map_top" OnClick=@(() => { RecentRecordType = "Map_Top"; })>Map Top</BSDropdownItem>
+        <BSDropdownItem Href="/recentrecords/map" OnClick=@(() => { RecentRecordType = "Map"; LoadData(); })>Map WR</BSDropdownItem>
+        <BSDropdownItem Href="/recentrecords/course" OnClick=@(() => { RecentRecordType = "Course"; LoadData(); })>Course WR</BSDropdownItem>
+        <BSDropdownItem Href="/recentrecords/bonus" OnClick=@(() => { RecentRecordType = "Bonus"; LoadData(); })>Bonus WR</BSDropdownItem>
+        <BSDropdownItem Href="/recentrecords/map_top" OnClick=@(() => { RecentRecordType = "Map_Top"; LoadData(); })>Map Top</BSDropdownItem>
     </BSDropdownMenu>
 </BSDropdown>
 
