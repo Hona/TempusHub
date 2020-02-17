@@ -1,0 +1,64 @@
+﻿@page "/topplayersonline"
+
+@using TempusHubBlazor.Data
+@using TempusHubBlazor.Models.Tempus.Activity
+@using TempusHubBlazor.Models.Tempus.Responses
+@using TempusHubBlazor.Utilities
+@using TempusHubBlazor.Models
+@using TempusHubBlazor.Services
+
+@inject TempusDataService TempusDataService
+@inject TempusCacheService TempusCacheService
+
+<h1>Top Players Online</h1>
+<br />
+
+@if (TopPlayerOnline == null || TopPlayerOnline.Count == 0)
+{
+    <p><em>Getting top player online data...</em></p>
+}
+else
+{
+    <table class="table">
+        <colgroup>
+            <col width="1*" />
+            <col width="16*" />
+            <col width="8*" />
+            <col width="8*" />
+            <col width="8*" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Player</th>
+                <th>Map</th>
+                <th>Server</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var player in TopPlayerOnline)
+            {
+                <tr>
+                    <td>@player.Rank</td>
+                    <td>@player.Name</td>
+                    <td>@player.Server.GameInfo.CurrentMap</td>
+                    <td>@player.Server.ServerInfo.Shortname</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    List<TopPlayerOnline> TopPlayerOnline = new List<TopPlayerOnline>();
+
+    protected override void OnInitialized()
+    {
+        LoadData();
+    }
+
+    void LoadData()
+    {
+        TopPlayerOnline = TempusCacheService.TopPlayersOnline;
+    }
+}
