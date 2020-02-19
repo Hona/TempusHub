@@ -93,6 +93,6 @@ else
 
     DetailedMapOverviewModel MapFromPartialName(string partialName)
     {
-        return TempusCacheService.DetailedMapList.FirstOrDefault(x => x.Name.Contains(partialName));
+        return TempusCacheService.DetailedMapList.FirstOrDefault(x => x.Name == TempusDataService.ParseMapName(partialName));
     }
 }

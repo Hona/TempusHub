@@ -219,7 +219,7 @@ namespace TempusHubBlazor.Data
             };     
         }
 
-        private string ParseMapName(string map)
+        public string ParseMapName(string map)
         {
             if (MapNameList == null || MapNameList.Count == 0)
             {
