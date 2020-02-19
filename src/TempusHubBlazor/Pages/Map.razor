@@ -14,7 +14,7 @@
 <h1>@(ParsedMap?.Name ?? MapName)</h1>
 <br />
 
-@if (MapFromPartialName(MapName) == null)
+@if (ParsedMap == null || FullMapOverView == null)
 {
     <p>Map not found...</p>
 }
@@ -82,10 +82,6 @@ else
 
     protected override void OnInitialized()
     {
-        if (MapName == null)
-        {
-            return;
-        }
         ParsedMap = MapFromPartialName(MapName);
         FullMapOverView = TempusDataService.GetFullMapOverViewAsync(MapName).GetAwaiter().GetResult();
     }
