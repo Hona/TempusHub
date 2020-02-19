@@ -221,7 +221,7 @@ namespace TempusHubBlazor.Data
 
         private string ParseMapName(string map)
         {
-            if (MapNameList == null)
+            if (MapNameList == null || MapNameList.Count == 0)
             {
                 UpdateMapListAsync().GetAwaiter().GetResult();
             }
