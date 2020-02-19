@@ -11,7 +11,7 @@
 @inject TempusCacheService TempusCacheService
 @inject TempusDataService TempusDataService
 
-<h1>@(MapFromPartialName(MapName)?.Name ?? MapName)</h1>
+<h1>@(ParsedMap?.Name ?? MapName)</h1>
 <br />
 
 @if (MapFromPartialName(MapName) == null)
