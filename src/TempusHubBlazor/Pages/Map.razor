@@ -76,6 +76,9 @@ else
 @code{
     [Parameter]
     public string MapName { get; set; }
+    
+    public DetailedMapOverviewModel ParsedMap { get; set; }
+    public MapFullOverviewModel FullMapOverView { get; set; }
 
     protected override void OnInitialized()
     {
@@ -87,8 +90,6 @@ else
         FullMapOverView = TempusDataService.GetFullMapOverViewAsync(MapName).GetAwaiter().GetResult();
     }
 
-    public DetailedMapOverviewModel ParsedMap { get; set; }
-    public MapFullOverviewModel FullMapOverView { get; set; }
 
     DetailedMapOverviewModel MapFromPartialName(string partialName)
     {
