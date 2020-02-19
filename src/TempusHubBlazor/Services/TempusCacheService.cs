@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TempusHubBlazor.Data;
 using TempusHubBlazor.Models;
+using TempusHubBlazor.Models.Tempus.DetailedMapList;
 using TempusHubBlazor.Models.Tempus.Rank;
 using TempusHubBlazor.Models.Tempus.Responses;
 
@@ -17,6 +18,7 @@ namespace TempusHubBlazor.Services
         public RecentActivityModel RecentActivity { get; private set; }
         public RecentActivityWithZonedData RecentActivityWithZonedData { get; private set; } = new RecentActivityWithZonedData();
         public List<TopPlayerOnline> TopPlayersOnline { get; private set; } = new List<TopPlayerOnline>();
+        public List<DetailedMapOverviewModel> DetailedMapList { get; set; }
 
         public TempusCacheService(TempusDataService tempusDataService)
         {
@@ -30,7 +32,8 @@ namespace TempusHubBlazor.Services
             var tasks = new List<Task>
             {
                  UpdateRecentActivityAsync().ContinueWith((taskOutput) => UpdateRecentActivityWithZonedDataAsync()),
-                 UpdateTopOnlinePlayersAsync()
+                 UpdateTopOnlinePlayersAsync(),
+                 UpdateDetailedMapListAsync()
             };
 
             await Task.WhenAll(tasks);
@@ -104,6 +107,10 @@ namespace TempusHubBlazor.Services
             }
 
             TopPlayersOnline = tempTopPlayersOnline;
+        }
+        private async Task UpdateDetailedMapListAsync()
+        {
+            DetailedMapList = await TempusDataService.GetDetailedMapListAsync();
         }
     }
 }
