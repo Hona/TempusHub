@@ -24,7 +24,7 @@ namespace TempusHubBlazor.Services
         {
             TempusDataService = tempusDataService;
             UpdateAllCachedDataAsync().GetAwaiter().GetResult();
-            _updateTimer = new Timer(async callback => await UpdateAllCachedDataAsync(), null, TimeSpan.Zero, TimeSpan.FromMinutes(1.5));
+            _updateTimer = new Timer(async callback => await UpdateAllCachedDataAsync(), null, TimeSpan.FromMinutes(1.5), TimeSpan.FromMinutes(1.5));
         }
         
         private async Task UpdateAllCachedDataAsync()
