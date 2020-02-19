@@ -221,6 +221,10 @@ namespace TempusHubBlazor.Data
 
         private string ParseMapName(string map)
         {
+            if (map == null)
+            {
+                return null;
+            }
             if (string.IsNullOrWhiteSpace(map))
             {
                 return string.Empty;
