@@ -45,7 +45,7 @@ else
             @for (var i = 0; i < FullMapOverView.SoldierRuns.Count; i++)
             {
                 <tr>
-                    <td>#@i: @TempusUtilities.FormattedDuration(FullMapOverView.SoldierRuns[i].Duration)</td>
+                    <td>#@(i + 1): @TempusUtilities.FormattedDuration(FullMapOverView.SoldierRuns[i].Duration)</td>
                     <td>@FullMapOverView.SoldierRuns[i].Name</td>
                 </tr>
             }
@@ -65,7 +65,7 @@ else
             @for (var i = 0; i < FullMapOverView.DemomanRuns.Count; i++)
             {
                 <tr>
-                    <td>#@i: @TempusUtilities.FormattedDuration(FullMapOverView.DemomanRuns[i].Duration)</td>
+                    <td>#@(i + 1): @TempusUtilities.FormattedDuration(FullMapOverView.DemomanRuns[i].Duration)</td>
                     <td>@FullMapOverView.DemomanRuns[i].Name</td>
                 </tr>
             }
