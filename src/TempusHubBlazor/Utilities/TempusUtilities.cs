@@ -88,6 +88,14 @@ namespace TempusHubBlazor.Utilities
         /// </summary>
         /// <param name="ticks">TF2 game ticks</param>
         public static TimeSpan TicksToTimeSpan(long ticks) => new TimeSpan(ticks * 149998);
-        public static string GetYoutubeUrl(string id) => "https://youtubehub.com/watch?v=" + id;
+        public static string GetYoutubeUrl(string id)
+        {
+            if (id == null)
+            {
+                return null
+            }
+
+            return "https://youtubehub.com/watch?v=" + id;
+        }
     }
 }
