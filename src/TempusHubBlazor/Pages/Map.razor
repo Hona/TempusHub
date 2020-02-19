@@ -74,21 +74,17 @@ else
 }
 
 @code{
-    private string _mapName = string.Empty;
     [Parameter]
-    public string MapName
+    public string MapName { get; set; }
+
+    protected override void OnInitialized()
     {
-        get => _mapName; 
-        set
+        if (MapName == null)
         {
-            if (value == null)
-            {
-                return;
-            }
-            _mapName = value;
-            ParsedMap = MapFromPartialName(_mapName);
-            FullMapOverView = TempusDataService.GetFullMapOverViewAsync(_mapName).GetAwaiter().GetResult();
+            return;
         }
+        ParsedMap = MapFromPartialName(MapName);
+        FullMapOverView = TempusDataService.GetFullMapOverViewAsync(MapName).GetAwaiter().GetResult();
     }
 
     public DetailedMapOverviewModel ParsedMap { get; set; }
