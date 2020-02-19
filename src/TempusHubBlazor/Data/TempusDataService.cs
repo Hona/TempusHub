@@ -237,7 +237,7 @@ namespace TempusHubBlazor.Data
         public async Task UpdateMapListAsync()
         {
             var maps = await GetDetailedMapListAsync();
-            MapList = maps;
+            MapList = maps.OrderBy(x => x.Name).ToList();
             MapNameList = maps.ConvertAll(x => x.Name).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
         }
     }
