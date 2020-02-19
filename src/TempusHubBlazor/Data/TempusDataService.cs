@@ -95,6 +95,10 @@ namespace TempusHubBlazor.Data
 
         public async Task<MapFullOverviewModel> GetFullMapOverViewAsync(string map)
         {
+            if (map == null)
+            {
+                return null;
+            }
             try
             {
                 return _fullOverviewCache.First(x => x.MapInfo.Name == ParseMapName(map));
