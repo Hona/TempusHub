@@ -1,0 +1,48 @@
+﻿@page "/maps"
+
+@using TempusHubBlazor.Data
+@using TempusHubBlazor.Models.Tempus.DetailedMapList
+@using TempusHubBlazor.Constants
+@using TempusHubBlazor.Services
+
+@inject TempusDataService TempusDataService
+@inject TempusCacheService TempusCacheService
+
+<h1>Tempus Map List</h1>
+<br />
+
+@if (MapList == null || MapList.Count() == 0)
+{
+    <p><em>Getting map list data...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th><img width="24" height="24" src="@LocalFileConstants.SoldierIcon" /></th>
+                <th><img width="24" height="24" src="@LocalFileConstants.DemomanIcon" /></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var map in MapList)
+            {
+                <tr>
+                    <td>@map.Name</td>
+                    <td>T@(map.TierInfo.Soldier)</td>
+                    <td>T@(map.TierInfo.Demoman)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code{
+    List<DetailedMapOverviewModel> MapList;
+
+    protected override void OnInitialized()
+    {
+        MapList = TempusDataService.MapList;
+    }
+}
