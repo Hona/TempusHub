@@ -1,0 +1,94 @@
+﻿@page "/maps/{MapName}"
+@page "/map/{MapName}"
+
+@using TempusHubBlazor.Data
+@using TempusHubBlazor.Models.Tempus.Responses
+@using TempusHubBlazor.Models.Tempus.DetailedMapList
+@using TempusHubBlazor.Constants
+@using TempusHubBlazor.Services
+@using TempusHubBlazor.Utilities
+
+@inject TempusCacheService TempusCacheService
+@inject TempusDataService TempusDataService
+
+<h1>@(MapFromPartialName(MapName)?.Name ?? MapName)</h1>
+<br />
+
+@if (MapFromPartialName(MapName) == null)
+{
+    <p>Map not found...</p>
+}
+else
+{
+    <p>@LocalFileConstants.SoldierIcon T@(ParsedMap.TierInfo.Soldier)  @LocalFileConstants.DemomanIcon T@(ParsedMap.TierInfo.Demoman)</p>
+    <p>@LocalFileConstants.SoldierIcon @(TempusUtilities.GetYoutubeUrl(ParsedMap.Videos.Soldier) ?? "No showcase")  @LocalFileConstants.DemomanIcon @(TempusUtilities.GetYoutubeUrl(ParsedMap.Videos.Demoman) ?? "No showcase")</p>
+    <br />
+}
+
+@if (FullMapOverView == null)
+{
+    <p>Loading map runs data...</p>
+}
+else
+{
+    <table class="table">
+        <colgroup>
+            <col width="8*" />
+            <col width="8*" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th colspan="2">Soldier</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < FullMapOverView.SoldierRuns.Count; i++)
+            {
+                <tr>
+                    <td>#@i: @TempusUtilities.FormattedDuration(FullMapOverView.SoldierRuns[i].Duration)</td>
+                    <td>@FullMapOverView.SoldierRuns[i].Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <table class="table">
+        <colgroup>
+            <col width="8*" />
+            <col width="8*" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th colspan="2">Demoman</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < FullMapOverView.DemomanRuns.Count; i++)
+            {
+                <tr>
+                    <td>#@i: @TempusUtilities.FormattedDuration(FullMapOverView.DemomanRuns[i].Duration)</td>
+                    <td>@FullMapOverView.DemomanRuns[i].Name</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code{
+
+    [Parameter]
+    public string MapName { get; set; }
+
+    public DetailedMapOverviewModel ParsedMap { get; set; }
+    public MapFullOverviewModel FullMapOverView { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ParsedMap = MapFromPartialName(MapName);
+        FullMapOverView = await TempusDataService.GetFullMapOverViewAsync(MapName);
+    }
+
+    DetailedMapOverviewModel MapFromPartialName(string partialName)
+    {
+        return TempusCacheService.DetailedMapList.FirstOrDefault(x => x.Name.Contains(partialName));
+    }
+}
