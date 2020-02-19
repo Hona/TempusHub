@@ -92,7 +92,7 @@ namespace TempusHubBlazor.Utilities
         {
             if (id == null)
             {
-                return null
+                return null;
             }
 
             return "https://youtubehub.com/watch?v=" + id;
