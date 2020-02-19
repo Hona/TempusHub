@@ -14,7 +14,7 @@
 <h1>@(ParsedMap?.Name ?? MapName)</h1>
 <br />
 
-@if (ParsedMap == null || FullMapOverView == null)
+@if (string.IsNullOrWhiteSpace(MapName) || ParsedMap == null || FullMapOverView == null)
 {
     <p>Map not found...</p>
 }
