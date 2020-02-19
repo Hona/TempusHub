@@ -225,11 +225,11 @@ namespace TempusHubBlazor.Data
             {
                 return null;
             }
+
             if (string.IsNullOrWhiteSpace(map))
             {
                 return string.Empty;
             }
-
             map = map.ToLower();
             if (MapNameList.Contains(map)) return map;
 
