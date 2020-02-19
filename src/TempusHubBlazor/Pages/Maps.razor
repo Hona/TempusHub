@@ -6,7 +6,6 @@
 @using TempusHubBlazor.Services
 
 @inject TempusDataService TempusDataService
-@inject TempusCacheService TempusCacheService
 
 <h1>Tempus Map List</h1>
 <br />
@@ -41,8 +40,8 @@ else
 @code{
     List<DetailedMapOverviewModel> MapList;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        MapList = TempusDataService.MapList;
+        MapList = await TempusDataService.GetDetailedMapListAsync();
     }
 }
