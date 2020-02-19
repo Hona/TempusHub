@@ -86,7 +86,6 @@ else
         FullMapOverView = TempusDataService.GetFullMapOverViewAsync(MapName).GetAwaiter().GetResult();
     }
 
-
     DetailedMapOverviewModel MapFromPartialName(string partialName)
     {
         return TempusCacheService.DetailedMapList.FirstOrDefault(x => x.Name == TempusDataService.ParseMapName(partialName));
