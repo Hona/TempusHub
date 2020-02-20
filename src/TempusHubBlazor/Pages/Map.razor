@@ -88,6 +88,7 @@ else
 
     DetailedMapOverviewModel MapFromPartialName(string partialName)
     {
-        return TempusCacheService.DetailedMapList.FirstOrDefault(x => x.Name == TempusDataService.ParseMapName(partialName));
+        var parsedMapName = TempusDataService.ParseMapName(partialName);
+        return TempusCacheService.DetailedMapList.FirstOrDefault(x => x.Name == parsedMapName);
     }
 }
