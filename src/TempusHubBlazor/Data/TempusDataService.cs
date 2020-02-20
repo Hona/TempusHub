@@ -188,12 +188,12 @@ namespace TempusHubBlazor.Data
 
         public async Task<List<DetailedMapOverviewModel>> GetDetailedMapListAsync() =>
             await GetResponseAsync<List<DetailedMapOverviewModel>>("/maps/detailedList");
-        public async Task<List<RanksOverviewModel>> GetOverallRanksOverview() =>
-            await GetResponseAsync<List<RanksOverviewModel>>("/ranks/overall");
-        public async Task<List<RanksOverviewModel>> GetDemomanRanksOverview() =>
-            await GetResponseAsync<List<RanksOverviewModel>>("/ranks/class/4");
-        public async Task<List<RanksOverviewModel>> GetSoldierRanksOverview() =>
-            await GetResponseAsync<List<RanksOverviewModel>>("/ranks/class/3");
+        public async Task<RanksOverviewModel> GetOverallRanksOverview() =>
+            await GetResponseAsync<RanksOverviewModel>("/ranks/overall");
+        public async Task<RanksOverviewModel> GetDemomanRanksOverview() =>
+            await GetResponseAsync<RanksOverviewModel>("/ranks/class/4");
+        public async Task<RanksOverviewModel> GetSoldierRanksOverview() =>
+            await GetResponseAsync<RanksOverviewModel>("/ranks/class/3");
         public async Task<Rank> GetUserRankAsync(string id) => await GetResponseAsync<Rank>($"/players/id/{id}/rank");
         public async Task<RecordWithZonedData> PopulateRecordDataAsync(TempusRecordBase recordBase)
         {

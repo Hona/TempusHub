@@ -8,8 +8,8 @@ namespace TempusHubBlazor.Models
 {
     public class PlayerLeaderboards
     {
-        public List<RanksOverviewModel> Overall { get; set; }
-        public List<RanksOverviewModel> Soldier { get; set; }
-        public List<RanksOverviewModel> Demoman { get; set; }
+        public RanksOverviewModel Overall { get; set; }
+        public RanksOverviewModel Soldier { get; set; }
+        public RanksOverviewModel Demoman { get; set; }
     }
 }
