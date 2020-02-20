@@ -80,10 +80,10 @@ else
     public DetailedMapOverviewModel ParsedMap { get; set; }
     public MapFullOverviewModel FullMapOverView { get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         ParsedMap = MapFromPartialName(MapName);
-        FullMapOverView = TempusDataService.GetFullMapOverViewAsync(MapName).GetAwaiter().GetResult();
+        FullMapOverView = await TempusDataService.GetFullMapOverViewAsync(MapName);
     }
 
     DetailedMapOverviewModel MapFromPartialName(string partialName)
