@@ -1,0 +1,45 @@
+﻿@page "/player/{PlayerId}"
+
+@using TempusHubBlazor.Data
+@using TempusHubBlazor.Models.Tempus.Responses
+@using BlazorStrap
+@using TempusHubBlazor.Utilities
+@using TempusHubBlazor.Models.Tempus.Rank
+@using TempusHubBlazor.Constants
+
+@inject TempusDataService TempusDataService
+
+@if (PlayerRank == null)
+{
+    <p>Player not found</p>
+}
+else
+{
+    <h1>@PlayerRank.PlayerInfo.Name</h1>
+    <br />
+    <span>From @PlayerRank.PlayerInfo.Country</span>
+    @if (PlayerRank.PlayerInfo.LastSeen.HasValue)
+    {
+        <p>First played @(TempusUtilities.GetDateFromSeconds(PlayerRank.PlayerInfo.FirstSeen).GetTimeStringSinceDateTime())</p>
+    }
+    @if (PlayerRank.ClassRankInfo.SoldierRank.Rank > 0)
+    {
+        <h3><img width="32" height="32" src="@LocalFileConstants.SoldierIcon" /> Rank @PlayerRank.ClassRankInfo.SoldierRank.Rank | @PlayerRank.ClassRankInfo.SoldierRank.Points points</h3>
+    }
+    @if (PlayerRank.ClassRankInfo.DemoRank.Rank > 0)
+    {
+        <h3><img width="32" height="32" src="@LocalFileConstants.DemomanIcon" /> Rank @PlayerRank.ClassRankInfo.DemoRank.Rank | @PlayerRank.ClassRankInfo.DemoRank.Points points</h3>
+    }
+}
+
+@code{
+    [Parameter]
+    public string PlayerId { get; set; }
+
+    public Rank PlayerRank { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        PlayerRank = await TempusDataService.GetUserRankAsync(PlayerId);
+    }
+}
