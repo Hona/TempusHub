@@ -95,7 +95,7 @@ namespace TempusHubBlazor.Utilities
                 return null;
             }
 
-            return "https://youtubehub.com/watch?v=" + id;
+            return "https://youtube.com/watch?v=" + id;
         }
     }
 }
