@@ -186,8 +186,8 @@ namespace TempusHubBlazor.Data
         public async Task<List<ShortMapInfoModel>> GetMapListAsync() =>
             await GetResponseAsync<List<ShortMapInfoModel>>("/maps/list");
 
-        public async Task<List<RanksOverviewModel>> GetDetailedMapListAsync() =>
-            await GetResponseAsync<List<RanksOverviewModel>>("/maps/detailedList");
+        public async Task<List<DetailedMapOverviewModel>> GetDetailedMapListAsync() =>
+            await GetResponseAsync<List<DetailedMapOverviewModel>>("/maps/detailedList");
         public async Task<List<RanksOverviewModel>> GetOverallRanksOverview() =>
             await GetResponseAsync<List<RanksOverviewModel>>("/ranks/overall");
         public async Task<List<RanksOverviewModel>> GetDemomanRanksOverview() =>
