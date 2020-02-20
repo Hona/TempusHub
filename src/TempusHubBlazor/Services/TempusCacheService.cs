@@ -101,6 +101,7 @@ namespace TempusHubBlazor.Services
 
                 tempTopPlayersOnline.Add(new TopPlayerOnline
                 {
+                    Id = player.Id.Value,
                     Rank = rank,
                     SteamId = player.SteamId,
                     Name = player.Name,
