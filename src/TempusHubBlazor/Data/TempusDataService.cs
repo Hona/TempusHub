@@ -44,7 +44,7 @@ namespace TempusHubBlazor.Data
         {
             get
             {
-                if (_mapList != null) return _mapList;
+                if (_mapList != null || _mapList.Count != 0) return _mapList;
                 UpdateMapListAsync().GetAwaiter().GetResult();
                 return MapList;
             }
