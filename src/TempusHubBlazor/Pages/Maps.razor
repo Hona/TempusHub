@@ -28,7 +28,7 @@ else
             @foreach (var map in MapList)
             {
                 <tr>
-                    <td>@map.Name</td>
+                    <td><a href="maps/@map.Name">@map.Name</a></td>
                     <td>T@(map.TierInfo.Soldier)</td>
                     <td>T@(map.TierInfo.Demoman)</td>
                 </tr>
