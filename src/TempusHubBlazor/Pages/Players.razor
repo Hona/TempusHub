@@ -1,0 +1,76 @@
+﻿@page "/players"
+@page "/players/{RankType}"
+
+@using TempusHubBlazor.Services
+@using TempusHubBlazor.Models.Tempus.Responses
+@using BlazorStrap
+@using TempusHubBlazor.Utilities
+
+@inject TempusCacheService TempusCacheService
+
+<h1>@RankType.ToStandardCasing() Leaderboard</h1><BSDropdown DropdownDirection="DropdownDirection.Left" Class="bsDropDown">
+    <BSDropdownToggle Color="Color.Primary">@RankType.ToStandardCasing()</BSDropdownToggle>
+    <BSDropdownMenu>
+        <BSDropdownItem Href="/players/overall" OnClick=@(() => { RankType = "Overall"; OnInitialized(); })>Overview</BSDropdownItem>
+        <BSDropdownItem Href="/players/soldier" OnClick=@(() => { RankType = "Soldier"; OnInitialized(); })>Soldier</BSDropdownItem>
+        <BSDropdownItem Href="/players/demoman" OnClick=@(() => { RankType = "Demoman"; OnInitialized(); })>Demoman</BSDropdownItem>
+    </BSDropdownMenu>
+</BSDropdown>
+
+@if (RanksOverview == null || RanksOverview.TopPlayers.Count == 0)
+{
+    <span>Loading ranks overview</span>
+}
+else
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th>Rank</th>
+            <th>Player</th>
+            <th>Points</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var player in RanksOverview.TopPlayers)
+        {
+        <tr>
+            <td>@player.Rank</td>
+            <td>@player.Name</td>
+            <td>@player.Points</td>
+        </tr>
+        }
+    </tbody>
+</table>
+}
+
+<br />
+@code{
+    [Parameter]
+    public string RankType { get; set; }
+
+    public RanksOverviewModel RanksOverview { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (string.IsNullOrWhiteSpace(RankType))
+        {
+            RankType = "overall";
+        }
+
+        switch (RankType.ToLower())
+        {
+            case "overall":
+                RanksOverview = TempusCacheService.PlayerLeaderboards.Overall;
+                break;
+            case "soldier":
+                RanksOverview = TempusCacheService.PlayerLeaderboards.Soldier;
+                break;
+            case "demoman":
+                RanksOverview = TempusCacheService.PlayerLeaderboards.Demoman;
+                break;
+            default:
+                throw new Exception("No rank for that type");
+        }
+    }
+}
