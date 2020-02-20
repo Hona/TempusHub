@@ -11,9 +11,9 @@ namespace TempusHubBlazor.Models.Tempus.Responses
         [JsonProperty(PropertyName = "id")]
         public int Id { get; set; }
         [JsonProperty(PropertyName = "steamid")]
-        public int SteamId { get; set; }
+        public string SteamId { get; set; }
         [JsonProperty(PropertyName = "name")]
-        public int Name { get; set; }
+        public string Name { get; set; }
         [JsonProperty(PropertyName = "points")]
         public double Points { get; set; }
         [JsonProperty(PropertyName = "rank")]
