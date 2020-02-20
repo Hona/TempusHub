@@ -26,6 +26,7 @@ namespace TempusHubBlazor.Data
         {
             TempusHubMySqlService = dataService;
             TempusRecordCacheService = new TempusRecordCacheService(this);
+            UpdateMapListAsync().GetAwaiter().GetResult();
         }
         public async Task CacheAllWRsAsync()
         {
