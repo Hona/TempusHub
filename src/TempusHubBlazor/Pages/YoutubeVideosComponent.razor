@@ -17,7 +17,7 @@ else
         <BSCard>
             <BSCard CardType="CardType.Image" VerticalAlignment="VerticalAlignment.Top" src="@(video.Snippet.Thumbnails.Maxres.Url)" />
             <BSCard CardType="CardType.Body">
-                <BSCard CardType="CardType.Title"><a href="@TempusUtilities.GetYoutubeUrl(video.Id)">@video.Snippet.Title</a></BSCard>
+                <BSCard CardType="CardType.Title"><a href="@TempusUtilities.GetYoutubeUrl(video.ContentDetails.VideoId)">@video.Snippet.Title</a></BSCard>
                 <BSCard CardType="CardType.Subtitle">@(new string(video.Snippet.Description.Take(50).ToArray())+"...")</BSCard>
                 <BSCard CardType="CardType.Text"><small class="text-muted">@video.Snippet.PublishedAt.Value.GetTimeStringSinceDateTime()</small></BSCard>
             </BSCard>
