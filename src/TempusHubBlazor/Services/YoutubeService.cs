@@ -19,7 +19,7 @@ namespace TempusHubBlazor.Services
             };
             _youtubeService = new YouTubeService(baseGoogleService);
         }
-        public async Task<List<PlaylistItem>> GetAllVideosAsync(string channelParam, bool isId = false)
+        public async Task<List<PlaylistItem>> GetAllVideosAsync(string channelParam, bool isId = false, int pages = -1)
         {
             var output = new List<PlaylistItem>();
 
@@ -40,6 +40,7 @@ namespace TempusHubBlazor.Services
             var channel = channelResponse.Items.First();
             var uploadPlaylistId = channel.ContentDetails.RelatedPlaylists.Uploads;
 
+            var pagesRead = 0;
             var nextUploadPageToken = "";
             while (nextUploadPageToken != null)
             {
@@ -55,6 +56,11 @@ namespace TempusHubBlazor.Services
 
                 // Get the next page
                 nextUploadPageToken = uploadListResponse.NextPageToken;
+                pagesRead++;
+                if (pages != -1 && pages <= pagesRead)
+                {
+                    return output;
+                }
             }
 
             return output;
