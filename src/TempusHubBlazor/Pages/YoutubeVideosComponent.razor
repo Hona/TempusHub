@@ -1,0 +1,37 @@
+﻿@using BlazorStrap
+@using Google.Apis.YouTube.v3.Data;
+@using TempusHubBlazor.Services
+@using TempusHubBlazor.Utilities
+
+@inject YoutubeAPIService YoutubeAPIService
+
+@if (Videos == null || Videos.Count == 0)
+{
+    <span>No videos found</span>
+}
+else
+{
+<BSCard CardType="CardType.Deck">
+    @foreach (var video in Videos.Take(3))
+    {
+        <BSCard>
+            <BSCard CardType="CardType.Image" VerticalAlignment="VerticalAlignment.Top" src="@(video.Snippet.Thumbnails.Maxres.Url)" />
+            <BSCard CardType="CardType.Body">
+                <BSCard CardType="CardType.Title">@video.Snippet.Title</BSCard>
+                <BSCard CardType="CardType.Subtitle">@video.Snippet.Description</BSCard>
+                <BSCard CardType="CardType.Text">This is a wider card with supporting text below as a natural lead-</BSCard>
+                <BSCard CardType="CardType.Text"><small class="text-muted">@video.Snippet.PublishedAt.Value.GetTimeStringSinceDateTime()</small></BSCard>
+            </BSCard>
+        </BSCard>
+    }
+</BSCard>
+}
+
+@code{
+    public List<PlaylistItem> Videos;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Videos = await YoutubeAPIService.GetAllVideosAsync("TF2RJWeekly");
+    }
+}

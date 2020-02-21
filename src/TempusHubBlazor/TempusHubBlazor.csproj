@@ -11,6 +11,7 @@
     <PackageReference Include="BlazorStrap" Version="1.1.101" />
     <PackageReference Include="Dapper" Version="2.0.30" />
     <PackageReference Include="Dapper.FluentMap" Version="1.8.0" />
+    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.43.0.1834" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.2">
       <PrivateAssets>all</PrivateAssets>
