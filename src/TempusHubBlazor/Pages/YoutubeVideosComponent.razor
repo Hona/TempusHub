@@ -16,7 +16,7 @@ else
     @foreach (var video in Videos.Take(VideoCount).ToArray())
     {
         <BSCard>
-            <BSCard CardType="CardType.Image" VerticalAlignment="VerticalAlignment.Top" src="@(video.Snippet.Thumbnails.Maxres?.Url ?? video.Snippet.Thumbnails.High.Url)" />
+            <a href="@TempusUtilities.GetYoutubeUrl(video.Snippet.ResourceId.VideoId)"><BSCard CardType="CardType.Image" VerticalAlignment="VerticalAlignment.Top" src="@(video.Snippet.Thumbnails.Maxres?.Url ?? video.Snippet.Thumbnails.High.Url)" /></a>
             <BSCard CardType="CardType.Body">
                 <BSCard CardType="CardType.Title"><a href="@TempusUtilities.GetYoutubeUrl(video.Snippet.ResourceId.VideoId)">@video.Snippet.Title</a></BSCard>
                 <BSCard CardType="CardType.Subtitle">@(new string(video.Snippet.Description.Take(50).ToArray())+"...")</BSCard>
