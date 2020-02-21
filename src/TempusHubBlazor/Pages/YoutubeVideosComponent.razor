@@ -11,8 +11,9 @@
 }
 else
 {
-<BSCard CardType="CardType.Deck">
-    @foreach (var video in Videos.Take(4).ToArray())
+<h4><a href="https://youtube.com/channel/@Videos.First().Snippet.ChannelId">@Videos.First().Snippet.ChannelTitle</a></h4>
+<BSCard CardType="@ParentCardType">
+    @foreach (var video in Videos.Take(VideoCount).ToArray())
     {
         <BSCard>
             <BSCard CardType="CardType.Image" VerticalAlignment="VerticalAlignment.Top" src="@(video.Snippet.Thumbnails.Maxres?.Url ?? video.Snippet.Thumbnails.High.Url)" />
@@ -29,8 +30,17 @@ else
 @code{
     public List<PlaylistItem> Videos;
 
+    [Parameter]
+    public string Channel { get; set; }
+    [Parameter]
+    public bool IsId { get; set; }
+    [Parameter]
+    public CardType ParentCardType { get; set; }
+    [Parameter]
+    public int VideoCount { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
-        Videos = await YoutubeAPIService.GetAllVideosAsync("TF2RJWeekly", pages:1);
+        Videos = await YoutubeAPIService.GetAllVideosAsync(Channel, IsId, pages:1);
     }
 }
