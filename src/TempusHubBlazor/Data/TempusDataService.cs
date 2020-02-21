@@ -40,7 +40,6 @@ namespace TempusHubBlazor.Data
         public TempusHubMySqlService TempusHubMySqlService { get; set; }
         private static readonly Stopwatch Stopwatch = new Stopwatch();
         private List<DetailedMapOverviewModel> _mapList;
-        private List<MapFullOverviewModel> _fullOverviewCache = new List<MapFullOverviewModel>(TempusDataConstants.FullMapOverviewCacheSize);
         public List<DetailedMapOverviewModel> MapList
         {
             get
@@ -52,14 +51,6 @@ namespace TempusHubBlazor.Data
             private set => _mapList = value;
         }
 
-        private void AddMapOverviewCacheItem(MapFullOverviewModel fullOverview)
-        {
-            _fullOverviewCache.Insert(0, fullOverview);
-            var countToRemove = _fullOverviewCache.Count - TempusDataConstants.FullMapOverviewCacheSize;
-            if (countToRemove <= 0) return;
-            _fullOverviewCache.RemoveRange(TempusDataConstants.FullMapOverviewCacheSize - 1, _fullOverviewCache.Count - TempusDataConstants.FullMapOverviewCacheSize);
-
-        }
         public List<string> MapNameList { get; set; }
         private static string GetFullAPIPath(string partial) => "/api" + partial;
         private static async Task<T> GetResponseAsync<T>(string request)
@@ -100,19 +91,10 @@ namespace TempusHubBlazor.Data
             {
                 return null;
             }
-            try
-            {
-                return _fullOverviewCache.First(x => x.MapInfo.Name == ParseMapName(map));
-            }
-            catch
-            {
-                // The map isn't in the cache
-                var overview = await
-                    GetResponseAsync<MapFullOverviewModel>($"/maps/name/{ParseMapName(map)}/fullOverview");
-                AddMapOverviewCacheItem(overview);
-                return overview;
-            }
 
+            var overview = await
+                GetResponseAsync<MapFullOverviewModel>($"/maps/name/{ParseMapName(map)}/fullOverview");
+            return overview;
         }
         public async Task<MapRecordCache> UpdateCachedWRDataAsync(MapRecordCache cached, TempusRecordBase map)
         {
