@@ -20,7 +20,8 @@ namespace TempusHubBlazor.Services
         public List<TopPlayerOnline> TopPlayersOnline { get; private set; } = new List<TopPlayerOnline>();
         public List<DetailedMapOverviewModel> DetailedMapList { get; set; }
         public PlayerLeaderboards PlayerLeaderboards { get; set; }
-        
+        public List<ServerStatusModel> ServerStatusList { get; set; }
+
         public TempusCacheService(TempusDataService tempusDataService)
         {
             TempusDataService = tempusDataService;
@@ -123,6 +124,10 @@ namespace TempusHubBlazor.Services
                 Soldier = await TempusDataService.GetSoldierRanksOverview(),
                 Demoman = await TempusDataService.GetDemomanRanksOverview()
             };
+        }
+        private async Task UpdateServerStatusListAsync()
+        {
+            ServerStatusList = await TempusDataService.GetServerStatusAsync();
         }
     }
 }
