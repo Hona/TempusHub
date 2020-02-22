@@ -1,0 +1,55 @@
+﻿@page "/servers"
+
+@using TempusHubBlazor.Data
+@using TempusHubBlazor.Models.Tempus.Responses
+@using TempusHubBlazor.Models.Tempus.DetailedMapList
+@using TempusHubBlazor.Constants
+@using TempusHubBlazor.Services
+@using TempusHubBlazor.Utilities
+
+@inject TempusCacheService TempusCacheService
+
+<h1>Servers</h1>
+<br />
+
+@if (ServerStatusList == null || ServerStatusList.Count == 0)
+{
+    <span>Loading servers...</span>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Map</th>
+                <th>Players</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var server in ServerStatusList)
+            {
+                <tr>
+                    <td>@server.ServerInfo.Shortname | @server.ServerInfo.Name</td>
+                    <td>@server.GameInfo.CurrentMap@if (server.GameInfo.NextMap != null) { <span>(@server.GameInfo.NextMap.ToString())</span> }</td>
+                    <td>@(server.GameInfo.PlayerCount)/@server.GameInfo.MaxPlayers</td>
+                    <td><a href="steam://connect/@server.ServerInfo.Addr:@server.ServerInfo.Port">Connect</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    public List<ServerStatusModel> ServerStatusList { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ServerStatusList = TempusCacheService.ServerStatusList
+            .Where(x => x != null && x.ServerInfo != null && x.GameInfo != null && !x.ServerInfo.Hidden)
+            .OrderByDescending(x => x.GameInfo.PlayerCount).ToList();
+    }
+
+}
