@@ -1,0 +1,73 @@
+﻿@page "/servers/{ServerParam}"
+@page "/server/{ServerParam}"
+
+@using TempusHubBlazor.Data
+@using TempusHubBlazor.Models
+@using TempusHubBlazor.Models.Tempus.Responses
+@using TempusHubBlazor.Services
+@using TempusHubBlazor.Utilities
+
+@inject TempusDataService TempusDataService
+@inject TempusCacheService TempusCacheService
+
+<h1>@(ServerInfo?.ServerInfo.Name ?? "No Server found")</h1>
+<br />
+
+<br />
+
+<h4>Players</h4>
+<span>@ServerInfo.GameInfo.CurrentMap (@(ServerInfo.GameInfo.PlayerCount)/@ServerInfo.GameInfo.MaxPlayers)</span>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Rank</th>
+            <th>Player</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in RankedPlayers)
+        {
+            <tr>
+                <td>@(user.Rank.HasValue ? user.Rank.Value.ToString() : "None")</td>
+                <td>@(user.Player.Name)</td>
+            </tr>
+        }
+    </tbody>
+</table>
+@code {
+    [Parameter]
+    public string ServerParam { get; set; }
+    public List<RankedServerPlayerModel> RankedPlayers { get; set; } = new List<RankedServerPlayerModel>();
+    public ServerStatusModel ServerInfo { get; set; }
+    protected override void OnInitialized()
+    {
+        if (int.TryParse(ServerParam, out var serverId))
+        {
+            ServerInfo = TempusCacheService.ServerStatusList.FirstOrDefault(x => x.ServerInfo.Id == serverId);
+        }
+        else
+        {
+            ServerInfo = TempusCacheService.ServerStatusList.FirstOrDefault(x => x.ServerInfo.Shortname.ToLower() == ServerParam.ToLower());
+
+            // Check if it wasn't the short name
+            if (ServerInfo == null)
+            {
+                ServerInfo = TempusCacheService.ServerStatusList.FirstOrDefault(x => x.ServerInfo.Name.ToLower().Contains(ServerParam.ToLower()));
+            }
+        }
+
+        if (ServerInfo.GameInfo.Users != null || ServerInfo.GameInfo.Users.Count > 0)
+        {
+            foreach (var user in ServerInfo.GameInfo.Users)
+            {
+                var rankedUser = TempusCacheService.TopPlayersOnline.FirstOrDefault(x => x.Id == user.Id);
+                RankedPlayers.Add(new RankedServerPlayerModel
+                {
+                    Player = user,
+                    Rank = rankedUser != null ? rankedUser.Rank : (int?)null 
+                });
+            }
+            RankedPlayers.OrderByDescending(x => x.Rank);
+        }
+    }
+}
