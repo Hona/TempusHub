@@ -36,7 +36,8 @@ namespace TempusHubBlazor.Services
                  UpdateRecentActivityAsync().ContinueWith((taskOutput) => UpdateRecentActivityWithZonedDataAsync()),
                  UpdateTopOnlinePlayersAsync(),
                  UpdateDetailedMapListAsync(),
-                 UpdatePlayerLeaderboardsAsync()
+                 UpdatePlayerLeaderboardsAsync(),
+                 UpdateServerStatusListAsync()
             };
 
             await Task.WhenAll(tasks);
