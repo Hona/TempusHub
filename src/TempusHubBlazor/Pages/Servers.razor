@@ -2,6 +2,7 @@
 
 @using TempusHubBlazor.Models.Tempus.Responses
 @using TempusHubBlazor.Services
+@using TempusHubBlazor.Utilities
 
 @inject TempusCacheService TempusCacheService
 
@@ -27,7 +28,7 @@ else
             @foreach (var server in ServerStatusList)
             {
                 <tr>
-                    <td>@server.ServerInfo.Shortname | @server.ServerInfo.Name</td>
+                    <td><a href="@HrefHelper.GetServerInfoPath(server.ServerInfo.Shortname)">@server.ServerInfo.Shortname | @server.ServerInfo.Name</a></td>
                     <td>@server.GameInfo.CurrentMap@if (server.GameInfo.NextMap != null) { <span>(@server.GameInfo.NextMap.ToString())</span> }</td>
                     <td>@(server.GameInfo.PlayerCount)/@server.GameInfo.MaxPlayers</td>
                     <td><a href="steam://connect/@server.ServerInfo.Addr:@server.ServerInfo.Port">Connect</a></td>
