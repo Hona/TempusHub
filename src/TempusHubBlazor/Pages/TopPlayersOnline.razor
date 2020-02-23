@@ -42,7 +42,7 @@ else
                     <td>@player.Rank</td>
                     <td><a href="@HrefHelper.GetPlayerInfoPath(player.Id.ToString())">@player.Name</a></td>
                     <td><a href="@HrefHelper.GetMapInfoPath(player.Server.GameInfo.CurrentMap)">@player.Server.GameInfo.CurrentMap</a></td>
-                    <td>@player.Server.ServerInfo.Shortname | <a href="steam://connect/@player.Server.ServerInfo.Addr:@player.Server.ServerInfo.Port">Connect</a></td>
+                    <td><a href="@HrefHelper.GetServerInfoPath(player.Server.ServerInfo.Shortname)">@player.Server.ServerInfo.Shortname</a> | <a href="steam://connect/@player.Server.ServerInfo.Addr:@player.Server.ServerInfo.Port">Connect</a></td>
                 </tr>
             }
         </tbody>
