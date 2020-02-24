@@ -13,12 +13,12 @@ a, .btn-link {
 h1 {
     display: inline !important;
 }
-h1.slim-center
+h1.slim-center {
 	text-align: center !important;
 	margin-left: auto !important;
 	margin-right: auto !important;
 }
-table.slim-center
+table.slim-center {
 	display: table !important;
 	width: auto !important;
 	text-align: center !important;
