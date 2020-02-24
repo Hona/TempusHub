@@ -12,15 +12,15 @@
 else
 {
 <h4><a href="https://youtube.com/channel/@Videos.First().Snippet.ChannelId">@Videos.First().Snippet.ChannelTitle</a></h4>
-<BSCard Color="Color.Dark" CardType="@ParentCardType">
+<BSCard IsInverse="true" CardType="@ParentCardType">
     @foreach (var video in Videos.Take(VideoCount).ToArray())
     {
-        <BSCard>
+        <BSCard IsInverse="true">
             <a href="@TempusUtilities.GetYoutubeUrl(video.Snippet.ResourceId.VideoId)"><BSCard CardType="CardType.Image" VerticalAlignment="VerticalAlignment.Top" src="@(video.Snippet.Thumbnails.Maxres?.Url ?? video.Snippet.Thumbnails.High.Url)" /></a>
-            <BSCard CardType="CardType.Body">
-                <BSCard CardType="CardType.Title"><a href="@TempusUtilities.GetYoutubeUrl(video.Snippet.ResourceId.VideoId)">@video.Snippet.Title</a></BSCard>
-                <BSCard CardType="CardType.Subtitle">@(new string(video.Snippet.Description.Take(50).ToArray())+"...")</BSCard>
-                <BSCard CardType="CardType.Text"><small class="text-muted">@video.Snippet.PublishedAt.Value.GetTimeStringSinceDateTime()</small></BSCard>
+            <BSCard IsInverse="true" CardType="CardType.Body">
+                <BSCard IsInverse="true" CardType="CardType.Title"><a href="@TempusUtilities.GetYoutubeUrl(video.Snippet.ResourceId.VideoId)">@video.Snippet.Title</a></BSCard>
+                <BSCard IsInverse="true" CardType="CardType.Subtitle">@(new string(video.Snippet.Description.Take(50).ToArray())+"...")</BSCard>
+                <BSCard IsInverse="true" CardType="CardType.Text"><small class="text-muted">@video.Snippet.PublishedAt.Value.GetTimeStringSinceDateTime()</small></BSCard>
             </BSCard>
         </BSCard>
     }
