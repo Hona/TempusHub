@@ -11,6 +11,7 @@
 }
 else
 {
+<div class="dark-inner">
 <h4><a href="https://youtube.com/channel/@Videos.First().Snippet.ChannelId">@Videos.First().Snippet.ChannelTitle</a></h4>
 <BSCard IsOutline="true" IsInverse="true" CardType="@ParentCardType">
     @foreach (var video in Videos.Take(VideoCount).ToArray())
@@ -25,6 +26,7 @@ else
         </BSCard>
     }
 </BSCard>
+</div/
 }
 
 @code{
