@@ -46,7 +46,7 @@ h1 {
 .dark-inner {
     background-color: #1f1f1f;
 }
-h1.slim-center, p.slim-center, div.slim-center {
+h1.slim-center, h4.slim-center, p.slim-center, div.slim-center, span.slim-center {
     text-align: center !important;
     margin-left: auto !important;
     margin-right: auto !important;
