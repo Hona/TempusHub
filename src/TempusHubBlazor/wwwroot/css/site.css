@@ -14,10 +14,6 @@ h1 {
     display: inline !important;
 }
 
-table {
-	background-color: #414141;
-}
-
 table, .slim-center
 	display: table;
 	text-align: center;
