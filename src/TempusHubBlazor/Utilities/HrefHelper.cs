@@ -8,6 +8,7 @@ namespace TempusHubBlazor.Utilities
     public static class HrefHelper
     {
         public static string GetMapInfoPath(string mapName) => "/map/" + mapName;
+        public static string GetPlayerInfoPath(int playerId) => GetPlayerInfoPath(playerId);
         public static string GetPlayerInfoPath(string playerId) => "/player/" + playerId;
         public static string GetServerInfoPath(string server) => "/server/" + server;
     }

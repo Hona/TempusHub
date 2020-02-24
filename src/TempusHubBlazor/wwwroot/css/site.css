@@ -10,6 +10,10 @@ a, .btn-link {
     color: #039cd6;
 }
 
+table.multi-table {
+    display: inline-table !important;
+}
+
 .heading-wrapper {
     text-align: center;
     display: block;
@@ -42,13 +46,13 @@ h1 {
 .dark-inner {
     background-color: #1f1f1f;
 }
-h1.slim-center {
-	text-align: center !important;
-	margin-left: auto !important;
-	margin-right: auto !important;
+h1.slim-center, p.slim-center, div.slim-center {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
 }
 table.slim-center {
-	display: table !important;
+	display: table;
 	width: auto !important;
 	text-align: center !important;
 	margin-left: auto !important;
