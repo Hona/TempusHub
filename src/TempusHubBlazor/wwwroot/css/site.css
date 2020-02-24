@@ -16,6 +16,10 @@ a, .btn-link {
     position: relative;
 }
 
+.table-dark.table-bordered {
+    border: 2px solid #454d55 !important;
+}
+
 .table-dark td {
     border: none;
     padding: 20px 20px 20px 20px;
