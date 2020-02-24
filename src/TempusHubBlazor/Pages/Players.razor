@@ -8,7 +8,7 @@
 
 @inject TempusCacheService TempusCacheService
 
-<h1 align="center" class="slim-center">@RankType.ToStandardCasing() Leaderboard</h1><BSDropdown DropdownDirection="DropdownDirection.Left" Class="bsDropDown">
+<h1 class="slim-center">@RankType.ToStandardCasing() Leaderboard</h1><BSDropdown DropdownDirection="DropdownDirection.Left" Class="bsDropDown">
     <BSDropdownToggle Color="Color.Primary">@RankType.ToStandardCasing()</BSDropdownToggle>
     <BSDropdownMenu>
         <BSDropdownItem Href="/players/overall" OnClick=@(() => { RankType = "Overall"; OnInitialized(); })>Overview</BSDropdownItem>
