@@ -21,6 +21,17 @@ a, .btn-link {
     padding: 20px 20px 20px 20px;
 }
 
+.table-dark th {
+    border: none;
+    padding: 20px 20px 20px 20px;
+}
+
+thead {
+    border-bottom: 2px solid #454d55 !important;
+    border: none;
+    padding: 20px 20px 20px 20px;
+}
+
 h1 {
     display: inline !important;
 }
