@@ -1,7 +1,11 @@
 ﻿@page "/maps/{MapName}"
 @page "/map/{MapName}"
+@page "/maps/{MapName}/{ZoneSelector}"
+@page "/map/{MapName}/{ZoneSelector}"
+
 
 @using TempusHubBlazor.Data
+@using TempusHubBlazor.Models.Tempus
 @using TempusHubBlazor.Models.Tempus.Responses
 @using TempusHubBlazor.Models.Tempus.DetailedMapList
 @using TempusHubBlazor.Constants
@@ -11,7 +15,7 @@
 @inject TempusCacheService TempusCacheService
 @inject TempusDataService TempusDataService
 <div class="heading-wrapper">
-<h1 class="slim-center">@(ParsedMap?.Name ?? MapName)</h1>
+    <h1 class="slim-center">@(ParsedMap?.Name ?? MapName)</h1>
 </div>
 <br />
 
@@ -40,71 +44,127 @@ else
 }
 else
 {
+
 <div class="slim-center">
-    @if (FullMapOverView.SoldierRuns.Count == 0)
+    <div class="heading-wrapper">
+        <BSDropdown DropdownDirection="DropdownDirection.Down" Class="bsDropDown bsDropDownZones">
+            <BSDropdownToggle Color="Color.Primary">@ZoneSelector.ToStandardCasing()</BSDropdownToggle>
+            <BSDropdownMenu Class="bsDropdown-menu">
+                <BSDropdownItem OnClick=@(async () => { ZoneSelector = "Map"; await OnInitializedAsync(); })>Map</BSDropdownItem>
+                @if ((FullMapOverView.ZoneCounts.Course ?? 0) > 1)
+                {
+                    for (int i = 1; i <= FullMapOverView.ZoneCounts.Course.Value; i++)
+                    {
+                        var index = i;
+                        <BSDropdownItem Href="@("/maps/"+ FullMapOverView.MapInfo.Name + "/c" + index)" OnClick=@(async () => { ZoneSelector = "Course " + index.ToString(); await OnInitializedAsync(); })>@("Course " + index)</BSDropdownItem>
+                    }
+                }
+                @if ((FullMapOverView.ZoneCounts.Bonus ?? 0) > 1)
+                {
+                    for (int i = 1; i <= FullMapOverView.ZoneCounts.Bonus.Value; i++)
+                    {
+                        var index = i;
+                        <BSDropdownItem Href="@("/maps/"+ FullMapOverView.MapInfo.Name + "/b" + index)" OnClick=@(async () => { ZoneSelector = "Bonus " + index.ToString(); await OnInitializedAsync(); })>Bonus @index</BSDropdownItem>
+                    }
+                }
+
+
+            </BSDropdownMenu>
+        </BSDropdown>
+    </div>
+    @if (ZonedSoldierRecords.Count == 0)
     {
-    <p>No soldier runs.</p>
+        <p>No soldier runs.</p>
     }
     else
     {
-    <table align="center" class="table table-dark table-bordered slim-center multi-table">
-        <thead>
-            <tr>
-                <th colspan="2">Soldier</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (var i = 0; i < FullMapOverView.SoldierRuns.Count; i++)
-            {
+        <table align="center" class="table table-dark table-bordered slim-center multi-table">
+            <thead>
                 <tr>
-                    <td>#@(i + 1): @TempusUtilities.FormattedDuration(FullMapOverView.SoldierRuns[i].Duration)</td>
-                    <td><a href="@HrefHelper.GetPlayerInfoPath(FullMapOverView.SoldierRuns[i].Id)">@FullMapOverView.SoldierRuns[i].Name</a></td>
+                    <th colspan="2">Soldier</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @for (var i = 0; i < ZonedSoldierRecords.Count; i++)
+                {
+                    <tr>
+                        <td>#@(i + 1): @TempusUtilities.FormattedDuration(ZonedSoldierRecords[i].Duration)</td>
+                        <td><a href="@HrefHelper.GetPlayerInfoPath(ZonedSoldierRecords[i].Id)">@ZonedSoldierRecords[i].Name</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     }
-    @if (FullMapOverView.DemomanRuns.Count == 0)
+    @if (ZonedDemomanRecords.Count == 0)
     {
-    <p>No demoman runs.</p>
+        <p>No demoman runs.</p>
     }
     else
     {
-    <table class="table table-dark table-bordered slim-center multi-table">
-        <colgroup>
-            <col width="8*" />
-            <col width="8*" />
-        </colgroup>
-        <thead>
-            <tr>
-                <th colspan="2">Demoman</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (var i = 0; i < FullMapOverView.DemomanRuns.Count; i++)
-            {
+        <table class="table table-dark table-bordered slim-center multi-table">
+            <thead>
                 <tr>
-                    <td>#@(i + 1): @TempusUtilities.FormattedDuration(FullMapOverView.DemomanRuns[i].Duration)</td>
-                    <td><a href="@HrefHelper.GetPlayerInfoPath(FullMapOverView.DemomanRuns[i].Id)">@FullMapOverView.DemomanRuns[i].Name</a></td>
+                    <th colspan="2">Demoman</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @for (var i = 0; i < ZonedDemomanRecords.Count; i++)
+                {
+                    <tr>
+                        <td>#@(i + 1): @TempusUtilities.FormattedDuration(ZonedDemomanRecords[i].Duration)</td>
+                        <td><a href="@HrefHelper.GetPlayerInfoPath(ZonedDemomanRecords[i].Id)">@ZonedDemomanRecords[i].Name</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     }
 </div>
 }
 
 @code{
-[Parameter]
+    [Parameter]
     public string MapName { get; set; }
 
     public DetailedMapOverviewModel ParsedMap { get; set; }
     public MapFullOverviewModel FullMapOverView { get; set; }
+    public List<RecordModel> ZonedSoldierRecords { get; set; }
+    public List<RecordModel> ZonedDemomanRecords { get; set; }
+
+    [Parameter]
+    public string ZoneSelector { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         ParsedMap = MapFromPartialName(MapName);
         FullMapOverView = await TempusDataService.GetFullMapOverViewAsync(MapName);
+
+        if (string.IsNullOrWhiteSpace(ZoneSelector))
+        {
+            ZoneSelector = "map";
+        }
+
+        ZoneSelector = ZoneSelector.ToLower();
+
+        if (ZoneSelector.Contains("m", StringComparison.InvariantCultureIgnoreCase))
+        {
+            ZonedSoldierRecords = FullMapOverView.SoldierRuns;
+            ZonedDemomanRecords = FullMapOverView.DemomanRuns;
+        }
+        else if (ZoneSelector.Contains("c", StringComparison.InvariantCultureIgnoreCase)
+            && int.TryParse(ZoneSelector.Last().ToString(), out var zoneCourseIndex))
+        {
+            var zonedTimes = await TempusDataService.GetTopZonedTimes(ParsedMap.Name, "course", zoneCourseIndex);
+            ZonedSoldierRecords = zonedTimes.Runs.SoldierRuns.Select(x => x.ToRecordModel()).ToList();
+            ZonedDemomanRecords = zonedTimes.Runs.DemomanRuns.Select(x => x.ToRecordModel()).ToList();
+        }
+        else if (ZoneSelector.Contains("b", StringComparison.InvariantCultureIgnoreCase)
+            && int.TryParse(ZoneSelector.Last().ToString(), out var zoneBonusIndex))
+        {
+            var zonedTimes = await TempusDataService.GetTopZonedTimes(ParsedMap.Name, "bonus", zoneBonusIndex);
+            ZonedSoldierRecords = zonedTimes.Runs.SoldierRuns.Select(x => x.ToRecordModel()).ToList();
+            ZonedDemomanRecords = zonedTimes.Runs.DemomanRuns.Select(x => x.ToRecordModel()).ToList();
+        }
+        this.StateHasChanged();
     }
 
     DetailedMapOverviewModel MapFromPartialName(string partialName)
@@ -112,4 +172,4 @@ else
         var parsedMapName = TempusDataService.ParseMapName(partialName);
         return TempusCacheService.DetailedMapList.FirstOrDefault(x => x.Name == parsedMapName);
     }
-    }
+}

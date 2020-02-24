@@ -65,6 +65,18 @@ table.slim-center {
     top: 0;
 }
 
+.bsDropdown-menu {
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    transform: translate(-50%, -15px);
+}
+
+.bsDropDownZones {
+    position: relative !important;
+    padding: 15px 15px 15px 15px;
+}
+
 .btn-primary {
     color: #fff;
     background-color: #1b6ec2;
@@ -85,6 +97,10 @@ app {
 
 .main {
     flex: 1;
+}
+
+.nav-top-row {
+    border-bottom: 1px solid #000000;
 }
 
 .main .top-row {

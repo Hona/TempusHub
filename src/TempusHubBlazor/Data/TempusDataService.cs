@@ -74,7 +74,7 @@ namespace TempusHubBlazor.Data
                 }
                 else
                 {
-                    Logger.LogError("Couldn't get Tempus API request");
+                    Logger.LogError("Couldn't get Tempus API request: " + fullPath);
                     return default;
                 }
             }

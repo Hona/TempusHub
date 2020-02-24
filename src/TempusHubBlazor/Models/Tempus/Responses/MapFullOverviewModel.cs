@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using TempusHubBlazor.Models.Tempus.DetailedMapList;
 
 namespace TempusHubBlazor.Models.Tempus.Responses
 {
@@ -25,7 +26,7 @@ namespace TempusHubBlazor.Models.Tempus.Responses
         public List<RecordModel> SoldierRuns { get; set; }
 
         [JsonProperty(PropertyName = "zone_counts")]
-        public ZoneCountsModel ZoneCounts { get; set; }
+        public ZoneCounts ZoneCounts { get; set; }
         public List<RecordModel> GetClassRuns(int id)
         {
             return id switch
