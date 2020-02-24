@@ -6,42 +6,43 @@
 @using TempusHubBlazor.Services
 
 @inject TempusCacheService TempusCacheService
+<div class="heading-wrapper">
+    <h1 class="slim-center">Tempus Map List</h1>
+</div>
+        <br />
 
-<h1 class="slim-center">Tempus Map List</h1>
-<br />
+        @if (MapList == null || MapList.Count() == 0)
+        {
+            <p><em>Getting map list data...</em></p>
+        }
+        else
+        {
+            <table align="center" class="table table-dark table-bordered slim-center">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th><img width="24" height="24" src="@LocalFileConstants.SoldierIcon" /></th>
+                        <th><img width="24" height="24" src="@LocalFileConstants.DemomanIcon" /></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var map in MapList)
+                    {
+                        <tr>
+                            <td><a href="maps/@map.Name">@map.Name</a></td>
+                            <td>T@(map.TierInfo.Soldier)</td>
+                            <td>T@(map.TierInfo.Demoman)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
 
-@if (MapList == null || MapList.Count() == 0)
-{
-    <p><em>Getting map list data...</em></p>
-}
-else
-{
-    <table align="center" class="table table-dark table-bordered slim-center">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th><img width="24" height="24" src="@LocalFileConstants.SoldierIcon" /></th>
-                <th><img width="24" height="24" src="@LocalFileConstants.DemomanIcon" /></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var map in MapList)
+        @code{
+            List<DetailedMapOverviewModel> MapList;
+
+            protected override async Task OnInitializedAsync()
             {
-                <tr>
-                    <td><a href="maps/@map.Name">@map.Name</a></td>
-                    <td>T@(map.TierInfo.Soldier)</td>
-                    <td>T@(map.TierInfo.Demoman)</td>
-                </tr>
+                MapList = TempusCacheService.DetailedMapList;
             }
-        </tbody>
-    </table>
-}
-
-@code{
-    List<DetailedMapOverviewModel> MapList;
-
-    protected override async Task OnInitializedAsync()
-    {
-        MapList = TempusCacheService.DetailedMapList;
-    }
-}
+        }

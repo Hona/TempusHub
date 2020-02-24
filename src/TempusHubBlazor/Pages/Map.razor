@@ -10,8 +10,9 @@
 
 @inject TempusCacheService TempusCacheService
 @inject TempusDataService TempusDataService
-
+<div class="heading-wrapper">
 <h1 class="slim-center">@(ParsedMap?.Name ?? MapName)</h1>
+</div>
 <br />
 
 @if (string.IsNullOrWhiteSpace(MapName) || ParsedMap == null || FullMapOverView == null)

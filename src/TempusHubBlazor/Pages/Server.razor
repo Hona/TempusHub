@@ -10,7 +10,9 @@
 @inject TempusDataService TempusDataService
 @inject TempusCacheService TempusCacheService
 
-<h1 class="slim-center">@(ServerInfo?.ServerInfo.Name ?? "No Server found")</h1>
+<div class="heading-wrapper">
+    <h1 class="slim-center">@(ServerInfo?.ServerInfo.Name ?? "No Server found")</h1>
+</div>
 <br />
 
 <br />
@@ -64,7 +66,7 @@
                 RankedPlayers.Add(new RankedServerPlayerModel
                 {
                     Player = user,
-                    Rank = rankedUser != null ? rankedUser.Rank : (int?)null 
+                    Rank = rankedUser != null ? rankedUser.Rank : (int?)null
                 });
             }
             RankedPlayers.OrderByDescending(x => x.Rank);

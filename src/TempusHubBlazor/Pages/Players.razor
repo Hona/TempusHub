@@ -7,41 +7,41 @@
 @using TempusHubBlazor.Utilities
 
 @inject TempusCacheService TempusCacheService
-
-<h1 class="slim-center">@RankType.ToStandardCasing() Leaderboard</h1><BSDropdown DropdownDirection="DropdownDirection.Left" Class="bsDropDown">
-    <BSDropdownToggle Color="Color.Primary">@RankType.ToStandardCasing()</BSDropdownToggle>
-    <BSDropdownMenu>
-        <BSDropdownItem Href="/players/overall" OnClick=@(() => { RankType = "Overall"; OnInitialized(); })>Overview</BSDropdownItem>
-        <BSDropdownItem Href="/players/soldier" OnClick=@(() => { RankType = "Soldier"; OnInitialized(); })>Soldier</BSDropdownItem>
-        <BSDropdownItem Href="/players/demoman" OnClick=@(() => { RankType = "Demoman"; OnInitialized(); })>Demoman</BSDropdownItem>
-    </BSDropdownMenu>
-</BSDropdown>
-
+<div class="heading-wrapper">
+    <h1 class="slim-center">@RankType.ToStandardCasing() Leaderboard</h1><BSDropdown DropdownDirection="DropdownDirection.Left" Class="bsDropDown">
+        <BSDropdownToggle Color="Color.Primary">@RankType.ToStandardCasing()</BSDropdownToggle>
+        <BSDropdownMenu>
+            <BSDropdownItem Href="/players/overall" OnClick=@(() => { RankType = "Overall"; OnInitialized(); })>Overview</BSDropdownItem>
+            <BSDropdownItem Href="/players/soldier" OnClick=@(() => { RankType = "Soldier"; OnInitialized(); })>Soldier</BSDropdownItem>
+            <BSDropdownItem Href="/players/demoman" OnClick=@(() => { RankType = "Demoman"; OnInitialized(); })>Demoman</BSDropdownItem>
+        </BSDropdownMenu>
+    </BSDropdown>
+</div>
 @if (RanksOverview == null || RanksOverview.TopPlayers.Count == 0)
 {
     <span>Loading ranks overview</span>
 }
 else
 {
-<table align="center" class="table table-dark table-bordered slim-center">
-    <thead>
-        <tr>
-            <th>Rank</th>
-            <th>Player</th>
-            <th>Points</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var player in RanksOverview.TopPlayers)
-        {
-        <tr>
-            <td>@player.Rank</td>
-            <td><a href="@HrefHelper.GetPlayerInfoPath(player.Id.ToString())">@player.Name</a></td>
-            <td>@player.Points</td>
-        </tr>
-        }
-    </tbody>
-</table>
+    <table align="center" class="table table-dark table-bordered slim-center">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Player</th>
+                <th>Points</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var player in RanksOverview.TopPlayers)
+            {
+                <tr>
+                    <td>@player.Rank</td>
+                    <td><a href="@HrefHelper.GetPlayerInfoPath(player.Id.ToString())">@player.Name</a></td>
+                    <td>@player.Points</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 
 <br />

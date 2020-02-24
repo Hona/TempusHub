@@ -10,6 +10,11 @@ a, .btn-link {
     color: #039cd6;
 }
 
+.heading-wrapper {
+    text-align: center;
+    display: block;
+}
+
 h1 {
     display: inline !important;
 }
