@@ -38,6 +38,7 @@ table.slim-center {
 .bsDropDown {
     position: absolute;
     right: 0;
+    top: 0;
 }
 
 .btn-primary {
