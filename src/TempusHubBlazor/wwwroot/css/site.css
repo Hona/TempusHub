@@ -13,6 +13,7 @@ a, .btn-link {
 .heading-wrapper {
     text-align: center;
     display: block;
+    position: relative;
 }
 
 h1 {
@@ -34,8 +35,9 @@ table.slim-center {
 	margin-right: auto !important;
 }
 
-.bsDropDown{
-    float: right;
+.bsDropDown {
+    position: absolute;
+    right: 0;
 }
 
 .btn-primary {
