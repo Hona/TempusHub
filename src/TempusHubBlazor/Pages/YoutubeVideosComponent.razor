@@ -12,7 +12,7 @@
 else
 {
 <h4><a href="https://youtube.com/channel/@Videos.First().Snippet.ChannelId">@Videos.First().Snippet.ChannelTitle</a></h4>
-<BSCard CardType="@ParentCardType">
+<BSCard Color="Color.Dark" CardType="@ParentCardType">
     @foreach (var video in Videos.Take(VideoCount).ToArray())
     {
         <BSCard>
