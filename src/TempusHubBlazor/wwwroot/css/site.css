@@ -15,10 +15,10 @@ h1 {
 }
 
 table, .slim-center
-	display: table;
-	text-align: center;
-	margin-left: auto;
-	margin-right: auto;
+	display: table !important;
+	text-align: center !important;
+	margin-left: auto !important;
+	margin-right: auto !important;
 }
 
 .bsDropDown{
