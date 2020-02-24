@@ -16,6 +16,11 @@ a, .btn-link {
     position: relative;
 }
 
+.table-dark td {
+    border: none;
+    padding: 20px 20px 20px 20px;
+}
+
 h1 {
     display: inline !important;
 }
