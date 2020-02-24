@@ -13,7 +13,7 @@
 @inject TempusDataService TempusDataService
 @inject TempusCacheService TempusCacheService
 
-<h1 class="slim-center">Recent Records</h1><BSDropdown DropdownDirection="DropdownDirection.Left" Class="bsDropDown">
+<h1 align="center" class="slim-center">Recent Records</h1><BSDropdown DropdownDirection="DropdownDirection.Left" Class="bsDropDown">
     <BSDropdownToggle Color="Color.Primary">@RecentRecordType.ToStandardCasing()</BSDropdownToggle>
     <BSDropdownMenu>
         <BSDropdownItem Href="/recentrecords/map" OnClick=@(() => { RecentRecordType = "Map"; LoadData(); })>Map WR</BSDropdownItem>
