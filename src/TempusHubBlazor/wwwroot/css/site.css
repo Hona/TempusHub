@@ -56,7 +56,7 @@ app {
 }
 
 .main .top-row {
-    background-color: #f7f7f7;
+    background-color: #1f1f1f;
     border-bottom: 1px solid #000000;
     justify-content: flex-end;
 }
