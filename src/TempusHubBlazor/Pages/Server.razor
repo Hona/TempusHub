@@ -10,14 +10,14 @@
 @inject TempusDataService TempusDataService
 @inject TempusCacheService TempusCacheService
 
-<h1>@(ServerInfo?.ServerInfo.Name ?? "No Server found")</h1>
+<h1 class="slim-center">@(ServerInfo?.ServerInfo.Name ?? "No Server found")</h1>
 <br />
 
 <br />
 
 <h4>Players</h4>
 <span>@ServerInfo.GameInfo.CurrentMap (@(ServerInfo.GameInfo.PlayerCount)/@ServerInfo.GameInfo.MaxPlayers)</span>
-<table align="center" class="table table-dark table-bordered">
+<table align="center" class="table table-dark table-bordered slim-center">
     <thead>
         <tr>
             <th>Rank</th>

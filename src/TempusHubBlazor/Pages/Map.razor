@@ -11,7 +11,7 @@
 @inject TempusCacheService TempusCacheService
 @inject TempusDataService TempusDataService
 
-<h1>@(ParsedMap?.Name ?? MapName)</h1>
+<h1 class="slim-center">@(ParsedMap?.Name ?? MapName)</h1>
 <br />
 
 @if (string.IsNullOrWhiteSpace(MapName) || ParsedMap == null || FullMapOverView == null)
@@ -45,7 +45,7 @@ else
     }
     else
     {
-        <table align="center" class="table table-dark table-bordered">
+        <table align="center" class="table table-dark table-bordered slim-center">
             <colgroup>
                 <col width="8*" />
                 <col width="8*" />

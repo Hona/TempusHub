@@ -10,7 +10,7 @@
 @inject TempusDataService TempusDataService
 @inject TempusCacheService TempusCacheService
 
-<h1>Top Players Online</h1>
+<h1 class="slim-center">Top Players Online</h1>
 <br />
 
 @if (TopPlayerOnline == null || TopPlayerOnline.Count == 0)
@@ -19,7 +19,7 @@
 }
 else
 {
-    <table align="center" class="table table-dark table-bordered">
+    <table align="center" class="table table-dark table-bordered slim-center">
         <colgroup>
             <col width="1*" />
             <col width="16*" />
