@@ -3,6 +3,7 @@
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	background-color: #313131;
+	color: white;
 }
 
 a, .btn-link {
