@@ -17,6 +17,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using TempusHubBlazor.Models.Tempus.Activity;
 using TempusHubBlazor.Models;
+using TempusHubBlazor.Utilities;
 
 namespace TempusHubBlazor.Data
 {
@@ -192,11 +193,11 @@ namespace TempusHubBlazor.Data
                 };
                 if (recordBase.RecordInfo.Class == 4)
                 {
-                    recordBase.CachedTime.CurrentWRDuration = zonedData.Runs.DemomanRuns.OrderBy(x => x.Duration).First().Duration;
+                    recordBase.CachedTime.CurrentWRDuration = zonedData.Runs.DemomanRuns.OrderByDuration().First().Duration;
                 }
                 else
                 {
-                    recordBase.CachedTime.CurrentWRDuration = zonedData.Runs.SoldierRuns.OrderBy(x => x.Duration).First().Duration;
+                    recordBase.CachedTime.CurrentWRDuration = zonedData.Runs.SoldierRuns.OrderByDuration().First().Duration;
                 }
             }
 
