@@ -207,6 +207,11 @@ namespace TempusHubBlazor.Data
                 ZonedData = zonedData
             };     
         }
+        public async Task<List<ServerDemoModel>> GetServerDemosAsync(int serverId)
+            => await GetResponseAsync<List<ServerDemoModel>>($"/servers/{serverId}/demos");
+
+        public async Task<List<ServerDemoFullOverview>> GetDemoInfoAsync(int demoId)
+            => await GetResponseAsync<List<ServerDemoFullOverview>>($"/demos/id/{demoId}/overview");
 
         public string ParseMapName(string map)
         {
