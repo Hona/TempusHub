@@ -208,10 +208,13 @@ namespace TempusHubBlazor.Data
             };     
         }
         public async Task<List<ServerDemoModel>> GetServerDemosAsync(int serverId)
-            => await GetResponseAsync<List<ServerDemoModel>>($"/servers/{serverId}/demos");
+            => (await GetResponseAsync<List<ServerDemoModel>>($"/servers/{serverId}/demos"));
 
-        public async Task<List<ServerDemoFullOverview>> GetDemoInfoAsync(int demoId)
-            => await GetResponseAsync<List<ServerDemoFullOverview>>($"/demos/id/{demoId}/overview");
+        public async Task<ServerDemoFullOverview> GetDemoInfoAsync(int demoId)
+            => await GetResponseAsync<ServerDemoFullOverview>($"/demos/id/{demoId}/overview");
+        //RunInfoModel
+        public async Task<RunInfoModel> GetRunInfoAsync(int runId)
+            => await GetResponseAsync<RunInfoModel>($"/records/id/{runId}/overview");
 
         public string ParseMapName(string map)
         {

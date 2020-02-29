@@ -1,0 +1,62 @@
+﻿@page "/run/{RunId}"
+
+@using TempusHubBlazor.Data
+@using TempusHubBlazor.Models.Tempus
+@using TempusHubBlazor.Models.Tempus.Responses
+@using TempusHubBlazor.Models.Tempus.DetailedMapList
+@using TempusHubBlazor.Constants
+@using TempusHubBlazor.Services
+@using TempusHubBlazor.Utilities
+
+@inject TempusCacheService TempusCacheService
+@inject TempusDataService TempusDataService
+
+@if (RunInfo == null || Server == null)
+{<span><i>Loading...</i></span> }
+else
+{
+    <div class="heading-wrapper">
+        <h1 class="slim-center"><a href="@HrefHelper.GetServerInfoPath(Server.ServerInfo.Shortname)">@Server.ServerInfo.Shortname</a> | <a href="@HrefHelper.GetMapInfoPath(RunInfo.MapInfo.Name)">@RunInfo.MapInfo.Name</a></h1>
+    </div>
+    <br />
+    <table align="center" class="table table-dark table-bordered slim-center">
+        <thead>
+            <tr>
+                <th>Class</th>
+                <th>Player</th>
+                <th>Zone</th>
+                <th>Time</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><img width="24" height="24" src="@(RunInfo.RecordInfo.Class == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /></td>
+                <td><a href="@HrefHelper.GetPlayerInfoPath(RunInfo.Player.Id ?? 0)">@RunInfo.Player.Name</a></td>
+                <td>@(RunInfo.ZoneInfo.Type.ToLower() == "map" ? "Map" : RunInfo.ZoneInfo.Type.ToStandardCasing() + " " + RunInfo.ZoneInfo.ZoneIndex)</td>
+                <td>#@RunInfo.RecordInfo.Rank: @(TempusUtilities.FormattedDuration(RunInfo.RecordInfo.Duration))</td>
+                <td>@TempusUtilities.GetDateFromSeconds(RunInfo.RecordInfo.Date).GetTimeStringSinceDateTime()</td>
+            </tr>
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter]
+    public string RunId { get; set; }
+    public RunInfoModel RunInfo { get; set; }
+    public ServerStatusModel Server { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (int.TryParse(RunId, out var parsedRunId))
+        {
+            RunInfo = await TempusDataService.GetRunInfoAsync(parsedRunId);
+            Server = TempusCacheService.ServerStatusList.First(x => x.ServerInfo.Id == RunInfo.RecordInfo.ServerId);
+        }
+        else
+        {
+            RunInfo = null;
+        }
+    }
+}
