@@ -93,7 +93,7 @@ else {
         {
             foreach (var user in ServerInfo.GameInfo.Users)
             {
-                var rankedUser = TempusCacheService.TopPlayersOnline.FirstOrDefault(x => x.Id == user.Id);
+                var rankedUser = TempusCacheService.TopPlayersOnline.FirstOrDefault(x => (x.Id == user.Id) || x.SteamId == user.SteamId);
                 RankedPlayers.Add(new RankedServerPlayerModel
                 {
                     Player = user,
