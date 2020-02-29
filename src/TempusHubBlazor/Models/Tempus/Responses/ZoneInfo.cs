@@ -16,6 +16,9 @@ namespace TempusHubBlazor.Models.Tempus.Responses
         public string Type { get; set; }
         [JsonProperty(PropertyName = "zoneindex")]
         public int ZoneIndex { get; set; }
+        [JsonProperty(PropertyName = "index")]
+        private int Index { set { ZoneIndex = value; } }
+       
         [JsonProperty(PropertyName = "custom_name")]
         public string CustomName { get; set; }
     }
