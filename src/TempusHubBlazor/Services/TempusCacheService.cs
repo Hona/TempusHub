@@ -72,14 +72,21 @@ namespace TempusHubBlazor.Services
             var servers = (await TempusDataService.GetServerStatusAsync()).Where(x => x != null).ToArray();
 
             // Get all valid online users
-            var users = servers.Where(x => x.GameInfo != null &&
+            var validUsers = servers.Where(x => x.GameInfo != null &&
                                            (x.GameInfo != null || x.ServerInfo != null ||
                                             x.GameInfo.Users != null) &&
                                            x.GameInfo.Users.Count != 0)
-                .SelectMany(x => x.GameInfo.Users).Where(x => x?.Id != null).ToArray();
+                .SelectMany(x => x.GameInfo.Users);
+            var usersWithId = validUsers.Where(x => x?.Id != null).ToList();
+            var usersWithoutId = validUsers.Where(x => x != null && x.Id == null);
+
+            var tasks = usersWithoutId.Select(async x => (await TempusDataService.GetSearchResultAsync(x.Name)).Players.FirstOrDefault(y => y.SteamId == x.SteamId));
+            var searchResults = await Task.WhenAll(tasks);
+
+            usersWithId.AddRange(searchResults.Where(x => x != null));
 
             // Get the user IDs as strings
-            var userIdStrings = (users.Where(user => user?.Id != null).Select(user => user.Id.ToString())).ToList();
+            var userIdStrings = (usersWithId.Where(user => user?.Id != null).Select(user => user.Id.ToString())).ToList();
 
             // Query all at once for all users ranks
             var rankTasks = new List<Task<Rank>>();
@@ -88,7 +95,7 @@ namespace TempusHubBlazor.Services
 
             // Get the users that actually have a rank (exclude unranks), and select the higher rank
             // Dictionary<User, BestRank>
-            var rankedUsers = ranks.ToDictionary(rank => users.First(x => x.Id == rank.PlayerInfo.Id), rank =>
+            var rankedUsers = ranks.ToDictionary(rank => usersWithId.First(x => x.Id == rank.PlayerInfo.Id), rank =>
                 rank.ClassRankInfo.DemoRank.Rank <= rank.ClassRankInfo.SoldierRank.Rank
                     ? rank.ClassRankInfo.DemoRank.Rank
                     : rank.ClassRankInfo.SoldierRank.Rank);
