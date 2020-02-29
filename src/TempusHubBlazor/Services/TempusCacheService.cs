@@ -145,7 +145,7 @@ namespace TempusHubBlazor.Services
         }
         public string GetRealName(int tempusId)
         {
-            return (RealNames.FirstOrDefault(x => x.Id == tempusId) ?? new TempusRealName()).RealName;
+            return RealNames.FirstOrDefault(x => x.Id == tempusId)?.RealName;
         }
     }
 }

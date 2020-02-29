@@ -3,11 +3,13 @@
 @using TempusHubBlazor.Data
 @using TempusHubBlazor.Models.Tempus.Responses
 @using BlazorStrap
+@using TempusHubBlazor.Services
 @using TempusHubBlazor.Utilities
 @using TempusHubBlazor.Models.Tempus.Rank
 @using TempusHubBlazor.Constants
 
 @inject TempusDataService TempusDataService
+@inject TempusCacheService TempusCacheService
 
 @if (PlayerRank == null)
 {
@@ -15,9 +17,10 @@
 }
 else
 {
-    <div class="heading-wrapper">
-        <h1>@PlayerRank.PlayerInfo.Name</h1>
-    </div>
+<div class="heading-wrapper">
+    <h1>@(TempusCacheService.GetRealName(PlayerRank.PlayerInfo.Id) ?? PlayerRank.PlayerInfo.Name)</h1>
+</div>
+<div class="slim-center">
     <br />
     @if (PlayerRank.PlayerInfo.Country != null)
     {
@@ -35,6 +38,7 @@ else
     {
         <h3><img width="32" height="32" src="@LocalFileConstants.DemomanIcon" /> Rank @PlayerRank.ClassRankInfo.DemoRank.Rank | @PlayerRank.ClassRankInfo.DemoRank.Points points</h3>
     }
+</div>
 }
 
 @code{

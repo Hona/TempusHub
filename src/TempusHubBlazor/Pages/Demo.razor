@@ -35,7 +35,7 @@ else
         {
             <tr>
                 <td><img width="24" height="24" src="@(run.RunInfo.PlayerClass == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /></td>
-                <td><a href="@HrefHelper.GetPlayerInfoPath(run.PlayerInfo.Id ?? 0)">@run.PlayerInfo.Name</a></td>
+                <td><a href="@HrefHelper.GetPlayerInfoPath(run.PlayerInfo.Id ?? 0)">@(TempusCacheService.GetRealName(run.PlayerInfo.Id ?? 0) ?? run.PlayerInfo.Name)</a></td>
                 <td>@(run.RunType.ToUpper() == "TOP" ? "Top" : run.RunType.ToUpper())</td>
                 <td>@(run.ZoneInfo.Type.ToLower() == "map" ? "Map" : run.ZoneInfo.Type.ToStandardCasing() + " " + run.ZoneInfo.ZoneIndex)</td>
                 <td><a href="@HrefHelper.GetRunInfoPath(run.RunInfo.Id)">@(TempusUtilities.FormattedDuration(run.RunInfo.Duration))</a></td>

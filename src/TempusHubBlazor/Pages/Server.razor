@@ -34,10 +34,10 @@
     <tbody>
         @foreach (var user in RankedPlayers)
         {
-            <tr>
-                <td>@(user.Rank.HasValue ? user.Rank.Value.ToString() : "None")</td>
-                <td><a href="@HrefHelper.GetPlayerInfoPath(user.Player.Id ?? 0)">@(user.Player.Name)</a></td>
-            </tr>
+        <tr>
+            <td>@(user.Rank.HasValue ? user.Rank.Value.ToString() : "None")</td>
+            <td><a href="@HrefHelper.GetPlayerInfoPath(user.Player.Id ?? 0)">@(TempusCacheService.GetRealName(user.Player.Id ?? 0) ?? user.Player.Name)</a></td>
+        </tr>
         }
     </tbody>
 </table>

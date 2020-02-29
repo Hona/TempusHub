@@ -40,9 +40,9 @@
 
         @code{
             List<DetailedMapOverviewModel> MapList;
-
-            protected override async Task OnInitializedAsync()
+            protected override void OnInitialized()
             {
                 MapList = TempusCacheService.DetailedMapList;
             }
+
         }
