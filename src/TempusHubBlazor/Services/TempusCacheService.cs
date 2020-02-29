@@ -110,7 +110,7 @@ namespace TempusHubBlazor.Services
                 var server = servers
                     .FirstOrDefault(x =>
                         x.GameInfo?.Users != null &&
-                        x.GameInfo.Users.Count(z => z.Id.HasValue && z.Id == player.Id) != 0);
+                        x.GameInfo.Users.Count(z => (z.Id.HasValue && z.Id == player.Id) || z.SteamId == player.SteamId) != 0);
                 if (server == null || player.Id == null) continue;
 
                 tempTopPlayersOnline.Add(new TopPlayerOnline
