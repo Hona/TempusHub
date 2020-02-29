@@ -31,7 +31,7 @@ else
                 <tr>
                     <td><a href="@HrefHelper.GetServerInfoPath(server.ServerInfo.Shortname)">@server.ServerInfo.Shortname | @server.ServerInfo.Name</a></td>
                     <td>
-                        <a href="@HrefHelper.GetMapInfoPath(server.GameInfo.CurrentMap)">@server.GameInfo.CurrentMap</a>@if (server.GameInfo.NextMap != null)
+                        <a href="@HrefHelper.GetMapInfoPath(server.GameInfo.CurrentMap)">@server.GameInfo.CurrentMap</a> @if (server.GameInfo.NextMap != null)
                         {<a href="@HrefHelper.GetMapInfoPath(server.GameInfo.NextMap.ToString())">(@server.GameInfo.NextMap.ToString())</a>}
                     </td>
                     <td>@(server.GameInfo.PlayerCount)/@server.GameInfo.MaxPlayers</td>
