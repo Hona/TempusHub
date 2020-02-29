@@ -89,7 +89,7 @@ else
                 {
                     <tr>
                         <td>#@(i + 1): @TempusUtilities.FormattedDuration(ZonedSoldierRecords[i].Duration)</td>
-                        <td><a href="@HrefHelper.GetPlayerInfoPath(ZonedSoldierRecords[i].Id)">@ZonedSoldierRecords[i].Name</a></td>
+                        <td><a href="@HrefHelper.GetPlayerInfoPath(ZonedSoldierRecords[i].Id)">@(TempusCacheService.GetRealName(ZonedSoldierRecords[i].Id) ?? ZonedSoldierRecords[i].Name)</a></td>
                     </tr>
                 }
             </tbody>
@@ -112,7 +112,7 @@ else
                 {
                     <tr>
                         <td>#@(i + 1): @TempusUtilities.FormattedDuration(ZonedDemomanRecords[i].Duration)</td>
-                        <td><a href="@HrefHelper.GetPlayerInfoPath(ZonedDemomanRecords[i].Id)">@ZonedDemomanRecords[i].Name</a></td>
+                        <td><a href="@HrefHelper.GetPlayerInfoPath(ZonedDemomanRecords[i].Id)">@(TempusCacheService.GetRealName(ZonedDemomanRecords[i].Id) ?? ZonedDemomanRecords[i].Name)</a></td>
                     </tr>
                 }
             </tbody>

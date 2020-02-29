@@ -12,13 +12,18 @@
 
 <div class="heading-wrapper">
     <h1 class="slim-center">@(ServerInfo?.ServerInfo.Name ?? "No Server found")</h1>
+
+    <br />
+
+    <br />
+
+
 </div>
-<br />
 
-<br />
-
-<h4>Players</h4>
-<span>@ServerInfo.GameInfo.CurrentMap (@(ServerInfo.GameInfo.PlayerCount)/@ServerInfo.GameInfo.MaxPlayers)</span>
+<span class="slim-center">
+    <p><a href="@HrefHelper.GetMapInfoPath(ServerInfo.GameInfo.CurrentMap)">@ServerInfo.GameInfo.CurrentMap</a> (@(ServerInfo.GameInfo.PlayerCount)/@ServerInfo.GameInfo.MaxPlayers)</p>
+</span>
+<h4 class="slim-center">Players</h4>
 <table align="center" class="table table-dark table-bordered slim-center">
     <thead>
         <tr>
@@ -29,19 +34,45 @@
     <tbody>
         @foreach (var user in RankedPlayers)
         {
-            <tr>
-                <td>@(user.Rank.HasValue ? user.Rank.Value.ToString() : "None")</td>
-                <td>@(user.Player.Name)</td>
-            </tr>
+        <tr>
+            <td>@(user.Rank.HasValue ? user.Rank.Value.ToString() : "None")</td>
+            <td><a href="@HrefHelper.GetPlayerInfoPath(user.Player.Id ?? 0)">@(TempusCacheService.GetRealName(user.Player.Id ?? 0) ?? user.Player.Name)</a></td>
+        </tr>
         }
     </tbody>
 </table>
+<br />
+@if (Demos == null)
+{
+    <div class="slim-center"><i>Loading demos...</i></div>
+}
+else { 
+    <h4 class="slim-center">Demos</h4>
+    <table align="center" class="table table-dark table-bordered slim-center">
+        <thead>
+            <tr>
+                <th>Map</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (var i = 0; i < Demos.Count; i++)
+            {
+                <tr>
+                    <td>@(Demos[i].Recording == true ? "Recording | " : "")<a href="@HrefHelper.GetDemoInfoPath(Demos[i].DemoId)">@Demos[i].MapName</a></td>
+                    <td>@(TempusUtilities.GetDateFromSeconds(Demos[i].Date).GetTimeStringSinceDateTime())</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
 @code {
     [Parameter]
     public string ServerParam { get; set; }
     public List<RankedServerPlayerModel> RankedPlayers { get; set; } = new List<RankedServerPlayerModel>();
     public ServerStatusModel ServerInfo { get; set; }
-    protected override void OnInitialized()
+    public List<ServerDemoModel> Demos { get; set; }
+    protected override async Task OnInitializedAsync()
     {
         if (int.TryParse(ServerParam, out var serverId))
         {
@@ -71,5 +102,7 @@
             }
             RankedPlayers.OrderByDescending(x => x.Rank);
         }
+
+        Demos = await TempusDataService.GetServerDemosAsync(ServerInfo.ServerInfo.Id);
     }
 }

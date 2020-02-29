@@ -17,6 +17,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using TempusHubBlazor.Models.Tempus.Activity;
 using TempusHubBlazor.Models;
+using TempusHubBlazor.Utilities;
 
 namespace TempusHubBlazor.Data
 {
@@ -49,7 +50,7 @@ namespace TempusHubBlazor.Data
             try
             {
                 // Map record
-                var duration = fullOverview.GetClassRuns(classId).OrderBy(x => x.Duration).First().Duration;
+                var duration = fullOverview.GetClassRuns(classId).OrderByDuration().First().Duration;
                 await CacheRecordAsync(map.Id, classId, duration, "map", 1);
 
                 // Course record
@@ -58,7 +59,7 @@ namespace TempusHubBlazor.Data
                     try
                     {
                         var runs = (await TempusDataService.GetTopZonedTimes(map.Name, "course", courseId)).Runs;
-                        duration = runs.GetClassRuns(classId).OrderBy(x => x.Duration).First().Duration;
+                        duration = runs.GetClassRuns(classId).OrderByDuration().First().Duration;
                         await CacheRecordAsync(map.Id, classId, duration, "course", courseId);
                     }
                     catch { }
@@ -70,7 +71,7 @@ namespace TempusHubBlazor.Data
                     try
                     {
                         var runs = (await TempusDataService.GetTopZonedTimes(map.Name, "bonus", bonusId)).Runs;
-                        duration = runs.GetClassRuns(classId).OrderBy(x => x.Duration).First().Duration;
+                        duration = runs.GetClassRuns(classId).OrderByDuration().First().Duration;
                         await CacheRecordAsync(map.Id, classId, duration, "bonus", bonusId);
                     }
                     catch { }

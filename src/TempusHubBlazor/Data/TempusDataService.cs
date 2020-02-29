@@ -17,6 +17,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using TempusHubBlazor.Models.Tempus.Activity;
 using TempusHubBlazor.Models;
+using TempusHubBlazor.Utilities;
 
 namespace TempusHubBlazor.Data
 {
@@ -192,11 +193,11 @@ namespace TempusHubBlazor.Data
                 };
                 if (recordBase.RecordInfo.Class == 4)
                 {
-                    recordBase.CachedTime.CurrentWRDuration = zonedData.Runs.DemomanRuns.OrderBy(x => x.Duration).First().Duration;
+                    recordBase.CachedTime.CurrentWRDuration = zonedData.Runs.DemomanRuns.OrderByDuration().First().Duration;
                 }
                 else
                 {
-                    recordBase.CachedTime.CurrentWRDuration = zonedData.Runs.SoldierRuns.OrderBy(x => x.Duration).First().Duration;
+                    recordBase.CachedTime.CurrentWRDuration = zonedData.Runs.SoldierRuns.OrderByDuration().First().Duration;
                 }
             }
 
@@ -206,6 +207,14 @@ namespace TempusHubBlazor.Data
                 ZonedData = zonedData
             };     
         }
+        public async Task<List<ServerDemoModel>> GetServerDemosAsync(int serverId)
+            => (await GetResponseAsync<List<ServerDemoModel>>($"/servers/{serverId}/demos"));
+
+        public async Task<ServerDemoFullOverview> GetDemoInfoAsync(int demoId)
+            => await GetResponseAsync<ServerDemoFullOverview>($"/demos/id/{demoId}/overview");
+        //RunInfoModel
+        public async Task<RunInfoModel> GetRunInfoAsync(int runId)
+            => await GetResponseAsync<RunInfoModel>($"/records/id/{runId}/overview");
 
         public string ParseMapName(string map)
         {

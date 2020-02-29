@@ -1,8 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using TempusHubBlazor.Constants;
 using TempusHubBlazor.Data;
 using TempusHubBlazor.Models;
 using TempusHubBlazor.Models.Tempus.DetailedMapList;
@@ -21,6 +24,7 @@ namespace TempusHubBlazor.Services
         public List<DetailedMapOverviewModel> DetailedMapList { get; set; }
         public PlayerLeaderboards PlayerLeaderboards { get; set; }
         public List<ServerStatusModel> ServerStatusList { get; set; }
+        public List<TempusRealName> RealNames { get; set; }
 
         public TempusCacheService(TempusDataService tempusDataService)
         {
@@ -37,7 +41,8 @@ namespace TempusHubBlazor.Services
                  UpdateTopOnlinePlayersAsync(),
                  UpdateDetailedMapListAsync(),
                  UpdatePlayerLeaderboardsAsync(),
-                 UpdateServerStatusListAsync()
+                 UpdateServerStatusListAsync(),
+                 UpdateRealNamesAsync()
             };
 
             await Task.WhenAll(tasks);
@@ -129,6 +134,18 @@ namespace TempusHubBlazor.Services
         private async Task UpdateServerStatusListAsync()
         {
             ServerStatusList = await TempusDataService.GetServerStatusAsync();
+        }
+        private async Task UpdateRealNamesAsync()
+        {
+            await Task.Run(() => 
+            {
+                var jsonText = File.ReadAllText(LocalFileConstants.TempusNames);
+                RealNames = JsonConvert.DeserializeObject<List<TempusRealName>>(jsonText);
+            });
+        }
+        public string GetRealName(int tempusId)
+        {
+            return RealNames.FirstOrDefault(x => x.Id == tempusId)?.RealName;
         }
     }
 }

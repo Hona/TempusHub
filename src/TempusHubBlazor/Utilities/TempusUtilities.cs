@@ -16,7 +16,7 @@ namespace TempusHubBlazor.Utilities
         /// <summary>
         /// The time that the API uses as 0 seconds
         /// </summary>
-        private static DateTime UnixEpoch = new DateTime(1970, 1, 1);
+        private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1);
         /// <summary>
         /// Returns DateTime from tempus API seconds
         /// </summary>
@@ -28,18 +28,12 @@ namespace TempusHubBlazor.Utilities
         /// </summary>
         /// <param name="id">Class ID</param>
         /// <returns></returns>
-        public static string GetClassChar(int id)
+        public static string GetClassChar(int id) => id switch
         {
-            switch (id)
-            {
-                case 4:
-                    return "D";
-                case 3:
-                    return "S";
-                default:
-                    return id.ToString();
-            }
-        }
+            4 => "D",
+            3 => "S",
+            _ => id.ToString(),
+        };
         /// <summary>
         /// Returns the world record split string using activity data, as well as map API times
         /// </summary>
@@ -52,8 +46,8 @@ namespace TempusHubBlazor.Utilities
             // If the current wr doesn't have a value, it can be assumed there is no old duration
             if (cache == null || !cache.CurrentWRDuration.HasValue || !cache.OldWRDuration.HasValue)
             {
-                slowRecord = cache.ClassId == 4 ? zonedResults.Runs.DemomanRuns.OrderBy(x => x.Duration).ToArray()[1].Duration 
-                    : zonedResults.Runs.SoldierRuns.OrderBy(x => x.Duration).ToArray()[1].Duration;
+                slowRecord = cache.ClassId == 4 ? zonedResults.Runs.DemomanRuns.OrderByDuration()[1].Duration 
+                    : zonedResults.Runs.SoldierRuns.OrderByDuration()[1].Duration;
             }
             else
             {
