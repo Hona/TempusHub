@@ -25,6 +25,8 @@ namespace TempusHubBlazor.Services
         public PlayerLeaderboards PlayerLeaderboards { get; set; }
         public List<ServerStatusModel> ServerStatusList { get; set; }
         public List<TempusRealName> RealNames { get; set; }
+        public List<TempusRankColor> TempusRankColors { get; set; }
+
 
         public TempusCacheService(TempusDataService tempusDataService)
         {
@@ -42,7 +44,8 @@ namespace TempusHubBlazor.Services
                  UpdateDetailedMapListAsync(),
                  UpdatePlayerLeaderboardsAsync(),
                  UpdateServerStatusListAsync(),
-                 UpdateRealNamesAsync()
+                 UpdateRealNamesAsync(),
+                 UpdateTempusColorsAsync()
             };
 
             await Task.WhenAll(tasks);
@@ -148,6 +151,14 @@ namespace TempusHubBlazor.Services
             {
                 var jsonText = File.ReadAllText(LocalFileConstants.TempusNames);
                 RealNames = JsonConvert.DeserializeObject<List<TempusRealName>>(jsonText);
+            });
+        }
+        private async Task UpdateTempusColorsAsync()
+        {
+            await Task.Run(() =>
+            {
+                var jsonText = File.ReadAllText(LocalFileConstants.TempusColors);
+                TempusRankColors = JsonConvert.DeserializeObject<List<TempusRankColor>>(jsonText);
             });
         }
         public string GetRealName(int tempusId)

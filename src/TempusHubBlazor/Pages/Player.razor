@@ -7,6 +7,7 @@
 @using TempusHubBlazor.Utilities
 @using TempusHubBlazor.Models.Tempus.Rank
 @using TempusHubBlazor.Constants
+@using TempusHubBlazor.Models;
 
 @inject TempusDataService TempusDataService
 @inject TempusCacheService TempusCacheService
@@ -18,7 +19,7 @@
 else
 {
 <div class="heading-wrapper">
-    <h1>@(TempusCacheService.GetRealName(PlayerRank.PlayerInfo.Id) ?? PlayerRank.PlayerInfo.Name)</h1>
+    <h1><span style="color: @RankColor.BracketsColor">[</span><span style="color: @RankColor.TitleColor">@(HigherRankInfo.Title)</span><span style="color: @RankColor.BracketsColor">] </span><span style="color: @RankColor.NameColor">@(TempusCacheService.GetRealName(PlayerRank.PlayerInfo.Id) ?? PlayerRank.PlayerInfo.Name)</span></h1>
 </div>
 <div class="slim-center">
     <br />
@@ -46,9 +47,13 @@ else
     public string PlayerId { get; set; }
 
     public Rank PlayerRank { get; set; }
+    public BaseRank HigherRankInfo { get; set; }
+    public TempusRankColor RankColor { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         PlayerRank = await TempusDataService.GetUserRankAsync(PlayerId);
+        HigherRankInfo = PlayerRank.ClassRankInfo.DemoRank.Rank <= PlayerRank.ClassRankInfo.SoldierRank.Rank ? (BaseRank)PlayerRank.ClassRankInfo.DemoRank : (BaseRank)PlayerRank.ClassRankInfo.SoldierRank;
+        RankColor = TempusCacheService.TempusRankColors.First(x => x.Title.ToLower() == HigherRankInfo.Title.ToLower());
     }
 }
