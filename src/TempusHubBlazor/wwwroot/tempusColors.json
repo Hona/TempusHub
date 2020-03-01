@@ -8,10 +8,10 @@
     },
     {
         "title": "King",
-        "brackets_color": "#AD0000",
-        "title_color": "#FF3838",
-        "name_color": "#F56200",
-        "chat_color": "#FFFF7A"
+        "brackets_color": "#9F06A6",
+        "title_color": "#8838E0",
+        "name_color": "#F154FF",
+        "chat_color": "#F59EFD"
     },    
     {
         "title": "Archduke",
@@ -29,9 +29,9 @@
     },
     {
         "title": "Duke",
-        "brackets_color": "#ACA287",
-        "title_color": "#645456",
-        "name_color": "#E85265",
+        "brackets_color": "#E6DFDF",
+        "title_color": "#2B2828",
+        "name_color": "#FB3C53",
         "chat_color": "#FFFFFF"
     },
     {
