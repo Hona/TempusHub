@@ -85,7 +85,7 @@ namespace TempusHubBlazor.Services
 
             if (usersWithoutId.Count() > 0)
             {
-                var tasks = usersWithoutId.Select(async x => (await TempusDataService.GetSearchResultAsync(x.Name)).Players.FirstOrDefault(y => y.SteamId == x.SteamId));
+                var tasks = usersWithoutId.Select(async x => (await TempusDataService.GetSearchResultAsync(x.Name))?.Players?.FirstOrDefault(y => y.SteamId == x.SteamId));
                 var searchResults = await Task.WhenAll(tasks);
 
                 usersWithId.AddRange(searchResults.Where(x => x != null));
