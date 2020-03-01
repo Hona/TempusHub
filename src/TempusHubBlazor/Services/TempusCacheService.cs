@@ -83,10 +83,13 @@ namespace TempusHubBlazor.Services
             var usersWithId = validUsers.Where(x => x?.Id != null).ToList();
             var usersWithoutId = validUsers.Where(x => x != null && x.Id == null);
 
-            var tasks = usersWithoutId.Select(async x => (await TempusDataService.GetSearchResultAsync(x.Name)).Players.FirstOrDefault(y => y.SteamId == x.SteamId));
-            var searchResults = await Task.WhenAll(tasks);
+            if (usersWithoutId.Count > 0)
+            {
+                var tasks = usersWithoutId.Select(async x => (await TempusDataService.GetSearchResultAsync(x.Name)).Players.FirstOrDefault(y => y.SteamId == x.SteamId));
+                var searchResults = await Task.WhenAll(tasks);
 
-            usersWithId.AddRange(searchResults.Where(x => x != null));
+                usersWithId.AddRange(searchResults.Where(x => x != null));
+            }
 
             // Get the user IDs as strings
             var userIdStrings = (usersWithId.Where(user => user?.Id != null).Select(user => user.Id.ToString())).ToList();
