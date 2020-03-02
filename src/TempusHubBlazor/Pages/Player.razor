@@ -18,72 +18,68 @@
 }
 else
 {
-<div class="heading-wrapper">
-    <h1><span style="color: @RankColor.BracketsColor">[</span><span style="color: @RankColor.TitleColor">@(HigherRankInfo.Title)</span><span style="color: @RankColor.BracketsColor">] </span><span style="color: @RankColor.NameColor">@(TempusCacheService.GetRealName(PlayerStats.PlayerInfo.Id) ?? PlayerStats.PlayerInfo.Name)</span></h1>
-</div>
-<div class="slim-center">
-    <br />
-    @if (PlayerStats.PlayerInfo.Country != null)
-    {
-        <span>From @PlayerStats.PlayerInfo.Country</span>
-    }
-    @if (PlayerStats.PlayerInfo.LastSeen.HasValue)
-    {
-        <p>First played @(TempusUtilities.GetDateFromSeconds(PlayerStats.PlayerInfo.FirstSeen).GetTimeStringSinceDateTime())</p>
-    }
-    @if (PlayerStats.ClassRankInfo.SoldierRank.Rank > 0)
-    {
-        <h3><img width="32" height="32" src="@LocalFileConstants.SoldierIcon" /> Rank @PlayerStats.ClassRankInfo.SoldierRank.Rank | @PlayerStats.ClassRankInfo.SoldierRank.Points points</h3>
-    }
-    @if (PlayerStats.ClassRankInfo.DemoRank.Rank > 0)
-    {
-        <h3><img width="32" height="32" src="@LocalFileConstants.DemomanIcon" /> Rank @PlayerStats.ClassRankInfo.DemoRank.Rank | @PlayerStats.ClassRankInfo.DemoRank.Points points</h3>
-    }
-    @if (PlayerStats.WorldRecordStats != null)
-    {
-        <h4>World Records</h4>
-        <ul>
+    <div class="heading-wrapper">
+        <h1><span style="color: @RankColor.BracketsColor">[</span><span style="color: @RankColor.TitleColor">@(HigherRankInfo.Title)</span><span style="color: @RankColor.BracketsColor">] </span><span style="color: @RankColor.NameColor">@(TempusCacheService.GetRealName(PlayerStats.PlayerInfo.Id) ?? PlayerStats.PlayerInfo.Name)</span></h1>
+    </div>
+    <div class="slim-center">
+        <br />
+        @if (PlayerStats.PlayerInfo.Country != null)
+        {
+            <span>From @PlayerStats.PlayerInfo.Country</span>
+        }
+        @if (PlayerStats.PlayerInfo.LastSeen.HasValue)
+        {
+            <p>First played @(TempusUtilities.GetDateFromSeconds(PlayerStats.PlayerInfo.FirstSeen).GetTimeStringSinceDateTime())</p>
+        }
+        @if (PlayerStats.ClassRankInfo.SoldierRank.Rank > 0)
+        {
+            <h3><img width="32" height="32" src="@LocalFileConstants.SoldierIcon" /> Rank @PlayerStats.ClassRankInfo.SoldierRank.Rank | @PlayerStats.ClassRankInfo.SoldierRank.Points points</h3>
+        }
+        @if (PlayerStats.ClassRankInfo.DemoRank.Rank > 0)
+        {
+            <h3><img width="32" height="32" src="@LocalFileConstants.DemomanIcon" /> Rank @PlayerStats.ClassRankInfo.DemoRank.Rank | @PlayerStats.ClassRankInfo.DemoRank.Points points</h3>
+        }
+        @if (PlayerStats.WorldRecordStats != null)
+        {
+            <h4>World Records</h4>
             @if (PlayerStats.WorldRecordStats.Map != null)
             {
-                <li>Map: @(PlayerStats.WorldRecordStats.Map.Count) - @PlayerStats.WorldRecordStats.Map.Points</li>
+                <p>Map: @(PlayerStats.WorldRecordStats.Map.Count) - @PlayerStats.WorldRecordStats.Map.Points points</p>
             }
             @if (PlayerStats.WorldRecordStats.Course != null)
             {
-                <li>Course: @(PlayerStats.WorldRecordStats.Course.Count) - @PlayerStats.WorldRecordStats.Course.Points</li>
+                <p>Course: @(PlayerStats.WorldRecordStats.Course.Count) - @PlayerStats.WorldRecordStats.Course.Points points</p>
             }
             @if (PlayerStats.WorldRecordStats.Bonus != null)
             {
-                <li>Bonus: @(PlayerStats.WorldRecordStats.Bonus.Count) - @PlayerStats.WorldRecordStats.Bonus.Points</li>
+                <p>Bonus: @(PlayerStats.WorldRecordStats.Bonus.Count) - @PlayerStats.WorldRecordStats.Bonus.Points points</p>
             }
             @if (PlayerStats.WorldRecordStats.Trick != null)
             {
-                <li>Trick: @(PlayerStats.WorldRecordStats.Trick.Count) - @PlayerStats.WorldRecordStats.Trick.Points</li>
+                <p>Trick: @(PlayerStats.WorldRecordStats.Trick.Count) - @PlayerStats.WorldRecordStats.Trick.Points points</p>
             }
-        </ul>
-    }
-    @if (PlayerStats.TopTimeStats != null)
-    {
-        <h4>Top Times</h4>
-        <ul>
+        }
+        @if (PlayerStats.TopTimeStats != null)
+        {
+            <h4>Top Times</h4>
             @if (PlayerStats.TopTimeStats.Map != null)
             {
-                <li>Map: @(PlayerStats.TopTimeStats.Map.Count) - @PlayerStats.TopTimeStats.Map.Points</li>
+                <p>Map: @(PlayerStats.TopTimeStats.Map.Count) - @PlayerStats.TopTimeStats.Map.Points points</p>
             }
             @if (PlayerStats.TopTimeStats.Course != null)
             {
-                <li>Course: @(PlayerStats.TopTimeStats.Course.Count) - @PlayerStats.TopTimeStats.Course.Points</li>
+                <p>Course: @(PlayerStats.TopTimeStats.Course.Count) - @PlayerStats.TopTimeStats.Course.Points points</p>
             }
             @if (PlayerStats.TopTimeStats.Bonus != null)
             {
-                <li>Bonus: @(PlayerStats.TopTimeStats.Bonus.Count) - @PlayerStats.TopTimeStats.Bonus.Points</li>
+                <p>Bonus: @(PlayerStats.TopTimeStats.Bonus.Count) - @PlayerStats.TopTimeStats.Bonus.Points points</p>
             }
             @if (PlayerStats.TopTimeStats.Trick != null)
             {
-                <li>Trick: @(PlayerStats.TopTimeStats.Trick.Count) - @PlayerStats.TopTimeStats.Trick.Points</li>
+                <p>Trick: @(PlayerStats.TopTimeStats.Trick.Count) - @PlayerStats.TopTimeStats.Trick.Points points</p>
             }
-        </ul>
-    }
-</div>
+        }
+    </div>
 }
 
 @code{
