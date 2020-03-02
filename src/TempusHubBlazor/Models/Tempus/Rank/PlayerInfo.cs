@@ -21,5 +21,8 @@ namespace TempusHubBlazor.Models.Tempus.Rank
 
         [JsonProperty(PropertyName = "last_seen")]
         public double? LastSeen { get; set; }
+        [JsonProperty(PropertyName = "country_code")]
+        public string CountryCode { get; set; }
+
     }
 }

@@ -18,6 +18,7 @@ using System.Net.Http.Headers;
 using TempusHubBlazor.Models.Tempus.Activity;
 using TempusHubBlazor.Models;
 using TempusHubBlazor.Utilities;
+using TempusHubBlazor.Models.Tempus.PlayerStats;
 
 namespace TempusHubBlazor.Data
 {
@@ -179,6 +180,8 @@ namespace TempusHubBlazor.Data
         public async Task<RanksOverviewModel> GetSoldierRanksOverview() =>
             await GetResponseAsync<RanksOverviewModel>("/ranks/class/3");
         public async Task<Rank> GetUserRankAsync(string id) => await GetResponseAsync<Rank>($"/players/id/{id}/rank");
+        public async Task<PlayerStatsModel> GetUserStatsAsync(string id) =>
+            await GetResponseAsync<PlayerStatsModel>($"/players/id/{id}/stats");
         public async Task<RecordWithZonedData> PopulateRecordDataAsync(TempusRecordBase recordBase)
         {
             var zonedData = await GetTopZonedTimes(recordBase.MapInfo.Name, recordBase.ZoneInfo.Type, recordBase.ZoneInfo.Zoneindex);

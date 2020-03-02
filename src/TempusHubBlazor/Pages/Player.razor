@@ -1,7 +1,7 @@
 ﻿@page "/player/{PlayerId}"
 
 @using TempusHubBlazor.Data
-@using TempusHubBlazor.Models.Tempus.Responses
+@using TempusHubBlazor.Models.Tempus.PlayerStats
 @using BlazorStrap
 @using TempusHubBlazor.Services
 @using TempusHubBlazor.Utilities
@@ -12,48 +12,88 @@
 @inject TempusDataService TempusDataService
 @inject TempusCacheService TempusCacheService
 
-@if (PlayerRank == null)
+@if (PlayerStats == null)
 {
     <i>Loading player data...</i>
 }
 else
 {
-<div class="heading-wrapper">
-    <h1><span style="color: @RankColor.BracketsColor">[</span><span style="color: @RankColor.TitleColor">@(HigherRankInfo.Title)</span><span style="color: @RankColor.BracketsColor">] </span><span style="color: @RankColor.NameColor">@(TempusCacheService.GetRealName(PlayerRank.PlayerInfo.Id) ?? PlayerRank.PlayerInfo.Name)</span></h1>
-</div>
-<div class="slim-center">
-    <br />
-    @if (PlayerRank.PlayerInfo.Country != null)
-    {
-        <span>From @PlayerRank.PlayerInfo.Country</span>
-    }
-    @if (PlayerRank.PlayerInfo.LastSeen.HasValue)
-    {
-        <p>First played @(TempusUtilities.GetDateFromSeconds(PlayerRank.PlayerInfo.FirstSeen).GetTimeStringSinceDateTime())</p>
-    }
-    @if (PlayerRank.ClassRankInfo.SoldierRank.Rank > 0)
-    {
-        <h3><img width="32" height="32" src="@LocalFileConstants.SoldierIcon" /> Rank @PlayerRank.ClassRankInfo.SoldierRank.Rank | @PlayerRank.ClassRankInfo.SoldierRank.Points points</h3>
-    }
-    @if (PlayerRank.ClassRankInfo.DemoRank.Rank > 0)
-    {
-        <h3><img width="32" height="32" src="@LocalFileConstants.DemomanIcon" /> Rank @PlayerRank.ClassRankInfo.DemoRank.Rank | @PlayerRank.ClassRankInfo.DemoRank.Points points</h3>
-    }
-</div>
+    <div class="heading-wrapper">
+        <h1><span style="color: @RankColor.BracketsColor">[</span><span style="color: @RankColor.TitleColor">@(HigherRankInfo.Title)</span><span style="color: @RankColor.BracketsColor">] </span><span style="color: @RankColor.NameColor">@(TempusCacheService.GetRealName(PlayerStats.PlayerInfo.Id) ?? PlayerStats.PlayerInfo.Name)</span></h1>
+    </div>
+    <div class="slim-center">
+        <br />
+        @if (PlayerStats.PlayerInfo.Country != null)
+        {
+            <span>From @PlayerStats.PlayerInfo.Country</span>
+        }
+        @if (PlayerStats.PlayerInfo.LastSeen.HasValue)
+        {
+            <p>First played @(TempusUtilities.GetDateFromSeconds(PlayerStats.PlayerInfo.FirstSeen).GetTimeStringSinceDateTime())</p>
+        }
+        @if (PlayerStats.ClassRankInfo.SoldierRank.Rank > 0)
+        {
+            <h3><img width="32" height="32" src="@LocalFileConstants.SoldierIcon" /> Rank @PlayerStats.ClassRankInfo.SoldierRank.Rank | @PlayerStats.ClassRankInfo.SoldierRank.Points points</h3>
+        }
+        @if (PlayerStats.ClassRankInfo.DemoRank.Rank > 0)
+        {
+            <h3><img width="32" height="32" src="@LocalFileConstants.DemomanIcon" /> Rank @PlayerStats.ClassRankInfo.DemoRank.Rank | @PlayerStats.ClassRankInfo.DemoRank.Points points</h3>
+        }
+        @if (PlayerStats.WorldRecordStats != null)
+        {
+            <h4>World Records</h4>
+            @if (PlayerStats.WorldRecordStats.Map != null)
+            {
+                <p>Map: @(PlayerStats.WorldRecordStats.Map.Count) - @PlayerStats.WorldRecordStats.Map.Points points</p>
+            }
+            @if (PlayerStats.WorldRecordStats.Course != null)
+            {
+                <p>Course: @(PlayerStats.WorldRecordStats.Course.Count) - @PlayerStats.WorldRecordStats.Course.Points points</p>
+            }
+            @if (PlayerStats.WorldRecordStats.Bonus != null)
+            {
+                <p>Bonus: @(PlayerStats.WorldRecordStats.Bonus.Count) - @PlayerStats.WorldRecordStats.Bonus.Points points</p>
+            }
+            @if (PlayerStats.WorldRecordStats.Trick != null)
+            {
+                <p>Trick: @(PlayerStats.WorldRecordStats.Trick.Count) - @PlayerStats.WorldRecordStats.Trick.Points points</p>
+            }
+        }
+        @if (PlayerStats.TopTimeStats != null)
+        {
+            <h4>Top Times</h4>
+            @if (PlayerStats.TopTimeStats.Map != null)
+            {
+                <p>Map: @(PlayerStats.TopTimeStats.Map.Count) - @PlayerStats.TopTimeStats.Map.Points points</p>
+            }
+            @if (PlayerStats.TopTimeStats.Course != null)
+            {
+                <p>Course: @(PlayerStats.TopTimeStats.Course.Count) - @PlayerStats.TopTimeStats.Course.Points points</p>
+            }
+            @if (PlayerStats.TopTimeStats.Bonus != null)
+            {
+                <p>Bonus: @(PlayerStats.TopTimeStats.Bonus.Count) - @PlayerStats.TopTimeStats.Bonus.Points points</p>
+            }
+            @if (PlayerStats.TopTimeStats.Trick != null)
+            {
+                <p>Trick: @(PlayerStats.TopTimeStats.Trick.Count) - @PlayerStats.TopTimeStats.Trick.Points points</p>
+            }
+        }
+    </div>
 }
 
 @code{
     [Parameter]
     public string PlayerId { get; set; }
 
-    public Rank PlayerRank { get; set; }
+    public PlayerStatsModel PlayerStats { get; set; }
     public BaseRank HigherRankInfo { get; set; }
     public TempusRankColor RankColor { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        PlayerRank = await TempusDataService.GetUserRankAsync(PlayerId);
-        HigherRankInfo = PlayerRank.ClassRankInfo.DemoRank.Rank <= PlayerRank.ClassRankInfo.SoldierRank.Rank ? (BaseRank)PlayerRank.ClassRankInfo.DemoRank : (BaseRank)PlayerRank.ClassRankInfo.SoldierRank;
+        PlayerStats = await TempusDataService.GetUserStatsAsync(PlayerId);
+        HigherRankInfo = PlayerStats.ClassRankInfo.DemoRank.Rank <= PlayerStats.ClassRankInfo.SoldierRank.Rank ? (BaseRank)PlayerStats.ClassRankInfo.DemoRank : (BaseRank)PlayerStats.ClassRankInfo.SoldierRank;
         RankColor = TempusCacheService.TempusRankColors.First(x => x.Title.ToLower() == HigherRankInfo.Title.ToLower());
     }
 }
