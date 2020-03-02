@@ -1,4 +1,4 @@
-# Tempus Hub
+# Tempus Hub ![.NET Core](https://github.com/TheRealHona/TempusHub/workflows/.NET%20Core/badge.svg)
 Tempus Hub is a complimentary website to the TF2 jump community, with tight connections to the [Tempus Jump Network](https://tempus.xyz). It contains helpful features that other third-party apps don't have such as Top Players online and Recent Record WR time save.
 ## Getting Started
 You can use the site at http://tempushub.xyz
