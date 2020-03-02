@@ -23,7 +23,7 @@ namespace TempusHubBlazor
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                    webBuilder.UseSetting("https_port", Environment.GetEnvironmentVariable("ASPNETCORE_HTTPS_PORT"));
+                    //webBuilder.UseSetting("https_port", Environment.GetEnvironmentVariable("ASPNETCORE_HTTPS_PORT"));
                 });
     }
 }
