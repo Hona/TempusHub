@@ -10,11 +10,11 @@ Feel free to fork and make changes, if you think a feature should be added, feel
 
 * **Luke Parker** - *Main contributor* - [TheRealHona](https://github.com/TheRealHona)
 
-See also the list of [contributors](https://github.com/TheRealHona/Lambda/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/TheRealHona/TempusHub/contributors) who participated in this project.
 
 ## License
 
-This project is licensed under the Apache 2.0 License - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the Apache 2.0 License - see the [LICENSE.md](LICENSE) file for details
 
 ## Acknowledgments
 

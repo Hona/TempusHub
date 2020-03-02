@@ -25,6 +25,8 @@ namespace TempusHubBlazor.Services
         public PlayerLeaderboards PlayerLeaderboards { get; set; }
         public List<ServerStatusModel> ServerStatusList { get; set; }
         public List<TempusRealName> RealNames { get; set; }
+        public List<TempusRankColor> TempusRankColors { get; set; }
+
 
         public TempusCacheService(TempusDataService tempusDataService)
         {
@@ -42,7 +44,8 @@ namespace TempusHubBlazor.Services
                  UpdateDetailedMapListAsync(),
                  UpdatePlayerLeaderboardsAsync(),
                  UpdateServerStatusListAsync(),
-                 UpdateRealNamesAsync()
+                 UpdateRealNamesAsync(),
+                 UpdateTempusColorsAsync()
             };
 
             await Task.WhenAll(tasks);
@@ -72,14 +75,24 @@ namespace TempusHubBlazor.Services
             var servers = (await TempusDataService.GetServerStatusAsync()).Where(x => x != null).ToArray();
 
             // Get all valid online users
-            var users = servers.Where(x => x.GameInfo != null &&
+            var validUsers = servers.Where(x => x.GameInfo != null &&
                                            (x.GameInfo != null || x.ServerInfo != null ||
                                             x.GameInfo.Users != null) &&
                                            x.GameInfo.Users.Count != 0)
-                .SelectMany(x => x.GameInfo.Users).Where(x => x?.Id != null).ToArray();
+                .SelectMany(x => x.GameInfo.Users);
+            var usersWithId = validUsers.Where(x => x?.Id != null).ToList();
+            var usersWithoutId = validUsers.Where(x => x != null && x.Id == null);
+
+            if (usersWithoutId.Count() > 0)
+            {
+                var tasks = usersWithoutId.Select(async x => (await TempusDataService.GetSearchResultAsync(x.Name))?.Players?.FirstOrDefault(y => y.SteamId == x.SteamId));
+                var searchResults = await Task.WhenAll(tasks);
+
+                usersWithId.AddRange(searchResults.Where(x => x != null));
+            }
 
             // Get the user IDs as strings
-            var userIdStrings = (users.Where(user => user?.Id != null).Select(user => user.Id.ToString())).ToList();
+            var userIdStrings = (usersWithId.Where(user => user?.Id != null).Select(user => user.Id.ToString())).ToList();
 
             // Query all at once for all users ranks
             var rankTasks = new List<Task<Rank>>();
@@ -88,7 +101,7 @@ namespace TempusHubBlazor.Services
 
             // Get the users that actually have a rank (exclude unranks), and select the higher rank
             // Dictionary<User, BestRank>
-            var rankedUsers = ranks.ToDictionary(rank => users.First(x => x.Id == rank.PlayerInfo.Id), rank =>
+            var rankedUsers = ranks.ToDictionary(rank => usersWithId.First(x => x.Id == rank.PlayerInfo.Id), rank =>
                 rank.ClassRankInfo.DemoRank.Rank <= rank.ClassRankInfo.SoldierRank.Rank
                     ? rank.ClassRankInfo.DemoRank.Rank
                     : rank.ClassRankInfo.SoldierRank.Rank);
@@ -103,7 +116,7 @@ namespace TempusHubBlazor.Services
                 var server = servers
                     .FirstOrDefault(x =>
                         x.GameInfo?.Users != null &&
-                        x.GameInfo.Users.Count(z => z.Id.HasValue && z.Id == player.Id) != 0);
+                        x.GameInfo.Users.Count(z => (z.Id.HasValue && z.Id == player.Id) || z.SteamId == player.SteamId) != 0);
                 if (server == null || player.Id == null) continue;
 
                 tempTopPlayersOnline.Add(new TopPlayerOnline
@@ -141,6 +154,14 @@ namespace TempusHubBlazor.Services
             {
                 var jsonText = File.ReadAllText(LocalFileConstants.TempusNames);
                 RealNames = JsonConvert.DeserializeObject<List<TempusRealName>>(jsonText);
+            });
+        }
+        private async Task UpdateTempusColorsAsync()
+        {
+            await Task.Run(() =>
+            {
+                var jsonText = File.ReadAllText(LocalFileConstants.TempusColors);
+                TempusRankColors = JsonConvert.DeserializeObject<List<TempusRankColor>>(jsonText);
             });
         }
         public string GetRealName(int tempusId)

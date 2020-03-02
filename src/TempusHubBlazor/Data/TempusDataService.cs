@@ -162,7 +162,8 @@ namespace TempusHubBlazor.Data
 
             return activity;
         }
-
+        public async Task<PlayerMapSearchResult> GetSearchResultAsync(string query) =>
+            await GetResponseAsync<PlayerMapSearchResult>($"/search/playersAndMaps/{query.Replace(' ', '_')}");
         public async Task<List<ServerStatusModel>> GetServerStatusAsync() =>
             await GetResponseAsync<List<ServerStatusModel>>("/servers/statusList");
 

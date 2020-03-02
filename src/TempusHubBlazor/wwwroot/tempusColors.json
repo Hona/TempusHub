@@ -1,0 +1,121 @@
+[
+    {
+        "title": "Emperor",
+        "brackets_color": "#000000",
+        "title_color": "#525252",
+        "name_color": "#3838FF",
+        "chat_color": "#87BBFF"
+    },
+    {
+        "title": "King",
+        "brackets_color": "#9F06A6",
+        "title_color": "#8838E0",
+        "name_color": "#F154FF",
+        "chat_color": "#F59EFD"
+    },    
+    {
+        "title": "Archduke",
+        "brackets_color": "#0000B3",
+        "title_color": "#45AAF7",
+        "name_color": "#3C4CA5",
+        "chat_color": "#FFFFFF"
+    },
+    {
+        "title": "Lord",
+        "brackets_color": "#005200",
+        "title_color": "#009900",
+        "name_color": "#626262",
+        "chat_color": "#FFFFFF"
+    },
+    {
+        "title": "Duke",
+        "brackets_color": "#E6DFDF",
+        "title_color": "#2B2828",
+        "name_color": "#FB3C53",
+        "chat_color": "#FFFFFF"
+    },
+    {
+        "title": "Prince",
+        "brackets_color": "#2E6994",
+        "title_color": "#00FFCC",
+        "name_color": "#45AAF7",
+        "chat_color": "#FFFFFF"
+    },    
+    {
+        "title": "Earl",
+        "brackets_color": "#292626",
+        "title_color": "#7D7777",
+        "name_color": "#E8E5E5",
+        "chat_color": "#FFFFFF"
+    },
+    {
+        "title": "Sir",
+        "brackets_color": "#BD5C00",
+        "title_color": "#EC3E00",
+        "name_color": "#FFFFFF",
+        "chat_color": "#FFFFFF"
+    },
+    {
+        "title": "Count",
+        "brackets_color": "#059605",
+        "title_color": "#54AB31",
+        "name_color": "#FFFFFF",
+        "chat_color": "#FFFFFF"
+    },
+    {
+        "title": "Baron",
+        "brackets_color": "#35B7EA",
+        "title_color": "#C567E0",
+        "name_color": "#FFFFFF",
+        "chat_color": "#FFFFFF"
+    },    
+    {
+        "title": "Knight",
+        "brackets_color": "#FF8A8A",
+        "title_color": "#D91818",
+        "name_color": "#FFFFFF",
+        "chat_color": "#FFFFFF"
+    },
+    {
+        "title": "Noble",
+        "brackets_color": "#9EA5CB",
+        "title_color": "#9477D4",
+        "name_color": "#FFFFFF",
+        "chat_color": "#FFFFFF"
+    },
+    {
+        "title": "Esquire",
+        "brackets_color": "#A9B6B3",
+        "title_color": "#45AAF7",
+        "name_color": "#FFFFFF",
+        "chat_color": "#FFFFFF"
+    },
+    {
+        "title": "Jester",
+        "brackets_color": "#C5B1A3",
+        "title_color": "#3EBBA0",
+        "name_color": "#FFFFFF",
+        "chat_color": "#FFFFFF"
+    },    
+    {
+        "title": "Plebeian",
+        "brackets_color": "#C2C2A6",
+        "title_color": "#66924C",
+        "name_color": "#FFFFFF",
+        "chat_color": "#FFFFFF"
+    },
+    {
+        "title": "Peasant",
+        "brackets_color": "#B9B3B3",
+        "title_color": "#AFE06C",
+        "name_color": "#FFFFFF",
+        "chat_color": "#FFFFFF"
+    },
+    {
+        "title": "Peon",
+        "brackets_color": "#A6A6A6",
+        "title_color": "#EFDA3F",
+        "name_color": "#FFFFFF",
+        "chat_color": "#FFFFFF"
+    }
+]
