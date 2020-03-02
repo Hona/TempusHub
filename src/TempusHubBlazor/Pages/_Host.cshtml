@@ -21,6 +21,10 @@
 <body>
     <app>
         @(await Html.RenderComponentAsync<App>(RenderMode.Server))
+
+        <!-- The below two files are needed by BlazorStrap -->
+        <script src="_content/BlazorStrap/blazorStrap.js"></script>
+        <script src="_content/BlazorStrap/popper.min.js"></script>
     </app>
 </body>
 </html>
