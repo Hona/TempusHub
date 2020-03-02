@@ -11,16 +11,18 @@
     <base href="~/" />
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
     <link href="css/site.css" rel="stylesheet" />
-
-    <!-- The below two files are needed by BlazorStrap -->
     <script src="_content/BlazorStrap/blazorStrap.js"></script>
-    <script src="_content/BlazorStrap/popper.min.js"></script>
-
     <link rel="stylesheet" href="_content/BlazorStrap/css/submenu.css" />
 </head>
 <body>
     <app>
         @(await Html.RenderComponentAsync<App>(RenderMode.Server))
     </app>
+
+    <script src="_framework/blazor.server.js"></script>
+
+    <!-- The below two files are needed by BlazorStrap -->
+    <script src="_content/BlazorStrap/blazorStrap.js"></script>
+    <script src="_content/BlazorStrap/popper.min.js"></script>
 </body>
 </html>
