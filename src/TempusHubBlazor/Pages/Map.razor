@@ -151,14 +151,14 @@ else
             ZonedDemomanRecords = FullMapOverView.DemomanRuns;
         }
         else if (ZoneSelector.Contains("c", StringComparison.InvariantCultureIgnoreCase)
-            && int.TryParse(ZoneSelector.Last().ToString(), out var zoneCourseIndex))
+            && int.TryParse(string.Join(string.Empty, ZoneSelector.Skip(1)), out var zoneCourseIndex))
         {
             var zonedTimes = await TempusDataService.GetTopZonedTimes(ParsedMap.Name, "course", zoneCourseIndex);
             ZonedSoldierRecords = zonedTimes.Runs.SoldierRuns.Select(x => x.ToRecordModel()).ToList();
             ZonedDemomanRecords = zonedTimes.Runs.DemomanRuns.Select(x => x.ToRecordModel()).ToList();
         }
         else if (ZoneSelector.Contains("b", StringComparison.InvariantCultureIgnoreCase)
-            && int.TryParse(ZoneSelector.Last().ToString(), out var zoneBonusIndex))
+            && int.TryParse(string.Join(string.Empty, ZoneSelector.Skip(1)), out var zoneBonusIndex))
         {
             var zonedTimes = await TempusDataService.GetTopZonedTimes(ParsedMap.Name, "bonus", zoneBonusIndex);
             ZonedSoldierRecords = zonedTimes.Runs.SoldierRuns.Select(x => x.ToRecordModel()).ToList();
