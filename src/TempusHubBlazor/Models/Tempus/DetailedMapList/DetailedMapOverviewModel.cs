@@ -22,5 +22,6 @@ namespace TempusHubBlazor.Models.Tempus.DetailedMapList
 
         [JsonProperty(PropertyName = "id")]
         public int Id { get; set; }
+        public char IntendedClass { get; set; }
     }
 }

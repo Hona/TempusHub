@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TempusHubBlazor.Constants;
 using TempusHubBlazor.Data;
+using TempusHubBlazor.Logging;
 using TempusHubBlazor.Models;
 using TempusHubBlazor.Models.Tempus.DetailedMapList;
 using TempusHubBlazor.Models.Tempus.Rank;
@@ -134,6 +135,35 @@ namespace TempusHubBlazor.Services
         private async Task UpdateDetailedMapListAsync()
         {
             DetailedMapList = await TempusDataService.GetDetailedMapListAsync();
+            await Task.Run(() =>
+            {
+                var lines = File.ReadAllLines(LocalFileConstants.MapClasses);
+                foreach (var line in lines)
+                {
+                    var lineData = line.Split(',');
+
+                    // Will always only be 1 char, also converts it to a char by calling .First()
+                    var classChar = lineData[0].First();
+                    var mapName = lineData[1];
+                    var matchedDetailedMapInfo = DetailedMapList.FirstOrDefault(x => x.Name.ToLower() == mapName.ToLower());
+                    if (matchedDetailedMapInfo == null)
+                    {
+                        Logger.LogWarning("Could not find map data for: " + mapName);
+                    }
+                    else
+                    {
+                        matchedDetailedMapInfo.IntendedClass = classChar;
+                    }
+                }
+
+                // Check if there are maps with no 
+                var noClassDataMaps = DetailedMapList.Where(x => x.IntendedClass == default).ToArray();
+                for (int i = 0; i < noClassDataMaps.Length; i++)
+                {
+                    Logger.LogWarning("No class data for " + noClassDataMaps[i].Name);
+                    noClassDataMaps[i].IntendedClass = 'B';
+                }
+            });
         }
         private async Task UpdatePlayerLeaderboardsAsync()
         {
