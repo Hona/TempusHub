@@ -9,40 +9,64 @@
 <div class="heading-wrapper">
     <h1 class="slim-center">Tempus Map List</h1>
 </div>
-        <br />
+<br />
 
-        @if (MapList == null || MapList.Count() == 0)
-        {
-            <p><em>Getting map list data...</em></p>
-        }
-        else
-        {
-            <table align="center" class="table table-dark table-bordered slim-center">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th><img width="24" height="24" src="@LocalFileConstants.SoldierIcon" /></th>
-                        <th><img width="24" height="24" src="@LocalFileConstants.DemomanIcon" /></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var map in MapList)
-                    {
-                        <tr>
-                            <td><a href="maps/@map.Name">@map.Name</a></td>
-                            <td>T@(map.TierInfo.Soldier)</td>
-                            <td>T@(map.TierInfo.Demoman)</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
-
-        @code{
-            List<DetailedMapOverviewModel> MapList;
-            protected override void OnInitialized()
+@if (MapList == null || MapList.Count() == 0)
+{
+    <p><em>Getting map list data...</em></p>
+}
+else
+{
+<div class="slim-center">
+    <table align="center" class="table table-dark table-bordered slim-center multi-table">
+        <thead>
+            <tr>
+                <th>Demoman Maps</th>
+                <th><img width="24" height="24" src="@LocalFileConstants.SoldierIcon" /></th>
+                <th><img width="24" height="24" src="@LocalFileConstants.DemomanIcon" /></th>
+            </tr>
+        </thead>
+        <tbody>
+            <!--Demo maps, includes maps that are for both classes-->
+            @foreach (var map in MapList.Where(x => x.IntendedClass != 'S'))
             {
-                MapList = TempusCacheService.DetailedMapList;
+                <tr>
+                    <td><a href="maps/@map.Name">@map.Name</a></td>
+                    <td>T@(map.TierInfo.Soldier)</td>
+                    <td>T@(map.TierInfo.Demoman)</td>
+                </tr>
             }
+        </tbody>
+    </table>
 
-        }
+    <table class="table table-dark table-bordered slim-center multi-table">
+        <thead>
+            <tr>
+                <th>Soldier Maps</th>
+                <th><img width="24" height="24" src="@LocalFileConstants.SoldierIcon" /></th>
+                <th><img width="24" height="24" src="@LocalFileConstants.DemomanIcon" /></th>
+            </tr>
+        </thead>
+        <tbody>
+            <!--Soldier maps, includes maps that are for both classes-->
+            @foreach (var map in MapList.Where(x => x.IntendedClass != 'D'))
+            {
+                <tr>
+                    <td><a href="maps/@map.Name">@map.Name</a></td>
+                    <td>T@(map.TierInfo.Soldier)</td>
+                    <td>T@(map.TierInfo.Demoman)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+}
+
+@code{
+    List<DetailedMapOverviewModel> MapList;
+    protected override void OnInitialized()
+    {
+        MapList = TempusCacheService.DetailedMapList;
+    }
+
+}
