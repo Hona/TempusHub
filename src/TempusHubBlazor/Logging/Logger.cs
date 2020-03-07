@@ -7,19 +7,23 @@ namespace TempusHubBlazor.Logging
 {
     public static class Logger
     {
+        private static object _lock = new object();
         public static void LogInfo(string message) => LogToConsole(new LogMessage(LogType.Info, message));
         public static void LogWarning(string message) => LogToConsole(new LogMessage(LogType.Warning, message));
         public static void LogError(string message, Exception exception = null) => LogToConsole(new LogMessage(LogType.Error, message, exception));
         public static void LogException(Exception exception, string message = null) => LogToConsole(new LogMessage(LogType.Error, message ?? "No extra information.", exception));
         public static void LogToConsole(LogMessage logMessage)
         {
-            PrintSeverityPrefix(logMessage.Severity);
-            Console.WriteLine($" - {logMessage.Message}");
-            
-            if (logMessage.HasException)
+            lock (_lock)
             {
-                Console.WriteLine();
-                Console.WriteLine(logMessage.Exception.ToString());
+                PrintSeverityPrefix(logMessage.Severity);
+                Console.WriteLine($" - {logMessage.Message}");
+
+                if (logMessage.HasException)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine(logMessage.Exception.ToString());
+                }
             }
         }
         private static void PrintSeverityPrefix(LogType severity)
