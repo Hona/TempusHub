@@ -11,4 +11,4 @@ docker build -t tempus-hub ./src/TempusHubBlazor/
 
 echo '-= Runnning the Image (bound to host port 80) =-\n'
 # Bind port '80:' of host to ':80' of container
-docker run --name "tempus-hub-production" -d -p 80:80 -p 443:443 --env-file env-vars.env tempus-hub
+docker run --restart on-failure:5 --name "tempus-hub-production" -d -p 80:80 -p 443:443 --env-file env-vars.env tempus-hub
