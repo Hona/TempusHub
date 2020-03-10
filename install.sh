@@ -1,3 +1,9 @@
+echo '-= Pulling latest Git commit from master =-'
+git pull
+
+echo '-= Latest Commits =-'
+git log -7 --pretty='%h - %s'
+
 # Stop and remove existing production container
 echo '-= Stopping TempusHub Production Container =-'
 docker container stop tempus-hub-production
