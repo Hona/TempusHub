@@ -8,7 +8,7 @@ S,jump_above_rc1
 S,jump_abuq
 S,jump_abyss_rc2
 S,jump_acepogo
-D,jump_adventure
+S,jump_adventure
 S,jump_aggregate_zip
 S,jump_aigis_a4
 D,jump_air
@@ -35,7 +35,7 @@ S,jump_ascent_final
 D,jump_asdf
 S,jump_asshole_a3
 S,jump_ataronchronon_b2
-B,jump_aten_test
+D,jump_aten_test
 S,jump_attached2_rcx
 S,jump_attached_b2
 S,jump_aura_b4
@@ -68,7 +68,7 @@ S,jump_bob_fixed
 S,jump_bojack_v2
 S,jump_bomb
 S,jump_bongwater
-D,jump_bonus
+S,jump_bonus
 S,jump_boredfox2_b1
 S,jump_boredfox_b1
 S,jump_boredgorge
@@ -175,8 +175,8 @@ S,jump_foundation_a2
 S,jump_fox
 D,jump_frayb_a4
 S,jump_free_b2
-B,jump_freezeflame_easy
-B,jump_frost_a1
+S,jump_freezeflame_easy
+S,jump_frost_a1
 D,jump_future_rebuild
 S,jump_gateway_final
 S,jump_gaylord
@@ -190,7 +190,7 @@ D,jump_grape_final
 D,jump_grimace
 D,jump_grotto_rc2
 S,jump_hajnal_finalbeta
-D,jump_half
+S,jump_half
 D,jump_hana
 S,jump_hanami_final_v2
 S,jump_hangar_18
@@ -216,7 +216,7 @@ D,jump_ice_v4
 D,jump_illusion_final
 S,jump_impact
 D,jump_impulse_a2
-B,jump_internal_b4
+D,jump_internal_b4
 D,jump_isak_b4
 S,jump_iser_a3
 S,jump_it_final
@@ -267,7 +267,7 @@ S,jump_manitou
 S,jump_mario_beta1_zip
 S,jump_maso
 S,jump_mirage
-S,jump_mire
+D,jump_mire
 D,jump_mireal2_final
 D,jump_mireal3_final
 D,jump_mireal_tpn
