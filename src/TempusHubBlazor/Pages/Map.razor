@@ -59,7 +59,7 @@ else
                         <BSDropdownItem Href="@("/maps/"+ FullMapOverView.MapInfo.Name + "/c" + index)" OnClick=@(async () => { ZoneSelector = "Course " + index.ToString(); await OnInitializedAsync(); })>@("Course " + index)</BSDropdownItem>
                     }
                 }
-                @if ((FullMapOverView.ZoneCounts.Bonus ?? 0) > 1)
+                @if ((FullMapOverView.ZoneCounts.Bonus ?? 0) >= 1)
                 {
                     for (int i = 1; i <= FullMapOverView.ZoneCounts.Bonus.Value; i++)
                     {
