@@ -93,7 +93,7 @@ namespace TempusHubBlazor.Services
             }
 
             // Get the user IDs as strings
-            var userIdStrings = (usersWithId.Where(user => user?.Id != null).Select(user => user.Id.ToString())).ToList();
+            var userIdStrings = (usersWithId.Where(user => user?.Id != null).Select(user => user.Id.ToString())).ToList().Distinct();
 
             // Query all at once for all users ranks
             var rankTasks = new List<Task<Rank>>();
