@@ -14,7 +14,7 @@ else
 <div>
 <h4><a href="https://youtube.com/channel/@Videos.First().Snippet.ChannelId">@Videos.First().Snippet.ChannelTitle</a></h4>
 <BSCard IsOutline="true" IsInverse="true" CardType="@ParentCardType">
-    @foreach (var video in Videos.Take(VideoCount).ToArray())
+    @foreach (var video in Videos.OrderByDescending(x => x.Snippet.PublishedAt ?? DateTime.MinValue).Take(VideoCount).ToArray())
     {
         <BSCard IsOutline="true" IsInverse="true">
             <a href="@TempusUtilities.GetYoutubeUrl(video.Snippet.ResourceId.VideoId)"><BSCard CardType="CardType.Image" VerticalAlignment="VerticalAlignment.Top" src="@(video.Snippet.Thumbnails.Maxres?.Url ?? video.Snippet.Thumbnails.High.Url)" /></a>

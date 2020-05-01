@@ -38,18 +38,28 @@ namespace TempusHubBlazor.Services
         
         private async Task UpdateAllCachedDataAsync()
         {
-            var tasks = new List<Task>
+            Task allTasks = null;
+            try 
             {
-                 UpdateRecentActivityAsync().ContinueWith((taskOutput) => UpdateRecentActivityWithZonedDataAsync()),
-                 UpdateTopOnlinePlayersAsync(),
-                 UpdateDetailedMapListAsync(),
-                 UpdatePlayerLeaderboardsAsync(),
-                 UpdateServerStatusListAsync(),
-                 UpdateRealNamesAsync(),
-                 UpdateTempusColorsAsync()
-            };
+                var tasks = new List<Task>
+                {
+                    UpdateRecentActivityAsync().ContinueWith((taskOutput) => UpdateRecentActivityWithZonedDataAsync()),
+                    UpdateTopOnlinePlayersAsync(),
+                    UpdateDetailedMapListAsync(),
+                    UpdatePlayerLeaderboardsAsync(),
+                    UpdateServerStatusListAsync(),
+                    UpdateRealNamesAsync(),
+                    UpdateTempusColorsAsync()
+                };
 
-            await Task.WhenAll(tasks);
+                allTasks = Task.WhenAll(tasks);
+
+                await allTasks;
+            }
+            catch (Exception e)
+            {
+                Logger.LogException(e);
+            }
         }
         private async Task UpdateRecentActivityAsync()
         {
@@ -73,7 +83,15 @@ namespace TempusHubBlazor.Services
             var tempTopPlayersOnline = new List<TopPlayerOnline>();
 
             // Get online servers
-            var servers = (await TempusDataService.GetServerStatusAsync()).Where(x => x != null).ToArray();
+            var servers = (await TempusDataService.GetServerStatusAsync()).ToList();
+
+            if (servers.Count == 0)
+            {
+                Logger.LogError("Could not get any server status's");
+                return;
+            }
+
+            servers = servers.Where(x => x != null).ToList();
 
             // Get all valid online users
             var validUsers = servers.Where(x => x.GameInfo != null &&

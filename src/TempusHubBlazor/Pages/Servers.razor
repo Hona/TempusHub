@@ -48,6 +48,11 @@ else
 
     protected override void OnInitialized()
     {
+        if (TempusCacheService.ServerStatusList == null || TempusCacheService.ServerStatusList.Count == 0)
+        {
+            return;
+        }
+
         ServerStatusList = TempusCacheService.ServerStatusList
             .Where(x => x != null && x.ServerInfo != null && x.GameInfo != null && !x.ServerInfo.Hidden)
             .OrderByDescending(x => x.GameInfo.PlayerCount).ToList();
