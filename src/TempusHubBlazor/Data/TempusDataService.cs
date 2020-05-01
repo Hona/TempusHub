@@ -77,13 +77,12 @@ namespace TempusHubBlazor.Data
                 else
                 {
                     Logger.LogError("Couldn't get Tempus API request: " + fullPath);
-                    return default;
+                    throw new Exception("Couldn't get Tempus API request: " + fullPath);
                 }
             }
-            catch (Exception e)
+            catch
             {
-                Logger.LogException(e, "Failed on: " + fullPath);
-                return default;
+                throw new Exception("Failed on: " + fullPath);
             }
         }
 
