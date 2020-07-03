@@ -118,7 +118,8 @@ namespace TempusHubBlazor.Data
                 await TempusHubMySqlService.UpdateCachedRecordAsync(tempNewCache);
             }
             // Check if the cached wr duration is different to the new record
-            else if (cached.CurrentWRDuration.HasValue && cached.CurrentWRDuration.Value != map.RecordInfo.Duration)
+            else if (cached.CurrentWRDuration.HasValue && 
+                     Math.Abs(cached.CurrentWRDuration.Value - map.RecordInfo.Duration) > 0.000000000001)
             {
                 tempNewCache = new MapRecordCache
                 {
