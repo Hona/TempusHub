@@ -44,8 +44,10 @@ namespace TempusHubBlazor.Utilities
         {
             double slowRecord;
             // If the current wr doesn't have a value, it can be assumed there is no old duration
-            if (cache == null || !cache.CurrentWRDuration.HasValue || !cache.OldWRDuration.HasValue)
+            if (cache?.CurrentWRDuration == null || !cache.OldWRDuration.HasValue || 
+                TimesEqual(cache.CurrentWRDuration.Value, cache.OldWRDuration.Value))
             {
+                // Get #2 time
                 slowRecord = cache.ClassId == 4 ? zonedResults.Runs.DemomanRuns.OrderByDuration()[1].Duration 
                     : zonedResults.Runs.SoldierRuns.OrderByDuration()[1].Duration;
             }
@@ -97,6 +99,6 @@ namespace TempusHubBlazor.Utilities
         /// </summary>
         public static bool TimesEqual(double time1, double time2)
         // Allows tolerance past 12 dp
-            => Math.Abs(time1 - time2) > 0.000000000001;
+            => Math.Abs(time1 - time2) < 0.000000000001;
     }
 }
