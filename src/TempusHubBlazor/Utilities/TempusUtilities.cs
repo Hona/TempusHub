@@ -91,5 +91,12 @@ namespace TempusHubBlazor.Utilities
 
             return "https://youtube.com/watch?v=" + id;
         }
+
+        /// <summary>
+        /// Simplifies the accuracy comparison of runs, when they are given in difference dp (12 vs 14)
+        /// </summary>
+        public static bool TimesEqual(double time1, double time2)
+        // Allows tolerance past 12 dp
+            => Math.Abs(time1 - time2) > 0.000000000001;
     }
 }

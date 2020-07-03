@@ -119,7 +119,7 @@ namespace TempusHubBlazor.Data
             }
             // Check if the cached wr duration is different to the new record
             else if (cached.CurrentWRDuration.HasValue && 
-                     Math.Abs(cached.CurrentWRDuration.Value - map.RecordInfo.Duration) > 0.000000000001)
+                     TempusUtilities.TimesEqual(cached.CurrentWRDuration.Value, map.RecordInfo.Duration))
             {
                 tempNewCache = new MapRecordCache
                 {
