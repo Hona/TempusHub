@@ -10,7 +10,7 @@ using TempusHubBlazor.Logging;
 
 namespace TempusHubBlazor.Data
 {
-    public class MySqlDataAccessBase
+    public class MySqlDataAccessBase : IDisposable
     {
         private readonly string _connectionString;
         private MySqlConnection _connection;
