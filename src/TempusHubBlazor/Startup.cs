@@ -30,6 +30,7 @@ namespace TempusHubBlazor
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddControllers();
             var tempusHubMySqlService = new TempusHubMySqlService(Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING"));
             services.AddSingleton(tempusHubMySqlService);
             var tempusDataService = new TempusDataService(tempusHubMySqlService);
@@ -63,13 +64,12 @@ namespace TempusHubBlazor
 
             //app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
+                endpoints.MapControllers();
             });
         }
     }
