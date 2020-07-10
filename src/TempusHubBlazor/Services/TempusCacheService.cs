@@ -82,33 +82,20 @@ namespace TempusHubBlazor.Services
         {
             var tempTopPlayersOnline = new List<TopPlayerOnline>();
 
-            // Get online servers
-            var servers = (await TempusDataService.GetServerStatusAsync()).ToList();
-
-            if (servers.Count == 0)
+            if (ServerStatusList.Count == 0)
             {
                 Logger.LogError("Could not get any server status's");
                 return;
             }
 
-            servers = servers.Where(x => x != null).ToList();
-
             // Get all valid online users
-            var validUsers = servers.Where(x => x.GameInfo != null &&
-                                           (x.GameInfo != null || x.ServerInfo != null ||
-                                            x.GameInfo.Users != null) &&
-                                           x.GameInfo.Users.Count != 0)
-                .SelectMany(x => x.GameInfo.Users);
+            var validUsers = ServerStatusList.Where(x => x.GameInfo != null &&
+                                                (x.GameInfo != null || x.ServerInfo != null ||
+                                                 x.GameInfo.Users != null) &&
+                                                x.GameInfo.Users.Count != 0)
+                .SelectMany(x => x.GameInfo.Users).ToList();
             var usersWithId = validUsers.Where(x => x?.Id != null).ToList();
-            var usersWithoutId = validUsers.Where(x => x != null && x.Id == null);
 
-            if (usersWithoutId.Count() > 0)
-            {
-                var tasks = usersWithoutId.Select(async x => (await TempusDataService.GetSearchResultAsync(x.Name))?.Players?.FirstOrDefault(y => y.SteamId == x.SteamId));
-                var searchResults = await Task.WhenAll(tasks);
-
-                usersWithId.AddRange(searchResults.Where(x => x != null));
-            }
 
             // Get the user IDs as strings
             var userIdStrings = (usersWithId.Where(user => user?.Id != null).Select(user => user.Id.ToString())).ToList().Distinct();
@@ -120,30 +107,43 @@ namespace TempusHubBlazor.Services
 
             // Get the users that actually have a rank (exclude unranks), and select the higher rank
             // Dictionary<User, BestRank>
-            var rankedUsers = ranks.ToDictionary(rank => usersWithId.First(x => x.Id == rank.PlayerInfo.Id), rank =>
-                rank.ClassRankInfo.DemoRank.Rank <= rank.ClassRankInfo.SoldierRank.Rank
-                    ? rank.ClassRankInfo.DemoRank.Rank
-                    : rank.ClassRankInfo.SoldierRank.Rank);
+
+            var classRankedUsers = ranks
+                .Select(rankedUser => new
+                {
+                    rankedUser,
+                    isDemoHigherRank = rankedUser.ClassRankInfo.DemoRank.Rank <=
+                                       rankedUser.ClassRankInfo.SoldierRank.Rank
+                })
+                .Select(classRankedUser => new ClassRank
+                {
+                    Class = classRankedUser.isDemoHigherRank ? 4 : 3,
+                    Player = usersWithId.First(x => x.Id == classRankedUser.rankedUser.PlayerInfo.Id),
+                    Rank = classRankedUser.isDemoHigherRank
+                        ? classRankedUser.rankedUser.ClassRankInfo.DemoRank.Rank
+                        : classRankedUser.rankedUser.ClassRankInfo.SoldierRank.Rank
+                }).ToList();
 
             // Sort by the best rank
-            var output = rankedUsers.OrderBy(x => x.Value);
+            var output = classRankedUsers.OrderBy(x => x.Rank);
 
-            // Limit it to the best 50 players
-            foreach (var (player, rank) in output.Take(50))
+            // Limit it to the best 100 players
+            foreach (var rankedUser in output.Take(100))
             {
-                if (player == null) continue;
-                var server = servers
+                if (rankedUser.Player == null) continue;
+                var server = ServerStatusList
                     .FirstOrDefault(x =>
                         x.GameInfo?.Users != null &&
-                        x.GameInfo.Users.Count(z => (z.Id.HasValue && z.Id == player.Id) || z.SteamId == player.SteamId) != 0);
-                if (server == null || player.Id == null) continue;
+                        x.GameInfo.Users.Count(z => (z.Id.HasValue && z.Id == rankedUser.Player.Id) || z.SteamId == rankedUser.Player.SteamId) != 0);
+                if (server == null || rankedUser.Player.Id == null) continue;
 
                 tempTopPlayersOnline.Add(new TopPlayerOnline
                 {
-                    Id = player.Id.Value,
-                    Rank = rank,
-                    SteamId = player.SteamId,
-                    Name = player.Name,
+                    Id = rankedUser.Player.Id.Value,
+                    Rank = rankedUser.Rank,
+                    RankClass = rankedUser.Class,
+                    SteamId = rankedUser.Player.SteamId,
+                    Name = rankedUser.Player.Name,
                     Server = server
                 });
             }
@@ -195,6 +195,33 @@ namespace TempusHubBlazor.Services
         private async Task UpdateServerStatusListAsync()
         {
             ServerStatusList = await TempusDataService.GetServerStatusAsync();
+
+            var servers = ServerStatusList.Where(x => x != null).ToList();
+
+            // Get all valid online users
+            var validUsers = servers.Where(x => x.GameInfo != null &&
+                                                (x.GameInfo != null || x.ServerInfo != null ||
+                                                 x.GameInfo.Users != null) &&
+                                                x.GameInfo.Users.Count != 0)
+                .SelectMany(x => x.GameInfo.Users).ToList();
+
+            var usersWithoutId = validUsers.Where(x => x != null && x.Id == null).ToList();
+
+            if (usersWithoutId.Any())
+            {
+                var tasks = usersWithoutId.Select(async x => (await TempusDataService.GetSearchResultAsync(x.Name))?.Players?.FirstOrDefault(y => y.SteamId == x.SteamId));
+                var searchResults = await Task.WhenAll(tasks);
+
+                foreach (var server in ServerStatusList.Where(x => x?.GameInfo?.Users != null))
+                {
+                    var nullUsers = server.GameInfo.Users.Where(x => x.Id == null);
+
+                    foreach (var nullUser in nullUsers)
+                    {
+                        nullUser.Id = searchResults.FirstOrDefault(x => x?.SteamId == nullUser.SteamId)?.Id;
+                    }
+                }
+            }
         }
         private async Task UpdateRealNamesAsync()
         {

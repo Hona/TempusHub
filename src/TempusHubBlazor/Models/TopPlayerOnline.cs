@@ -14,5 +14,6 @@ namespace TempusHubBlazor.Models
         public string Name { get; set; }
         public string SteamId { get; set; }
         public ServerStatusModel Server { get; set; }
+        public int RankClass { get; set; }
     }
 }

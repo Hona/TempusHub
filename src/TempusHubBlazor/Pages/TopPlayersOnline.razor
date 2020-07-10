@@ -34,7 +34,7 @@ else
             @foreach (var player in TopPlayerOnline)
             {
                 <tr>
-                    <td>@player.Rank</td>
+                    <td><img width="24" height="24" src="@(player.RankClass == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /> @player.Rank</td>
                     <td><a href="@HrefHelper.GetPlayerInfoPath(player.Id)">@(TempusCacheService.GetRealName(player.Id) ?? player.Name)</a></td>
                     <td><a href="@HrefHelper.GetMapInfoPath(player.Server.GameInfo.CurrentMap)">@player.Server.GameInfo.CurrentMap</a></td>
                     <td><a href="@HrefHelper.GetServerInfoPath(player.Server.ServerInfo.Shortname)">@player.Server.ServerInfo.Shortname</a> | <a href="steam://connect/@player.Server.ServerInfo.Addr:@player.Server.ServerInfo.Port">Connect</a></td>
