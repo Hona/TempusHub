@@ -37,7 +37,7 @@ namespace TempusHubBlazor.Api
                     CurrentPlayers = x.Server.GameInfo.PlayerCount,
                     MaxPlayers = x.Server.GameInfo.MaxPlayers,
                     Alias = x.Server.ServerInfo.Shortname,
-                    IpAddress = x.Server.ServerInfo.Addr,
+                    IpAddress = x.Server.ServerInfo.Addr + ":" + x.Server.ServerInfo.Port,
                     Name = x.Server.ServerInfo.Name
                 }
             });
