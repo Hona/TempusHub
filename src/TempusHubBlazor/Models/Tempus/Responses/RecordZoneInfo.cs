@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TempusHubBlazor.Models.Tempus.Responses
 {
-    public class ZoneInfo
+    public class RecordZoneInfo
     {
         [JsonProperty(PropertyName = "id")]
         public int Id { get; set; }
