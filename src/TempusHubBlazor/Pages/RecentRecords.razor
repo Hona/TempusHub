@@ -76,8 +76,14 @@ else
 
     protected override void OnInitialized()
     {
+        TempusCacheService.DataUpdated += OnDataUpdated;
         LoadData(forceUpdateState: false);
+    }
 
+    private void OnDataUpdated(object sender, EventArgs e)
+    {
+        LoadData();
+        InvokeAsync(StateHasChanged);
     }
 
     void LoadData()

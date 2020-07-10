@@ -1,5 +1,7 @@
 ﻿@page "/topplayersonline"
 
+@using Microsoft.VisualBasic.CompilerServices
+@using TempusHubBlazor.Constants
 @using TempusHubBlazor.Data
 @using TempusHubBlazor.Models.Tempus.Activity
 @using TempusHubBlazor.Models.Tempus.Responses
@@ -15,7 +17,7 @@
 </div>
 <br />
 
-@if (TopPlayerOnline == null || TopPlayerOnline.Count == 0)
+@if (_topPlayerOnline == null || _topPlayerOnline.Count == 0)
 {
     <p><em>Getting top player online data...</em></p>
 }
@@ -31,7 +33,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var player in TopPlayerOnline)
+            @foreach (var player in _topPlayerOnline)
             {
                 <tr>
                     <td><img width="24" height="24" src="@(player.RankClass == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /> @player.Rank</td>
@@ -45,15 +47,23 @@ else
 }
 
 @code {
-    List<TopPlayerOnline> TopPlayerOnline = new List<TopPlayerOnline>();
+    List<TopPlayerOnline> _topPlayerOnline = new List<TopPlayerOnline>();
 
     protected override void OnInitialized()
     {
+        TempusCacheService.DataUpdated += OnDataUpdated;
+
         LoadData();
     }
 
     void LoadData()
     {
-        TopPlayerOnline = TempusCacheService.TopPlayersOnline;
+        _topPlayerOnline = TempusCacheService.TopPlayersOnline;
+    }
+
+    private void OnDataUpdated(object sender, EventArgs e)
+    {
+        LoadData();
+        InvokeAsync(StateHasChanged);
     }
 }

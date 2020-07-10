@@ -48,6 +48,8 @@ else
 
     protected override void OnInitialized()
     {
+        TempusCacheService.DataUpdated += OnDataUpdated;
+
         if (TempusCacheService.ServerStatusList == null || TempusCacheService.ServerStatusList.Count == 0)
         {
             return;
@@ -58,4 +60,9 @@ else
             .OrderByDescending(x => x.GameInfo.PlayerCount).ToList();
     }
 
+    private void OnDataUpdated(object sender, EventArgs e)
+    {
+        ServerStatusList = TempusCacheService.ServerStatusList;
+        InvokeAsync(StateHasChanged);
+    }
 }
