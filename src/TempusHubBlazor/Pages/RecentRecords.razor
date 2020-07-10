@@ -12,6 +12,9 @@
 
 @inject TempusDataService TempusDataService
 @inject TempusCacheService TempusCacheService
+
+@implements IDisposable
+
 <div class="heading-wrapper">
     <h1 class="slim-center">Recent Records</h1><BSDropdown DropdownDirection="DropdownDirection.Left" Class="bsDropDown">
         <BSDropdownToggle Color="Color.Primary">@RecentRecordType.ToStandardCasing()</BSDropdownToggle>
@@ -125,5 +128,10 @@ else
         {
             base.StateHasChanged();
         }
+    }
+
+    public void Dispose()
+    {
+        TempusCacheService.DataUpdated -= OnDataUpdated;
     }
 }

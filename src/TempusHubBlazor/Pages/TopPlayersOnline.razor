@@ -12,6 +12,8 @@
 @inject TempusDataService TempusDataService
 @inject TempusCacheService TempusCacheService
 
+@implements IDisposable
+
 <div class="heading-wrapper">
     <h1 class="slim-center">Top Players Online</h1>
 </div>
@@ -65,5 +67,10 @@ else
     {
         LoadData();
         InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        TempusCacheService.DataUpdated -= OnDataUpdated;
     }
 }

@@ -5,6 +5,9 @@
 @using TempusHubBlazor.Utilities
 
 @inject TempusCacheService TempusCacheService
+
+@implements IDisposable
+
 <div class="heading-wrapper">
     <h1 class="slim-center">Servers</h1>
 </div>
@@ -64,5 +67,10 @@ else
     {
         ServerStatusList = TempusCacheService.ServerStatusList;
         InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        TempusCacheService.DataUpdated -= OnDataUpdated;
     }
 }
