@@ -19,6 +19,7 @@ namespace TempusHubBlazor.Services
     {
         private readonly Timer _updateTimer;
         private readonly TempusDataService TempusDataService;
+        public event EventHandler DataUpdated;
         public RecentActivityModel RecentActivity { get; private set; }
         public RecentActivityWithZonedData RecentActivityWithZonedData { get; private set; } = new RecentActivityWithZonedData();
         public List<TopPlayerOnline> TopPlayersOnline { get; private set; } = new List<TopPlayerOnline>();
@@ -38,23 +39,29 @@ namespace TempusHubBlazor.Services
         
         private async Task UpdateAllCachedDataAsync()
         {
-            Task allTasks = null;
             try 
             {
                 var tasks = new List<Task>
                 {
-                    UpdateRecentActivityAsync().ContinueWith((taskOutput) => UpdateRecentActivityWithZonedDataAsync()),
-                    UpdateTopOnlinePlayersAsync(),
+                    Task.Run(async () =>
+                    {
+                        await UpdateRecentActivityAsync();
+                        await UpdateRecentActivityWithZonedDataAsync();
+                    }),
                     UpdateDetailedMapListAsync(),
                     UpdatePlayerLeaderboardsAsync(),
-                    UpdateServerStatusListAsync(),
+                    Task.Run(async () =>
+                    {
+                        await UpdateServerStatusListAsync();
+                        await UpdateTopOnlinePlayersAsync();
+                    }),
                     UpdateRealNamesAsync(),
                     UpdateTempusColorsAsync()
                 };
 
-                allTasks = Task.WhenAll(tasks);
-
-                await allTasks;
+                await Task.WhenAll(tasks);
+                // Refreshes any clients
+                OnDataUpdated(EventArgs.Empty);
             }
             catch (Exception e)
             {
@@ -243,5 +250,8 @@ namespace TempusHubBlazor.Services
         {
             return RealNames.FirstOrDefault(x => x.Id == tempusId)?.RealName;
         }
+
+        protected virtual void OnDataUpdated(EventArgs e) 
+            => DataUpdated?.Invoke(this, e);
     }
 }
