@@ -41,6 +41,8 @@ namespace TempusHubBlazor
             services.AddSingleton(tempusDataService);
             services.AddSingleton(new TempusCacheService(tempusDataService));
             services.AddSingleton<YoutubeAPIService>();
+
+            services.AddSwaggerGen();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,6 +63,9 @@ namespace TempusHubBlazor
             {
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "TempusHub API V1"); });
 
             //app.UseHttpsRedirection();
             app.UseStaticFiles();
