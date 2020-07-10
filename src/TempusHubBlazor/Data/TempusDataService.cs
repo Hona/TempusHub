@@ -136,8 +136,8 @@ namespace TempusHubBlazor.Data
 
             return tempNewCache;
         }
-        public async Task<ZonedRecordsModel> GetTopZonedTimes(string mapName, string zoneType, int zoneId = 1) 
-            => await GetResponseAsync<ZonedRecordsModel>($"/maps/name/{mapName}/zones/typeindex/{zoneType}/{zoneId}/records/list");
+        public async Task<ZonedRecordsModel> GetTopZonedTimes(string mapName, string zoneType, int zoneIndex = 1) 
+            => await GetResponseAsync<ZonedRecordsModel>($"/maps/name/{mapName}/zones/typeindex/{zoneType}/{zoneIndex}/records/list");
         public async Task<RecentActivityModel> GetRecentActivityAsync()
         {
             var activity = await GetResponseAsync<RecentActivityModel>("/activity");
