@@ -15,6 +15,7 @@ using Newtonsoft.Json;
 using TempusHubBlazor.Models.MySQL;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Web;
 using TempusHubBlazor.Models.Tempus.Activity;
 using TempusHubBlazor.Models;
 using TempusHubBlazor.Utilities;
@@ -164,7 +165,7 @@ namespace TempusHubBlazor.Data
             return activity;
         }
         public async Task<PlayerMapSearchResult> GetSearchResultAsync(string query) =>
-            await GetResponseAsync<PlayerMapSearchResult>($"/search/playersAndMaps/{query.Replace(' ', '_').Replace('/', '_')}");
+            await GetResponseAsync<PlayerMapSearchResult>($"/search/playersAndMaps/{HttpUtility.UrlEncode(query)}");
         public async Task<List<ServerStatusModel>> GetServerStatusAsync() =>
             await GetResponseAsync<List<ServerStatusModel>>("/servers/statusList");
 
