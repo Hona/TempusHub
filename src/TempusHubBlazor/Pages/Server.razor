@@ -6,6 +6,7 @@
 @using TempusHubBlazor.Models.Tempus.Responses
 @using TempusHubBlazor.Services
 @using TempusHubBlazor.Utilities
+@using TempusHubBlazor.Constants
 
 @inject TempusDataService TempusDataService
 @inject TempusCacheService TempusCacheService
@@ -34,10 +35,17 @@
     <tbody>
         @foreach (var user in RankedPlayers)
         {
-        <tr>
-            <td>@(user.Rank.HasValue ? user.Rank.Value.ToString() : "None")</td>
-            <td><a href="@HrefHelper.GetPlayerInfoPath(user.Player.Id ?? 0)">@(TempusCacheService.GetRealName(user.Player.Id ?? 0) ?? user.Player.Name)</a></td>
-        </tr>
+            <tr>
+                @if (user.Rank.HasValue)
+                {
+                    <td><img width="24" height="24" src="@(user.Class == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)"/> @(user.Rank.Value.ToString())</td>
+                }
+                else
+                {
+                    <td>Unranked</td>
+                }
+                <td><a href="@HrefHelper.GetPlayerInfoPath(user.Player.Id ?? 0)">@(TempusCacheService.GetRealName(user.Player.Id ?? 0) ?? user.Player.Name)</a></td>
+            </tr>
         }
     </tbody>
 </table>
@@ -89,18 +97,27 @@ else {
             }
         }
 
-        if (ServerInfo.GameInfo.Users != null || ServerInfo.GameInfo.Users.Count > 0)
+        if (ServerInfo?.GameInfo.Users != null && ServerInfo.GameInfo.Users.Count > 0)
         {
             foreach (var user in ServerInfo.GameInfo.Users)
             {
-                var rankedUser = TempusCacheService.TopPlayersOnline.FirstOrDefault(x => (x.Id == user.Id) || x.SteamId == user.SteamId);
+                var rankedUser = TempusCacheService.TopPlayersOnline.FirstOrDefault(x => x.Id == user.Id || x.SteamId == user.SteamId);
                 RankedPlayers.Add(new RankedServerPlayerModel
                 {
                     Player = user,
-                    Rank = rankedUser != null ? rankedUser.Rank : (int?)null
+                    Rank = rankedUser?.Rank ?? (int?)int.MaxValue,
+                    Class = rankedUser?.RankClass ?? 0
                 });
             }
-            RankedPlayers.OrderByDescending(x => x.Rank);
+            RankedPlayers = RankedPlayers
+                .OrderBy(x => x.Rank)
+                .ToList();
+
+            // Replace temporary rank for sorting back to null
+            foreach (var rankedPlayer in RankedPlayers.Where(rankedPlayer => rankedPlayer.Rank.HasValue && rankedPlayer.Rank == int.MaxValue))
+            {
+                rankedPlayer.Rank = null;
+            }
         }
 
         Demos = await TempusDataService.GetServerDemosAsync(ServerInfo.ServerInfo.Id);
