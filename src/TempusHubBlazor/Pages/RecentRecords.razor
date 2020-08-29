@@ -120,4 +120,6 @@ else
             base.StateHasChanged();
         }
     }
+
+    protected override async Task OnParametersSetAsync() => await OnInitializedAsync();
 }

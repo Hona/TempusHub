@@ -96,4 +96,6 @@ else
         HigherRankInfo = PlayerStats.ClassRankInfo.DemoRank.Rank <= PlayerStats.ClassRankInfo.SoldierRank.Rank ? (BaseRank)PlayerStats.ClassRankInfo.DemoRank : (BaseRank)PlayerStats.ClassRankInfo.SoldierRank;
         RankColor = TempusCacheService.TempusRankColors.First(x => x.Title.ToLower() == HigherRankInfo.Title.ToLower());
     }
+
+    protected override async Task OnParametersSetAsync() => await OnInitializedAsync();
 }

@@ -73,4 +73,6 @@ else
                 throw new Exception("No rank for that type");
         }
     }
+
+    protected override async Task OnParametersSetAsync() => await OnInitializedAsync();
 }

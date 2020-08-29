@@ -56,4 +56,6 @@ else
     {
         TopPlayerOnline = TempusCacheService.TopPlayersOnline;
     }
+
+    protected override void OnParametersSet() => LoadData();
 }

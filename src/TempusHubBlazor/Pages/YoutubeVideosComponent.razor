@@ -14,14 +14,14 @@ else
 <div>
 <h4><a href="https://youtube.com/channel/@Videos.First().Snippet.ChannelId">@Videos.First().Snippet.ChannelTitle</a></h4>
 <BSCard IsOutline="true" IsInverse="true" CardType="@ParentCardType">
-    @foreach (var video in Videos.OrderByDescending(x => x.Snippet.PublishedAt ?? DateTime.MinValue).Take(VideoCount).ToArray())
+    @foreach (var video in Videos.OrderByDescending(x => x.Snippet.PublishedAt != null ? DateTime.Parse(x.Snippet.PublishedAt, null, System.Globalization.DateTimeStyles.RoundtripKind) : DateTime.MinValue).Take(VideoCount).ToArray())
     {
         <BSCard IsOutline="true" IsInverse="true">
             <a href="@TempusUtilities.GetYoutubeUrl(video.Snippet.ResourceId.VideoId)"><BSCard CardType="CardType.Image" VerticalAlignment="VerticalAlignment.Top" src="@(video.Snippet.Thumbnails.Maxres?.Url ?? video.Snippet.Thumbnails.High.Url)" /></a>
             <BSCard IsOutline="true" IsInverse="true" CardType="CardType.Body">
                 <BSCard IsOutline="true" IsInverse="true" CardType="CardType.Title"><a href="@TempusUtilities.GetYoutubeUrl(video.Snippet.ResourceId.VideoId)">@video.Snippet.Title</a></BSCard>
                 <BSCard IsOutline="true" IsInverse="true" CardType="CardType.Subtitle">@(new string(video.Snippet.Description.Take(50).ToArray())+"...")</BSCard>
-                <BSCard IsOutline="true" IsInverse="true" CardType="CardType.Text"><small class="text-muted">@video.Snippet.PublishedAt.Value.GetTimeStringSinceDateTime()</small></BSCard>
+                <BSCard IsOutline="true" IsInverse="true" CardType="CardType.Text"><small class="text-muted">@DateTime.Parse(video.Snippet.PublishedAt, null, System.Globalization.DateTimeStyles.RoundtripKind).GetTimeStringSinceDateTime())</small></BSCard>
             </BSCard>
         </BSCard>
     }
@@ -45,4 +45,7 @@ else
     {
         Videos = await YoutubeAPIService.GetAllVideosAsync(Channel, IsId, pages:1);
     }
+
+    protected override async Task OnParametersSetAsync() => await OnInitializedAsync();
+
 }

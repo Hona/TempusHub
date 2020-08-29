@@ -172,4 +172,6 @@ else
         var parsedMapName = TempusDataService.ParseMapName(partialName);
         return TempusCacheService.DetailedMapList.FirstOrDefault(x => x.Name == parsedMapName);
     }
+
+    protected override async Task OnParametersSetAsync() => await OnInitializedAsync();
 }
