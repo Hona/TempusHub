@@ -19,10 +19,8 @@
         @(await Html.RenderComponentAsync<App>(RenderMode.Server))
     </app>
 
-    <script src="_framework/blazor.server.js"></script>
-
-    <!-- The below two files are needed by BlazorStrap -->
-    <script src="_content/BlazorStrap/blazorStrap.js"></script>
-    <script src="_content/BlazorStrap/popper.min.js"></script>
+<script src="_framework/blazor.server.js"></script>
+<script src="js/interop_scripts.js"></script>
+<script src="_content/BlazorStrap/popper.min.js"></script>
 </body>
 </html>
