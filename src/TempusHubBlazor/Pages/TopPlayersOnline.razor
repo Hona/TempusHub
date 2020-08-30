@@ -73,4 +73,6 @@ else
     {
         TempusCacheService.DataUpdated -= OnDataUpdated;
     }
+
+    protected override void OnParametersSet() => LoadData();
 }

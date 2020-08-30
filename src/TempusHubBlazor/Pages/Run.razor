@@ -59,4 +59,6 @@ else
             RunInfo = null;
         }
     }
+
+    protected override async Task OnParametersSetAsync() => await OnInitializedAsync();
 }

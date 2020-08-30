@@ -92,8 +92,13 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        PlayerStats = await TempusDataService.GetUserStatsAsync(PlayerId);
+        var playerStats = await TempusDataService.GetUserStatsAsync(PlayerId);
+        playerStats.ClassRankInfo.DemoRank.Title ??= "Peon";
+        playerStats.ClassRankInfo.SoldierRank.Title ??= "Peon";
+        PlayerStats = playerStats;
         HigherRankInfo = PlayerStats.ClassRankInfo.DemoRank.Rank <= PlayerStats.ClassRankInfo.SoldierRank.Rank ? (BaseRank)PlayerStats.ClassRankInfo.DemoRank : (BaseRank)PlayerStats.ClassRankInfo.SoldierRank;
-        RankColor = TempusCacheService.TempusRankColors.First(x => x.Title.ToLower() == HigherRankInfo.Title.ToLower());
+        RankColor = TempusCacheService.TempusRankColors.First(x => string.Equals(x.Title, HigherRankInfo.Title ?? "Peon", StringComparison.CurrentCultureIgnoreCase));
     }
+
+    protected override async Task OnParametersSetAsync() => await OnInitializedAsync();
 }

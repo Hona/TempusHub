@@ -1,0 +1,69 @@
+﻿@using InputType = BlazorStrap.InputType
+@using TempusHubBlazor.Utilities
+@using TempusHubBlazor.Models.Tempus.Responses
+@using TempusHubBlazor.Data
+
+@inject TempusDataService TempusDataService
+@inject IJSRuntime JSRuntime
+
+<BSDropdown>
+    <BSBasicInput Class="search-bar" InputType="InputType.Text" PlaceHolder="Search"
+                  Value="@SearchText" ValueChanged="async (string search) => await SearchChanged(search)"
+                  @onkeydown="OnKeyDown" />
+    <BSDropdownToggle id="searchButton" IsSplit="false" Color="Color.Primary"><span class="oi oi-magnifying-glass"></span></BSDropdownToggle>
+    <BSDropdownMenu class="dropdown-style" @ref="DropdownMenu">
+        @if (PlayerMapSearchResult != null)
+        {
+            if (PlayerMapSearchResult.Maps.Any())
+            {
+                <BSDropdownHeader>Maps</BSDropdownHeader>
+            }
+            foreach (var map in PlayerMapSearchResult.Maps)
+            {
+                <BSDropdownItem class="dropdown-style" href="@HrefHelper.GetMapInfoPath(map.Name)">@map.Name</BSDropdownItem>
+            }
+            if (PlayerMapSearchResult.Maps.Any() && PlayerMapSearchResult.Players.Any())
+            {
+                <BSDropdownItem IsDivider="true"/>
+            }
+            if (PlayerMapSearchResult.Players.Any())
+            {
+                <BSDropdownHeader>Players</BSDropdownHeader>
+            }
+            foreach (var player in PlayerMapSearchResult.Players)
+            {
+                <BSDropdownItem class="dropdown-style" href="@HrefHelper.GetPlayerInfoPath(player.Id ?? 0)">@player.Name</BSDropdownItem>
+            }
+        }
+        else
+        {
+            <BSDropdownItem class="spinner-item"><div class="spinner"></div></BSDropdownItem>
+        }
+    </BSDropdownMenu>
+</BSDropdown>
+@code {
+    public PlayerMapSearchResult PlayerMapSearchResult { get; set; }
+    public string SearchText { get; set; }
+    public BSDropdownMenu DropdownMenu { get; set; }
+    public async Task SearchChanged(string search)
+    {
+        SearchText = search;
+        PlayerMapSearchResult = null;
+        if (!string.IsNullOrWhiteSpace(SearchText))
+        {
+            PlayerMapSearchResult = await TempusDataService.GetSearchResultAsync(SearchText);
+        }
+    }
+
+    private async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (string.Equals(e.Key, "Enter", StringComparison.InvariantCultureIgnoreCase) ||
+            string.Equals(e.Key, "Return", StringComparison.InvariantCultureIgnoreCase) ||
+            string.Equals(e.Key, "NumpadEnter", StringComparison.InvariantCultureIgnoreCase))
+        {
+            await JSRuntime.InvokeVoidAsync(
+                "searchFunctions.clickSearch",
+                "searchButton");
+        }
+    }
+}

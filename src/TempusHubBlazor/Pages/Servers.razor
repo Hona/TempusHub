@@ -59,10 +59,12 @@ else
         }
 
         ServerStatusList = TempusCacheService.ServerStatusList
-            .Where(x => x != null && x.ServerInfo != null && x.GameInfo != null && !x.ServerInfo.Hidden)
+            .Where(x => x?.ServerInfo != null && x.GameInfo != null && !x.ServerInfo.Hidden)
             .OrderByDescending(x => x.GameInfo.PlayerCount).ToList();
     }
 
+    protected override void OnParametersSet() => OnInitialized();
+      
     private void OnDataUpdated(object sender, EventArgs e)
     {
         ServerStatusList = TempusCacheService.ServerStatusList;

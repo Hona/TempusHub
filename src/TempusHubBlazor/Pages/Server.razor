@@ -80,6 +80,7 @@ else {
     public List<RankedServerPlayerModel> RankedPlayers { get; set; } = new List<RankedServerPlayerModel>();
     public ServerStatusModel ServerInfo { get; set; }
     public List<ServerDemoModel> Demos { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         if (int.TryParse(ServerParam, out var serverId))
@@ -122,4 +123,6 @@ else {
 
         Demos = await TempusDataService.GetServerDemosAsync(ServerInfo.ServerInfo.Id);
     }
+
+    protected override async Task OnParametersSetAsync() => await OnInitializedAsync();
 }
