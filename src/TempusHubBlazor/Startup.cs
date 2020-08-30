@@ -31,6 +31,7 @@ namespace TempusHubBlazor
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddControllers();
             var tempusHubMySqlService = new TempusHubMySqlService(Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING"));
             services.AddSingleton(tempusHubMySqlService);
             var tempusDataService = new TempusDataService(tempusHubMySqlService);
@@ -42,6 +43,7 @@ namespace TempusHubBlazor
             services.AddSingleton(new TempusCacheService(tempusDataService));
             services.AddSingleton<YoutubeAPIService>();
             services.AddBootstrapCss();
+            services.AddSwaggerGen();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -55,7 +57,6 @@ namespace TempusHubBlazor
             {
                 app.UseExceptionHandler("/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
             }
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
@@ -63,15 +64,17 @@ namespace TempusHubBlazor
                 ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
             });
 
+            app.UseSwagger();
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "TempusHub API V1"); });
+
             //app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
+                endpoints.MapControllers();
             });
         }
     }

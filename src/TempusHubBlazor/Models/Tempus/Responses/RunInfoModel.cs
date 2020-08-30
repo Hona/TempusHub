@@ -18,7 +18,7 @@ namespace TempusHubBlazor.Models.Tempus.Responses
         [JsonProperty(PropertyName = "tier_info")]
         public TierInfoModel TierInfo { get; set; }
         [JsonProperty(PropertyName = "zone_info")]
-        public ZoneInfo ZoneInfo { get; set; }
+        public RecordZoneInfo RecordZoneInfo { get; set; }
         [JsonProperty(PropertyName = "map_info")]
         public MapInfoModel MapInfo { get; set; }
     }

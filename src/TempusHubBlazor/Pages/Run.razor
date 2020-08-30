@@ -33,7 +33,7 @@ else
             <tr>
                 <td><img width="24" height="24" src="@(RunInfo.RecordInfo.Class == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /></td>
                 <td><a href="@HrefHelper.GetPlayerInfoPath(RunInfo.Player.Id ?? 0)">@(TempusCacheService.GetRealName(RunInfo.Player.Id ?? 0) ?? RunInfo.Player.Name)</a></td>
-                <td>@(RunInfo.ZoneInfo.Type.ToLower() == "map" ? "Map" : RunInfo.ZoneInfo.Type.ToStandardCasing() + " " + RunInfo.ZoneInfo.ZoneIndex)</td>
+                <td>@(RunInfo.RecordZoneInfo.Type.ToLower() == "map" ? "Map" : RunInfo.RecordZoneInfo.Type.ToStandardCasing() + " " + RunInfo.RecordZoneInfo.ZoneIndex)</td>
                 <td>#@RunInfo.RecordInfo.Rank: @(TempusUtilities.FormattedDuration(RunInfo.RecordInfo.Duration))</td>
                 <td>@TempusUtilities.GetDateFromSeconds(RunInfo.RecordInfo.Date).GetTimeStringSinceDateTime()</td>
             </tr>

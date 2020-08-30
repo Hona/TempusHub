@@ -1,5 +1,7 @@
 ﻿@page "/topplayersonline"
 
+@using Microsoft.VisualBasic.CompilerServices
+@using TempusHubBlazor.Constants
 @using TempusHubBlazor.Data
 @using TempusHubBlazor.Models.Tempus.Activity
 @using TempusHubBlazor.Models.Tempus.Responses
@@ -10,12 +12,14 @@
 @inject TempusDataService TempusDataService
 @inject TempusCacheService TempusCacheService
 
+@implements IDisposable
+
 <div class="heading-wrapper">
     <h1 class="slim-center">Top Players Online</h1>
 </div>
 <br />
 
-@if (TopPlayerOnline == null || TopPlayerOnline.Count == 0)
+@if (_topPlayerOnline == null || _topPlayerOnline.Count == 0)
 {
     <p><em>Getting top player online data...</em></p>
 }
@@ -31,10 +35,10 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var player in TopPlayerOnline)
+            @foreach (var player in _topPlayerOnline)
             {
                 <tr>
-                    <td>@player.Rank</td>
+                    <td><img width="24" height="24" src="@(player.RankClass == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /> @player.Rank</td>
                     <td><a href="@HrefHelper.GetPlayerInfoPath(player.Id)">@(TempusCacheService.GetRealName(player.Id) ?? player.Name)</a></td>
                     <td><a href="@HrefHelper.GetMapInfoPath(player.Server.GameInfo.CurrentMap)">@player.Server.GameInfo.CurrentMap</a></td>
                     <td><a href="@HrefHelper.GetServerInfoPath(player.Server.ServerInfo.Shortname)">@player.Server.ServerInfo.Shortname</a> | <a href="steam://connect/@player.Server.ServerInfo.Addr:@player.Server.ServerInfo.Port">Connect</a></td>
@@ -45,16 +49,29 @@ else
 }
 
 @code {
-    List<TopPlayerOnline> TopPlayerOnline = new List<TopPlayerOnline>();
+    List<TopPlayerOnline> _topPlayerOnline = new List<TopPlayerOnline>();
 
     protected override void OnInitialized()
     {
+        TempusCacheService.DataUpdated += OnDataUpdated;
+
         LoadData();
     }
 
     void LoadData()
     {
-        TopPlayerOnline = TempusCacheService.TopPlayersOnline;
+        _topPlayerOnline = TempusCacheService.TopPlayersOnline;
+    }
+
+    private void OnDataUpdated(object sender, EventArgs e)
+    {
+        LoadData();
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        TempusCacheService.DataUpdated -= OnDataUpdated;
     }
 
     protected override void OnParametersSet() => LoadData();

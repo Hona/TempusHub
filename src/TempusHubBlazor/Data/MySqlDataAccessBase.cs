@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using Dapper.FluentMap;
@@ -10,8 +11,9 @@ using TempusHubBlazor.Logging;
 
 namespace TempusHubBlazor.Data
 {
-    public class MySqlDataAccessBase
+    public class MySqlDataAccessBase : IDisposable
     {
+        private SemaphoreSlim _queryLock = new SemaphoreSlim(1, 1);
         private readonly string _connectionString;
         private MySqlConnection _connection;
 
@@ -48,6 +50,7 @@ namespace TempusHubBlazor.Data
         {
             try
             {
+                await _queryLock.WaitAsync();
                 await CheckConnectionAsync();
                 var result = (await _connection.QueryAsync<T>(query)).ToList();
                 return result;
@@ -57,12 +60,17 @@ namespace TempusHubBlazor.Data
                 Logger.LogException(e);
                 return null;
             }
+            finally
+            {
+                _queryLock.Release();
+            }
         }
 
         protected async Task<List<T>> QueryAsync<T>(string query, object param)
         {
             try
             {
+                await _queryLock.WaitAsync();
                 await CheckConnectionAsync();
                 var result = (await _connection.QueryAsync<T>(query, param)).ToList();
                 return result;
@@ -72,18 +80,27 @@ namespace TempusHubBlazor.Data
                 Logger.LogException(e);
                 return null;
             }
+            finally
+            {
+                _queryLock.Release();
+            }
         }
 
         protected async Task ExecuteAsync(string query, object param)
         {
             try
             {
+                await _queryLock.WaitAsync();
                 await CheckConnectionAsync();
                 await _connection.ExecuteAsync(query, param);
             }
             catch (Exception e)
             {
                 Logger.LogException(e);
+            }
+            finally
+            {
+                _queryLock.Release();
             }
         }
 

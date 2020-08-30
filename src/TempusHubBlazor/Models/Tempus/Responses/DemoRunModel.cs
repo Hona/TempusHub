@@ -13,7 +13,7 @@ namespace TempusHubBlazor.Models.Tempus.Responses
         [JsonProperty(PropertyName = "run_type")]
         public string RunType { get; set; }
         [JsonProperty(PropertyName = "zone_info")]
-        public ZoneInfo ZoneInfo { get; set; }
+        public RecordZoneInfo RecordZoneInfo { get; set; }
         [JsonProperty(PropertyName = "zone_run_info")]
         public DemoRecordModel RunInfo { get; set; }
     }

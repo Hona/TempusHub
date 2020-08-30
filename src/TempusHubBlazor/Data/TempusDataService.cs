@@ -15,6 +15,7 @@ using Newtonsoft.Json;
 using TempusHubBlazor.Models.MySQL;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Web;
 using TempusHubBlazor.Models.Tempus.Activity;
 using TempusHubBlazor.Models;
 using TempusHubBlazor.Utilities;
@@ -118,7 +119,8 @@ namespace TempusHubBlazor.Data
                 await TempusHubMySqlService.UpdateCachedRecordAsync(tempNewCache);
             }
             // Check if the cached wr duration is different to the new record
-            else if (cached.CurrentWRDuration.HasValue && cached.CurrentWRDuration.Value != map.RecordInfo.Duration)
+            else if (cached.CurrentWRDuration.HasValue && 
+                     !TempusUtilities.TimesEqual(cached.CurrentWRDuration.Value, map.RecordInfo.Duration))
             {
                 tempNewCache = new MapRecordCache
                 {
@@ -135,8 +137,8 @@ namespace TempusHubBlazor.Data
 
             return tempNewCache;
         }
-        public async Task<ZonedRecordsModel> GetTopZonedTimes(string mapName, string zoneType, int zoneId = 1) 
-            => await GetResponseAsync<ZonedRecordsModel>($"/maps/name/{mapName}/zones/typeindex/{zoneType}/{zoneId}/records/list");
+        public async Task<ZonedRecordsModel> GetTopZonedTimes(string mapName, string zoneType, int zoneIndex = 1) 
+            => await GetResponseAsync<ZonedRecordsModel>($"/maps/name/{mapName}/zones/typeindex/{zoneType}/{zoneIndex}/records/list");
         public async Task<RecentActivityModel> GetRecentActivityAsync()
         {
             var activity = await GetResponseAsync<RecentActivityModel>("/activity");
@@ -163,7 +165,7 @@ namespace TempusHubBlazor.Data
             return activity;
         }
         public async Task<PlayerMapSearchResult> GetSearchResultAsync(string query) =>
-            await GetResponseAsync<PlayerMapSearchResult>($"/search/playersAndMaps/{query.Replace(' ', '_').Replace('/', '_')}");
+            await GetResponseAsync<PlayerMapSearchResult>($"/search/playersAndMaps/{HttpUtility.UrlEncode(query)}");
         public async Task<List<ServerStatusModel>> GetServerStatusAsync() =>
             await GetResponseAsync<List<ServerStatusModel>>("/servers/statusList");
 
