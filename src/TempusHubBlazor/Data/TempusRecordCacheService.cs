@@ -81,7 +81,7 @@ namespace TempusHubBlazor.Data
         }
         private async Task CacheRecordAsync(int mapId, int classId, double duration, string zoneType, int zoneIndex)
         {
-            await TempusDataService.UpdateCachedWRDataAsync(null, new TempusRecordBase
+            await TempusDataService.UpdateCachedWrDataAsync(null, new TempusRecordBase
             {
                 CachedTime = null,
                 MapInfo = new MapInfo

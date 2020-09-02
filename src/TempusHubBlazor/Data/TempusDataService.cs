@@ -28,45 +28,47 @@ namespace TempusHubBlazor.Data
         public TempusDataService(TempusHubMySqlService dataService)
         {
             TempusHubMySqlService = dataService;
-            TempusRecordCacheService = new TempusRecordCacheService(this);
+            _tempusRecordCacheService = new TempusRecordCacheService(this);
             UpdateMapListAsync().GetAwaiter().GetResult();
         }
         public async Task CacheAllWRsAsync()
         {
-            await TempusRecordCacheService.CacheAllRecordsAsync();
+            await _tempusRecordCacheService.CacheAllRecordsAsync().ConfigureAwait(false);
         }
-        private static readonly HttpClient _httpClient = new HttpClient
+        private static readonly HttpClient HttpClient = new HttpClient
         {
             BaseAddress = new Uri("https://tempus.xyz")
         };
-        private readonly TempusRecordCacheService TempusRecordCacheService;   
-        public TempusHubMySqlService TempusHubMySqlService { get; set; }
+        private readonly TempusRecordCacheService _tempusRecordCacheService;
+        private TempusHubMySqlService TempusHubMySqlService { get; }
         private static readonly Stopwatch Stopwatch = new Stopwatch();
         private List<DetailedMapOverviewModel> _mapList;
         public List<DetailedMapOverviewModel> MapList
         {
             get
             {
-                if (_mapList != null || _mapList.Count != 0) return _mapList;
+                if (_mapList != null && (_mapList != null || _mapList.Count != 0)) return _mapList;
+                
+                // Bad to use async like this
                 UpdateMapListAsync().GetAwaiter().GetResult();
                 return MapList;
             }
             private set => _mapList = value;
         }
 
-        public List<string> MapNameList { get; set; }
-        private static string GetFullAPIPath(string partial) => "/api" + partial;
+        private List<string> MapNameList { get; set; }
+        private static string GetFullApiPath(string partial) => "/api" + partial;
         private static async Task<T> GetResponseAsync<T>(string request)
         {
-            var fullPath = GetFullAPIPath(request);
+            var fullPath = GetFullApiPath(request);
             Stopwatch.Restart();
             try
             {
-                var response = await _httpClient.GetAsync(fullPath);
+                var response = await HttpClient.GetAsync(fullPath).ConfigureAwait(false);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    object stringValue = await response.Content.ReadAsStringAsync();
+                    object stringValue = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     
                     Stopwatch.Stop();
                     Logger.LogInfo("Tempus /api" + request + " " + Stopwatch.ElapsedMilliseconds + "ms");
@@ -95,12 +97,12 @@ namespace TempusHubBlazor.Data
             }
 
             var overview = await
-                GetResponseAsync<MapFullOverviewModel>($"/maps/name/{ParseMapName(map)}/fullOverview");
+                GetResponseAsync<MapFullOverviewModel>($"/maps/name/{ParseMapName(map)}/fullOverview").ConfigureAwait(false);
             return overview;
         }
-        public async Task<MapRecordCache> UpdateCachedWRDataAsync(MapRecordCache cached, TempusRecordBase map)
+        public async Task<MapRecordCache> UpdateCachedWrDataAsync(MapRecordCache cached, TempusRecordBase map)
         {
-            MapRecordCache tempNewCache = cached;
+            var tempNewCache = cached;
 
             // Check for no data
             if (cached == null || !cached.CurrentWRDuration.HasValue && !cached.OldWRDuration.HasValue)
@@ -116,7 +118,7 @@ namespace TempusHubBlazor.Data
                     ZoneId = map.ZoneInfo.Zoneindex
                 };
 
-                await TempusHubMySqlService.UpdateCachedRecordAsync(tempNewCache);
+                await TempusHubMySqlService.UpdateCachedRecordAsync(tempNewCache).ConfigureAwait(false);
             }
             // Check if the cached wr duration is different to the new record
             else if (cached.CurrentWRDuration.HasValue && 
@@ -132,16 +134,16 @@ namespace TempusHubBlazor.Data
                     ZoneId = map.ZoneInfo.Zoneindex
                 };
 
-                await TempusHubMySqlService.UpdateCachedRecordAsync(tempNewCache);
+                await TempusHubMySqlService.UpdateCachedRecordAsync(tempNewCache).ConfigureAwait(false);
             }
 
             return tempNewCache;
         }
         public async Task<ZonedRecordsModel> GetTopZonedTimes(string mapName, string zoneType, int zoneIndex = 1) 
-            => await GetResponseAsync<ZonedRecordsModel>($"/maps/name/{mapName}/zones/typeindex/{zoneType}/{zoneIndex}/records/list");
+            => await GetResponseAsync<ZonedRecordsModel>($"/maps/name/{mapName}/zones/typeindex/{zoneType}/{zoneIndex}/records/list").ConfigureAwait(false);
         public async Task<RecentActivityModel> GetRecentActivityAsync()
         {
-            var activity = await GetResponseAsync<RecentActivityModel>("/activity");
+            var activity = await GetResponseAsync<RecentActivityModel>("/activity").ConfigureAwait(false);
             var worldRecordActivity = new List<TempusRecordBase>();
 
             // We are basically excluding the map top times
@@ -152,42 +154,42 @@ namespace TempusHubBlazor.Data
             foreach (var map in worldRecordActivity)
             {
                 // Fetch the latest cache
-                var cached = await TempusHubMySqlService.GetCachedRecordsAsync(map.MapInfo.Id, map.RecordInfo.Class, map.ZoneInfo.Type, map.ZoneInfo.Zoneindex);
-                map.CachedTime = await UpdateCachedWRDataAsync(cached, map);
+                var cached = await TempusHubMySqlService.GetCachedRecordsAsync(map.MapInfo.Id, map.RecordInfo.Class, map.ZoneInfo.Type, map.ZoneInfo.Zoneindex).ConfigureAwait(false);
+                map.CachedTime = await UpdateCachedWrDataAsync(cached, map).ConfigureAwait(false);
             }
 
             // Just apply the map wr to top time
             foreach (var record in activity.MapTopTimes)
             {
-                record.CachedTime = await TempusHubMySqlService.GetCachedRecordsAsync(record.MapInfo.Id, record.RecordInfo.Class, record.ZoneInfo.Type);
+                record.CachedTime = await TempusHubMySqlService.GetCachedRecordsAsync(record.MapInfo.Id, record.RecordInfo.Class, record.ZoneInfo.Type).ConfigureAwait(false);
             }
 
             return activity;
         }
         public async Task<PlayerMapSearchResult> GetSearchResultAsync(string query) =>
-            await GetResponseAsync<PlayerMapSearchResult>($"/search/playersAndMaps/{HttpUtility.UrlEncode(query)}");
+            await GetResponseAsync<PlayerMapSearchResult>($"/search/playersAndMaps/{HttpUtility.UrlEncode(query)}").ConfigureAwait(false);
         public async Task<List<ServerStatusModel>> GetServerStatusAsync() =>
-            await GetResponseAsync<List<ServerStatusModel>>("/servers/statusList");
+            await GetResponseAsync<List<ServerStatusModel>>("/servers/statusList").ConfigureAwait(false);
 
         public async Task<List<ShortMapInfoModel>> GetMapListAsync() =>
-            await GetResponseAsync<List<ShortMapInfoModel>>("/maps/list");
+            await GetResponseAsync<List<ShortMapInfoModel>>("/maps/list").ConfigureAwait(false);
 
         public async Task<List<DetailedMapOverviewModel>> GetDetailedMapListAsync() =>
-            await GetResponseAsync<List<DetailedMapOverviewModel>>("/maps/detailedList");
+            await GetResponseAsync<List<DetailedMapOverviewModel>>("/maps/detailedList").ConfigureAwait(false);
         public async Task<RanksOverviewModel> GetOverallRanksOverview() =>
-            await GetResponseAsync<RanksOverviewModel>("/ranks/overall");
+            await GetResponseAsync<RanksOverviewModel>("/ranks/overall").ConfigureAwait(false);
         public async Task<RanksOverviewModel> GetDemomanRanksOverview() =>
-            await GetResponseAsync<RanksOverviewModel>("/ranks/class/4");
+            await GetResponseAsync<RanksOverviewModel>("/ranks/class/4").ConfigureAwait(false);
         public async Task<RanksOverviewModel> GetSoldierRanksOverview() =>
-            await GetResponseAsync<RanksOverviewModel>("/ranks/class/3");
-        public async Task<Rank> GetUserRankAsync(string id) => await GetResponseAsync<Rank>($"/players/id/{id}/rank");
+            await GetResponseAsync<RanksOverviewModel>("/ranks/class/3").ConfigureAwait(false);
+        public async Task<Rank> GetUserRankAsync(string id) => await GetResponseAsync<Rank>($"/players/id/{id}/rank").ConfigureAwait(false);
         public async Task<PlayerStatsModel> GetUserStatsAsync(string id) =>
-            await GetResponseAsync<PlayerStatsModel>($"/players/id/{id}/stats");
+            await GetResponseAsync<PlayerStatsModel>($"/players/id/{id}/stats").ConfigureAwait(false);
         public async Task<RecordWithZonedData> PopulateRecordDataAsync(TempusRecordBase recordBase)
         {
-            var zonedData = await GetTopZonedTimes(recordBase.MapInfo.Name, recordBase.ZoneInfo.Type, recordBase.ZoneInfo.Zoneindex);
+            var zonedData = await GetTopZonedTimes(recordBase.MapInfo.Name, recordBase.ZoneInfo.Type, recordBase.ZoneInfo.Zoneindex).ConfigureAwait(false);
 
-            if (recordBase.CachedTime == null || !recordBase.CachedTime.CurrentWRDuration.HasValue)
+            if (recordBase.CachedTime?.CurrentWRDuration == null)
             {
                 recordBase.CachedTime = new MapRecordCache
                 {
@@ -196,14 +198,9 @@ namespace TempusHubBlazor.Data
                     ZoneId = recordBase.ZoneInfo.Zoneindex,
                     ZoneType = recordBase.ZoneInfo.Type,
                 };
-                if (recordBase.RecordInfo.Class == 4)
-                {
-                    recordBase.CachedTime.CurrentWRDuration = zonedData.Runs.DemomanRuns.OrderByDuration().First().Duration;
-                }
-                else
-                {
-                    recordBase.CachedTime.CurrentWRDuration = zonedData.Runs.SoldierRuns.OrderByDuration().First().Duration;
-                }
+                recordBase.CachedTime.CurrentWRDuration = recordBase.RecordInfo.Class == 4 
+                    ? zonedData.Runs.DemomanRuns.OrderByDuration().First().Duration 
+                    : zonedData.Runs.SoldierRuns.OrderByDuration().First().Duration;
             }
 
             return new RecordWithZonedData
@@ -213,13 +210,13 @@ namespace TempusHubBlazor.Data
             };     
         }
         public async Task<List<ServerDemoModel>> GetServerDemosAsync(int serverId)
-            => (await GetResponseAsync<List<ServerDemoModel>>($"/servers/{serverId}/demos"));
+            => await GetResponseAsync<List<ServerDemoModel>>($"/servers/{serverId}/demos").ConfigureAwait(false);
 
         public async Task<ServerDemoFullOverview> GetDemoInfoAsync(int demoId)
-            => await GetResponseAsync<ServerDemoFullOverview>($"/demos/id/{demoId}/overview");
+            => await GetResponseAsync<ServerDemoFullOverview>($"/demos/id/{demoId}/overview").ConfigureAwait(false);
         //RunInfoModel
         public async Task<RunInfoModel> GetRunInfoAsync(int runId)
-            => await GetResponseAsync<RunInfoModel>($"/records/id/{runId}/overview");
+            => await GetResponseAsync<RunInfoModel>($"/records/id/{runId}/overview").ConfigureAwait(false);
 
         public string ParseMapName(string map)
         {
@@ -244,9 +241,9 @@ namespace TempusHubBlazor.Data
             throw new Exception("Map not found");
         }
 
-        public async Task UpdateMapListAsync()
+        private async Task UpdateMapListAsync()
         {
-            var maps = await GetDetailedMapListAsync();
+            var maps = await GetDetailedMapListAsync().ConfigureAwait(false);
             MapList = maps.OrderBy(x => x.Name).ToList();
             MapNameList = maps.ConvertAll(x => x.Name).Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
         }
