@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using TempusHubBlazor.Constants;
 using TempusHubBlazor.Models.MySQL;
 using TempusHubBlazor.Models.Tempus.Responses;
@@ -100,5 +101,25 @@ namespace TempusHubBlazor.Utilities
         public static bool TimesEqual(double time1, double time2)
         // Allows tolerance past 12 dp
             => Math.Abs(time1 - time2) < 0.000000000001;
+
+        public static bool FasterThan(this double time1, double time2)
+        {
+            if (TimesEqual(time1, time2))
+            {
+                return false;
+            }
+
+            return time1 < time2;
+        }
+
+        public static bool SlowerThan(this double time1, double time2)
+        {
+            if (TimesEqual(time1, time2))
+            {
+                return false;
+            }
+
+            return time1 > time2;
+        }
     }
 }
