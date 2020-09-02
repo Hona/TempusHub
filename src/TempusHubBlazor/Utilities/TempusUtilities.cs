@@ -58,7 +58,11 @@ namespace TempusHubBlazor.Utilities
             }
 
             var timeSplit = slowRecord - cache.CurrentWRDuration.Value;
-            return "WR -" + FormattedDuration(timeSplit);
+
+            var symbol = TimesEqual(0, timeSplit) ? "-" : (timeSplit < 0 ? "+" : "-");
+
+
+            return "WR " + symbol + FormattedDuration(timeSplit);
         }
         /// <summary>
         /// Returns a nice string of the duration
