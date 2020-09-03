@@ -212,6 +212,18 @@ body > app > div.main > div.top-row.px-4 > div .dropdown, .dropdown-header, .dro
     width: 250px;
 }
 
+.country-group-list {
+    background: none;
+}
+
+.country-group-list-item:nth-child(odd) {
+    background-color: #3c434a;
+}
+
+.country-group-list-item:nth-child(even) {
+    background-color: #3f4750;
+}
+
 .spinner {
     border: 8px solid silver;
     border-top: 8px solid #337AB7;

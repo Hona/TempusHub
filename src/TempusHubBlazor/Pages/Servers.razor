@@ -1,4 +1,5 @@
 ﻿@page "/servers"
+@page "/servers/{ServerDisplayType}"
 
 @using TempusHubBlazor.Models.Tempus.Responses
 @using TempusHubBlazor.Services
@@ -10,6 +11,13 @@
 
 <div class="heading-wrapper">
     <h1 class="slim-center">Servers</h1>
+    <BSDropdown DropdownDirection="DropdownDirection.Left" Class="bsDropDown">
+    <BSDropdownToggle Color="Color.Primary">@(ServerDisplayType?.ToStandardCasing() ?? "List")</BSDropdownToggle>
+    <BSDropdownMenu>
+        <BSDropdownItem Href="/servers/list" OnClick=@(() => { ServerDisplayType = "List"; StateHasChanged(); })>List</BSDropdownItem>
+        <BSDropdownItem Href="/servers/country" OnClick=@(() => { ServerDisplayType = "Country"; StateHasChanged(); })>Country Cards</BSDropdownItem>
+    </BSDropdownMenu>
+</BSDropdown>
 </div>
 <br />
 
@@ -17,7 +25,7 @@
 {
     <span>Loading servers...</span>
 }
-else
+else if (string.IsNullOrWhiteSpace(ServerDisplayType) || string.Equals(ServerDisplayType, "List", StringComparison.InvariantCultureIgnoreCase))
 {
     <table align="center" class="table table-dark table-bordered slim-center">
         <thead>
@@ -44,9 +52,43 @@ else
         </tbody>
     </table>
 }
+else if (string.Equals(ServerDisplayType, "Country", StringComparison.InvariantCultureIgnoreCase))
+{
+    <BSCard IsOutline="true" IsInverse="true" CardType="CardType.Columns">
+        @foreach (var countryGroup in ServerStatusList.GroupBy(x => x.ServerInfo.Country))
+        {
+            <BSCard IsInverse="true">
+                <BSCard CardType="CardType.Body">
+                    <BSCard CardType="CardType.Title">@countryGroup.Key</BSCard>
+                    <BSCard CardType="CardType.Text">
+                        <BSListGroup class="country-group-list">
+                            @foreach (var server in countryGroup)
+                            {
+                                <BSListGroupItem class="country-group-list-item text-white">
+                                    <p>
+                                        <a href="@HrefHelper.GetServerInfoPath(server.ServerInfo.Shortname)">
+                                            @server.ServerInfo.Name
+                                        </a>
+                                        |
+                                        <a href="@HrefHelper.GetMapInfoPath(server.GameInfo.CurrentMap)">@server.GameInfo.CurrentMap</a> |
+                                        @(server.GameInfo.PlayerCount)/@server.GameInfo.MaxPlayers
+                                    </p>
+                                    <div class="text-center">
+                                        <a href="steam://connect/@server.ServerInfo.Addr:@server.ServerInfo.Port" class="btn btn-secondary btn-sm">Connect</a>
+                                    </div>
+                                </BSListGroupItem>
+                            }
+                        </BSListGroup>
+                    </BSCard>
+                </BSCard>
+            </BSCard>
+        }
+    </BSCard>
+}
 
 
 @code {
+    [Parameter] public string ServerDisplayType { get; set; }
     public List<ServerStatusModel> ServerStatusList { get; set; }
 
     protected override void OnInitialized()
@@ -68,7 +110,6 @@ else
     private void OnDataUpdated(object sender, EventArgs e)
     {
         ServerStatusList = TempusCacheService.ServerStatusList;
-        InvokeAsync(StateHasChanged);
     }
 
     public void Dispose()
