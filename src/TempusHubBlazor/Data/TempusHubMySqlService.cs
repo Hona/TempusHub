@@ -50,7 +50,7 @@ namespace TempusHubBlazor.Data
                 OldRecordDuration = newCache.OldWRDuration ?? null
             };
 
-            await ExecuteAsync(query, param);
+            await ExecuteAsync(query, param).ConfigureAwait(false);
         }
     }
 }

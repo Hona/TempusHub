@@ -41,7 +41,6 @@ namespace TempusHubBlazor.Data
         };
         private readonly TempusRecordCacheService _tempusRecordCacheService;
         private TempusHubMySqlService TempusHubMySqlService { get; }
-        private static readonly Stopwatch Stopwatch = new Stopwatch();
         private List<DetailedMapOverviewModel> _mapList;
         public List<DetailedMapOverviewModel> MapList
         {
@@ -61,17 +60,18 @@ namespace TempusHubBlazor.Data
         private static async Task<T> GetResponseAsync<T>(string request)
         {
             var fullPath = GetFullApiPath(request);
-            Stopwatch.Restart();
+            
             try
             {
+                var startTime = DateTime.Now;
                 var response = await HttpClient.GetAsync(fullPath).ConfigureAwait(false);
 
                 if (response.IsSuccessStatusCode)
                 {
                     object stringValue = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    
-                    Stopwatch.Stop();
-                    Logger.LogInfo("Tempus /api" + request + " " + Stopwatch.ElapsedMilliseconds + "ms");
+                    var duration = DateTime.Now - startTime;
+
+                    Logger.LogInfo("Tempus /api" + request + " " + duration.TotalMilliseconds + "ms");
                     // If T is a string, don't deserialise
                     return typeof(T) == typeof(string)
                         ? (T)stringValue

@@ -34,7 +34,7 @@ namespace TempusHubBlazor.Services
         {
             TempusDataService = tempusDataService;
             UpdateAllCachedDataAsync().GetAwaiter().GetResult();
-            _updateTimer = new Timer(async callback => await UpdateAllCachedDataAsync(), null, TimeSpan.FromMinutes(1.5), TimeSpan.FromMinutes(1.5));
+            _updateTimer = new Timer(async callback => await UpdateAllCachedDataAsync().ConfigureAwait(false), null, TimeSpan.FromMinutes(1.5), TimeSpan.FromMinutes(1.5));
         }
         
         private async Task UpdateAllCachedDataAsync()
@@ -45,21 +45,21 @@ namespace TempusHubBlazor.Services
                 {
                     Task.Run(async () =>
                     {
-                        await UpdateRecentActivityAsync();
-                        await UpdateRecentActivityWithZonedDataAsync();
+                        await UpdateRecentActivityAsync().ConfigureAwait(false);
+                        await UpdateRecentActivityWithZonedDataAsync().ConfigureAwait(false);
                     }),
                     UpdateDetailedMapListAsync(),
                     UpdatePlayerLeaderboardsAsync(),
                     Task.Run(async () =>
                     {
-                        await UpdateServerStatusListAsync();
-                        await UpdateTopOnlinePlayersAsync();
+                        await UpdateServerStatusListAsync().ConfigureAwait(false);
+                        await UpdateTopOnlinePlayersAsync().ConfigureAwait(false);
                     }),
                     UpdateRealNamesAsync(),
                     UpdateTempusColorsAsync()
                 };
 
-                await Task.WhenAll(tasks);
+                await Task.WhenAll(tasks).ConfigureAwait(false);
                 // Refreshes any clients
                 OnDataUpdated(EventArgs.Empty);
             }
@@ -70,18 +70,18 @@ namespace TempusHubBlazor.Services
         }
         private async Task UpdateRecentActivityAsync()
         {
-            RecentActivity = await TempusDataService.GetRecentActivityAsync();
+            RecentActivity = await TempusDataService.GetRecentActivityAsync().ConfigureAwait(false);
         }
         private async Task UpdateRecentActivityWithZonedDataAsync()
         {
             var recentActivityWithZonedData = new RecentActivityWithZonedData();
 
             var tasks = new List<Task>();
-            tasks.AddRange(RecentActivity.MapRecords.Select(async x => recentActivityWithZonedData.MapWR.Add(await TempusDataService.PopulateRecordDataAsync(x))));
-            tasks.AddRange(RecentActivity.CourseRecords.Select(async x => recentActivityWithZonedData.CourseWR.Add(await TempusDataService.PopulateRecordDataAsync(x))));
-            tasks.AddRange(RecentActivity.BonusRecords.Select(async x => recentActivityWithZonedData.BonusWR.Add(await TempusDataService.PopulateRecordDataAsync(x))));
-            tasks.AddRange(RecentActivity.MapTopTimes.Select(async x => recentActivityWithZonedData.MapTT.Add(await TempusDataService.PopulateRecordDataAsync(x))));
-            await Task.WhenAll(tasks);
+            tasks.AddRange(RecentActivity.MapRecords.Select(async x => recentActivityWithZonedData.MapWR.Add(await TempusDataService.PopulateRecordDataAsync(x).ConfigureAwait(false))));
+            tasks.AddRange(RecentActivity.CourseRecords.Select(async x => recentActivityWithZonedData.CourseWR.Add(await TempusDataService.PopulateRecordDataAsync(x).ConfigureAwait(false))));
+            tasks.AddRange(RecentActivity.BonusRecords.Select(async x => recentActivityWithZonedData.BonusWR.Add(await TempusDataService.PopulateRecordDataAsync(x).ConfigureAwait(false))));
+            tasks.AddRange(RecentActivity.MapTopTimes.Select(async x => recentActivityWithZonedData.MapTT.Add(await TempusDataService.PopulateRecordDataAsync(x).ConfigureAwait(false))));
+            await Task.WhenAll(tasks).ConfigureAwait(false);
 
             RecentActivityWithZonedData = recentActivityWithZonedData;
         }
@@ -110,7 +110,7 @@ namespace TempusHubBlazor.Services
             // Query all at once for all users ranks
             var rankTasks = new List<Task<Rank>>();
             rankTasks.AddRange(userIdStrings.Select(TempusDataService.GetUserRankAsync));
-            var ranks = await Task.WhenAll(rankTasks);
+            var ranks = await Task.WhenAll(rankTasks).ConfigureAwait(false);
 
             // Get the users that actually have a rank (exclude unranks), and select the higher rank
             // Dictionary<User, BestRank>
@@ -141,7 +141,7 @@ namespace TempusHubBlazor.Services
                 var server = ServerStatusList
                     .FirstOrDefault(x =>
                         x.GameInfo?.Users != null &&
-                        x.GameInfo.Users.Count(z => (z.Id.HasValue && z.Id == rankedUser.Player.Id) || z.SteamId == rankedUser.Player.SteamId) != 0);
+                        x.GameInfo.Users.Any(z => (z.Id.HasValue && z.Id == rankedUser.Player.Id) || z.SteamId == rankedUser.Player.SteamId));
                 if (server == null || rankedUser.Player.Id == null) continue;
 
                 tempTopPlayersOnline.Add(new TopPlayerOnline
@@ -201,7 +201,7 @@ namespace TempusHubBlazor.Services
         }
         private async Task UpdateServerStatusListAsync()
         {
-            ServerStatusList = await TempusDataService.GetServerStatusAsync();
+            ServerStatusList = await TempusDataService.GetServerStatusAsync().ConfigureAwait(false);
 
             var servers = ServerStatusList.Where(x => x != null).ToList();
 
@@ -216,8 +216,8 @@ namespace TempusHubBlazor.Services
 
             if (usersWithoutId.Any())
             {
-                var tasks = usersWithoutId.Select(async x => (await TempusDataService.GetSearchResultAsync(x.Name))?.Players?.FirstOrDefault(y => y.SteamId == x.SteamId));
-                var searchResults = await Task.WhenAll(tasks);
+                var tasks = usersWithoutId.Select(async x => (await TempusDataService.GetSearchResultAsync(x.Name).ConfigureAwait(false))?.Players?.FirstOrDefault(y => y.SteamId == x.SteamId));
+                var searchResults = await Task.WhenAll(tasks).ConfigureAwait(false);
 
                 foreach (var server in ServerStatusList.Where(x => x?.GameInfo?.Users != null))
                 {
@@ -236,7 +236,7 @@ namespace TempusHubBlazor.Services
             {
                 var jsonText = File.ReadAllText(LocalFileConstants.TempusNames);
                 RealNames = JsonConvert.DeserializeObject<List<TempusRealName>>(jsonText);
-            });
+            }).ConfigureAwait(false);
         }
         private async Task UpdateTempusColorsAsync()
         {
@@ -244,7 +244,7 @@ namespace TempusHubBlazor.Services
             {
                 var jsonText = File.ReadAllText(LocalFileConstants.TempusColors);
                 TempusRankColors = JsonConvert.DeserializeObject<List<TempusRankColor>>(jsonText);
-            });
+            }).ConfigureAwait(false);
         }
         public string GetRealName(int tempusId)
         {

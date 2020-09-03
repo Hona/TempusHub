@@ -33,15 +33,15 @@ namespace TempusHubBlazor.Data
             Logger.LogInfo($"Caching all {TempusDataService.MapList.Count} maps");
             foreach (var map in TempusDataService.MapList)
             {
-                await CacheAllRecordsOnMapAsync(map);
+                await CacheAllRecordsOnMapAsync(map).ConfigureAwait(false);
             }
         }
         private async Task CacheAllRecordsOnMapAsync(DetailedMapOverviewModel map)
         {
-            var fullOverview = await TempusDataService.GetFullMapOverViewAsync(map.Name);
+            var fullOverview = await TempusDataService.GetFullMapOverViewAsync(map.Name).ConfigureAwait(false);
 
-            await CacheClassRecordAsync(3, map, fullOverview);
-            await CacheClassRecordAsync(4, map, fullOverview);
+            await CacheClassRecordAsync(3, map, fullOverview).ConfigureAwait(false);
+            await CacheClassRecordAsync(4, map, fullOverview).ConfigureAwait(false);
         }
 
     
@@ -51,16 +51,16 @@ namespace TempusHubBlazor.Data
             {
                 // Map record
                 var duration = fullOverview.GetClassRuns(classId).OrderByDuration().First().Duration;
-                await CacheRecordAsync(map.Id, classId, duration, "map", 1);
+                await CacheRecordAsync(map.Id, classId, duration, "map", 1).ConfigureAwait(false);
 
                 // Course record
-                for (int courseId = 1; courseId <= map.ZoneCounts.Course; courseId++)
+                for (var courseId = 1; courseId <= map.ZoneCounts.Course; courseId++)
                 {
                     try
                     {
-                        var runs = (await TempusDataService.GetTopZonedTimes(map.Name, "course", courseId)).Runs;
+                        var runs = (await TempusDataService.GetTopZonedTimes(map.Name, "course", courseId).ConfigureAwait(false)).Runs;
                         duration = runs.GetClassRuns(classId).OrderByDuration().First().Duration;
-                        await CacheRecordAsync(map.Id, classId, duration, "course", courseId);
+                        await CacheRecordAsync(map.Id, classId, duration, "course", courseId).ConfigureAwait(false);
                     }
                     catch { }
                 }
@@ -70,9 +70,9 @@ namespace TempusHubBlazor.Data
                 {
                     try
                     {
-                        var runs = (await TempusDataService.GetTopZonedTimes(map.Name, "bonus", bonusId)).Runs;
+                        var runs = (await TempusDataService.GetTopZonedTimes(map.Name, "bonus", bonusId).ConfigureAwait(false)).Runs;
                         duration = runs.GetClassRuns(classId).OrderByDuration().First().Duration;
-                        await CacheRecordAsync(map.Id, classId, duration, "bonus", bonusId);
+                        await CacheRecordAsync(map.Id, classId, duration, "bonus", bonusId).ConfigureAwait(false);
                     }
                     catch { }
                 }
@@ -98,7 +98,7 @@ namespace TempusHubBlazor.Data
                     Type = zoneType,
                     Zoneindex = zoneIndex
                 }
-            });
+            }).ConfigureAwait(false);
         }
     }
 }

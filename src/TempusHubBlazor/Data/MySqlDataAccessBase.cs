@@ -25,23 +25,23 @@ namespace TempusHubBlazor.Data
 
         private async Task OpenConnectionAsync()
         {
-            Logger.LogInfo("Openning MySQL connection");
-            if (_connection == null) _connection = new MySqlConnection(_connectionString);
-            await _connection.OpenAsync();
+            Logger.LogInfo("Opening MySQL connection");
+            _connection ??= new MySqlConnection(_connectionString);
+            await _connection.OpenAsync().ConfigureAwait(false);
         }
 
         private async Task CheckConnectionAsync()
         {
             if (_connection == null || _connection.State == ConnectionState.Closed ||
                 _connection.State == ConnectionState.Broken)
-                await OpenConnectionAsync();
+                await OpenConnectionAsync().ConfigureAwait(false);
         }
 
         private async Task CloseAsync()
         {
             if (_connection == null) return;
-            await _connection.CloseAsync();
-            await _connection.ClearAllPoolsAsync();
+            await _connection.CloseAsync().ConfigureAwait(false);
+            await _connection.ClearAllPoolsAsync().ConfigureAwait(false);
             _connection.Dispose();
             _connection = null;
         }
@@ -50,9 +50,9 @@ namespace TempusHubBlazor.Data
         {
             try
             {
-                await _queryLock.WaitAsync();
-                await CheckConnectionAsync();
-                var result = (await _connection.QueryAsync<T>(query)).ToList();
+                await _queryLock.WaitAsync().ConfigureAwait(false);
+                await CheckConnectionAsync().ConfigureAwait(false);
+                var result = (await _connection.QueryAsync<T>(query).ConfigureAwait(false)).ToList();
                 return result;
             }
             catch (Exception e)
@@ -70,9 +70,9 @@ namespace TempusHubBlazor.Data
         {
             try
             {
-                await _queryLock.WaitAsync();
-                await CheckConnectionAsync();
-                var result = (await _connection.QueryAsync<T>(query, param)).ToList();
+                await _queryLock.WaitAsync().ConfigureAwait(false);
+                await CheckConnectionAsync().ConfigureAwait(false);
+                var result = (await _connection.QueryAsync<T>(query, param).ConfigureAwait(false)).ToList();
                 return result;
             }
             catch (Exception e)
@@ -90,9 +90,9 @@ namespace TempusHubBlazor.Data
         {
             try
             {
-                await _queryLock.WaitAsync();
-                await CheckConnectionAsync();
-                await _connection.ExecuteAsync(query, param);
+                await _queryLock.WaitAsync().ConfigureAwait(false);
+                await CheckConnectionAsync().ConfigureAwait(false);
+                await _connection.ExecuteAsync(query, param).ConfigureAwait(false);
             }
             catch (Exception e)
             {
