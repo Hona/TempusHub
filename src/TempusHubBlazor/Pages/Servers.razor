@@ -12,11 +12,11 @@
 <div class="heading-wrapper">
     <h1 class="slim-center">Servers</h1>
     <BSDropdown DropdownDirection="DropdownDirection.Left" Class="bsDropDown">
-    <BSDropdownToggle Color="Color.Primary">@(ServerDisplayType?.ToStandardCasing() ?? "List")</BSDropdownToggle>
-    <BSDropdownMenu>
-        <BSDropdownItem Href="/servers/list" OnClick=@(() => { ServerDisplayType = "List"; StateHasChanged(); })>List</BSDropdownItem>
-        <BSDropdownItem Href="/servers/country" OnClick=@(() => { ServerDisplayType = "Country"; StateHasChanged(); })>Country Cards</BSDropdownItem>
-    </BSDropdownMenu>
+    <BSDropdownToggle Color="Color.Primary">@(ServerDisplayType?.ToStandardCasing() ?? "Country")</BSDropdownToggle>
+        <BSDropdownMenu>
+            <BSDropdownItem Href="/servers/country" OnClick=@(() => { ServerDisplayType = "Country"; StateHasChanged(); })>Country Cards</BSDropdownItem>
+            <BSDropdownItem Href="/servers/list" OnClick=@(() => { ServerDisplayType = "List"; StateHasChanged(); })>List</BSDropdownItem>
+        </BSDropdownMenu>
 </BSDropdown>
 </div>
 <br />
@@ -25,7 +25,7 @@
 {
     <span>Loading servers...</span>
 }
-else if (string.IsNullOrWhiteSpace(ServerDisplayType) || string.Equals(ServerDisplayType, "List", StringComparison.InvariantCultureIgnoreCase))
+else if (string.Equals(ServerDisplayType, "List", StringComparison.InvariantCultureIgnoreCase))
 {
     <table align="center" class="table table-dark table-bordered slim-center">
         <thead>
@@ -52,7 +52,7 @@ else if (string.IsNullOrWhiteSpace(ServerDisplayType) || string.Equals(ServerDis
         </tbody>
     </table>
 }
-else if (string.Equals(ServerDisplayType, "Country", StringComparison.InvariantCultureIgnoreCase))
+else if (string.IsNullOrWhiteSpace(ServerDisplayType) || string.Equals(ServerDisplayType, "Country", StringComparison.InvariantCultureIgnoreCase))
 {
     <BSCard IsOutline="true" IsInverse="true" CardType="CardType.Columns">
         @foreach (var countryGroup in ServerStatusList.GroupBy(x => x.ServerInfo.Country))
@@ -88,7 +88,9 @@ else if (string.Equals(ServerDisplayType, "Country", StringComparison.InvariantC
 
 
 @code {
-    [Parameter] public string ServerDisplayType { get; set; }
+
+    [Parameter]
+    public string ServerDisplayType { get; set; } = "Country";
     public List<ServerStatusModel> ServerStatusList { get; set; }
 
     protected override void OnInitialized()
