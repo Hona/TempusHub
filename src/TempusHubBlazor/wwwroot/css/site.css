@@ -275,13 +275,13 @@ body > app > div.main > div.top-row.px-4 > div .dropdown, .dropdown-header, .dro
     position: relative;
 }
 
-@media (max-width: 767.98px) {
+@media (max-width: 1101.98px) {
     .main .top-row {
         display: none;
     }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1102px) {
     app {
         flex-direction: row;
     }
