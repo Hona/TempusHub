@@ -64,7 +64,7 @@ else if (string.Equals(ServerDisplayType, "Country", StringComparison.InvariantC
                         <BSListGroup class="country-group-list">
                             @foreach (var server in countryGroup)
                             {
-                                <BSListGroupItem class="country-group-list-item text-white">
+                                <BSListGroupItem class="country-group-list-item text-white text-center">
                                     <p>
                                         <a href="@HrefHelper.GetServerInfoPath(server.ServerInfo.Shortname)">
                                             @server.ServerInfo.Name
