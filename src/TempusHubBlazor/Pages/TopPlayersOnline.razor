@@ -1,4 +1,5 @@
 ﻿@page "/topplayersonline"
+@page "/topplayersonline/{DisplayType}" 
 
 @using Microsoft.VisualBasic.CompilerServices
 @using TempusHubBlazor.Constants
@@ -16,6 +17,13 @@
 
 <div class="heading-wrapper">
     <h1 class="slim-center">Top Players Online</h1>
+    <BSDropdown DropdownDirection="DropdownDirection.Left" Class="bsDropDown">
+        <BSDropdownToggle Color="Color.Primary">@(DisplayType?.ToStandardCasing() ?? "List")</BSDropdownToggle>
+        <BSDropdownMenu>
+            <BSDropdownItem Href="/topplayersonline/list" OnClick=@(() => { DisplayType = "List"; StateHasChanged(); })>List</BSDropdownItem>
+            <BSDropdownItem Href="/topplayersonline/server" OnClick=@(() => { DisplayType = "Server"; StateHasChanged(); })>Server Cards</BSDropdownItem>
+        </BSDropdownMenu>
+    </BSDropdown>
 </div>
 <br />
 
@@ -23,7 +31,7 @@
 {
     <p><em>Getting top player online data...</em></p>
 }
-else
+else if (string.IsNullOrWhiteSpace(DisplayType) || string.Equals(DisplayType, "list", StringComparison.InvariantCultureIgnoreCase))
 {
     <table align="center" class="table table-dark table-bordered slim-center">
         <thead>
@@ -47,8 +55,36 @@ else
         </tbody>
     </table>
 }
+else if (string.Equals(DisplayType, "server", StringComparison.InvariantCultureIgnoreCase))
+{
+    <BSCard IsOutline="true" IsInverse="true" CardType="CardType.Columns">
+        @foreach (var serverGroup in _topPlayerOnline.GroupBy(x => x.Server))
+        {
+            <BSCard IsInverse="true">
+                <BSCard CardType="CardType.Body">
+                    <BSCard CardType="CardType.Title">@serverGroup.Key.ServerInfo.Name</BSCard>
+                    <BSCard CardType="CardType.Subtitle">@serverGroup.Key.GameInfo.CurrentMap</BSCard>
+                    <BSCard CardType="CardType.Text">
+                        <BSListGroup class="country-group-list">
+                            @foreach (var player in serverGroup)
+                            {
+                                <BSListGroupItem class="country-group-list-item text-white">
+                                    <img width="24" height="24" src="@(player.RankClass == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /> @player.Rank 
+                                    <a href="@HrefHelper.GetPlayerInfoPath(player.Id)">@(TempusCacheService.GetRealName(player.Id) ?? player.Name)</a>
+                                </BSListGroupItem>
+                            }
+                        </BSListGroup>
+                    </BSCard>
+                    <a href="steam://connect/@serverGroup.First().Server.ServerInfo.Addr:@serverGroup.First().Server.ServerInfo.Port" class="btn btn-secondary btn-sm">Connect</a>
+                </BSCard>
+            </BSCard>
+        }
+    </BSCard>
+}
 
 @code {
+    [Parameter]
+    public string DisplayType { get; set; }
     List<TopPlayerOnline> _topPlayerOnline = new List<TopPlayerOnline>();
 
     protected override void OnInitialized()
