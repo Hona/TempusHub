@@ -49,8 +49,16 @@ namespace TempusHubBlazor.Utilities
                 TimesEqual(cache.CurrentWRDuration.Value, cache.OldWRDuration.Value))
             {
                 // Get #2 time
-                slowRecord = cache.ClassId == 4 ? zonedResults.Runs.DemomanRuns.OrderByDuration()[1].Duration 
-                    : zonedResults.Runs.SoldierRuns.OrderByDuration()[1].Duration;
+                var runs = cache.ClassId == 4 ? zonedResults.Runs.DemomanRuns 
+                    : zonedResults.Runs.SoldierRuns;
+
+                if (runs.Count == 1)
+                {
+                    // Only one run, split is N/A
+                    return "N/A";
+                }
+
+                slowRecord = runs.OrderByDuration()[1].Duration;
             }
             else
             {
