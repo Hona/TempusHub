@@ -533,7 +533,7 @@ D,jump_estrogen_a4
 D,jump_bane
 S,jump_4soldier_redo
 D,jump_luminous_rc5
-S,jump_bromelia_rc5
+S,jump_bromelia_final
 S,jump_mowi_rc2
 D,jump_halcyon_b3
 S,jump_yggdrasil
@@ -585,3 +585,4 @@ D,jump_treasure_fix
 D,jump_vertuosic_rc6
 D,jump_zilent
 S,jump_zone_rc2
+S,jump_rat_rc4
