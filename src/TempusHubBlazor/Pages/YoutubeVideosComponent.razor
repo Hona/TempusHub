@@ -21,7 +21,7 @@ else
             <BSCard IsOutline="true" IsInverse="true" CardType="CardType.Body">
                 <BSCard IsOutline="true" IsInverse="true" CardType="CardType.Title"><a href="@TempusUtilities.GetYoutubeUrl(video.Snippet.ResourceId.VideoId)">@video.Snippet.Title</a></BSCard>
                 <BSCard IsOutline="true" IsInverse="true" CardType="CardType.Subtitle">@(new string(video.Snippet.Description.Take(50).ToArray())+"...")</BSCard>
-                <BSCard IsOutline="true" IsInverse="true" CardType="CardType.Text"><small class="text-muted">@DateTime.Parse(video.Snippet.PublishedAt, null, System.Globalization.DateTimeStyles.RoundtripKind).GetTimeStringSinceDateTime())</small></BSCard>
+                <BSCard IsOutline="true" IsInverse="true" CardType="CardType.Text"><small class="text-muted">@DateTime.Parse(video.Snippet.PublishedAt, null, System.Globalization.DateTimeStyles.RoundtripKind).GetTimeStringSinceDateTime()</small></BSCard>
             </BSCard>
         </BSCard>
     }
