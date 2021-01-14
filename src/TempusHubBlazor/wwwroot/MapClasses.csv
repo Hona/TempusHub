@@ -143,7 +143,7 @@ D,jump_egyptian_b2
 S,jump_einfache_b1
 S,jump_elephant_a2
 B,jump_elite
-D,jump_elysium_fn
+S,jump_elysium_fn
 D,jump_embrace
 D,jump_endurance_rc2
 S,jump_eons_b2
@@ -499,8 +499,8 @@ S,jump_waves_final
 D,jump_weekly_rc2
 D,jump_what
 D,jump_when_b2_fix
-D,jump_who
-D,jump_why_rc3
+S,jump_who
+S,jump_why_rc3
 S,jump_wolf
 S,jump_x
 S,jump_xhappy
