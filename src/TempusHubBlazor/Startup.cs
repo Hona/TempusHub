@@ -41,7 +41,7 @@ namespace TempusHubBlazor
             }
             services.AddSingleton(tempusDataService);
             services.AddSingleton(new TempusCacheService(tempusDataService));
-            services.AddSingleton<YoutubeAPIService>();
+            services.AddSingleton<YoutubeApiService>();
             services.AddBootstrapCss();
             services.AddSwaggerGen();
         }

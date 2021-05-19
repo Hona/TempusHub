@@ -17,10 +17,10 @@ namespace TempusHubBlazor.Api
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class WRSplitController : ControllerBase
+    public class WrSplitController : ControllerBase
     {
         private TempusCacheService _tempusCacheService;
-        public WRSplitController(TempusCacheService tempusCacheService)
+        public WrSplitController(TempusCacheService tempusCacheService)
         {
             _tempusCacheService = tempusCacheService;
         }
@@ -33,13 +33,13 @@ namespace TempusHubBlazor.Api
             switch (recordType.ToLowerInvariant())
             {
                 case "map":
-                    recentRecords = _tempusCacheService.RecentActivityWithZonedData.MapWR;
+                    recentRecords = _tempusCacheService.RecentActivityWithZonedData.MapWr;
                     break;
                 case "course":
-                    recentRecords = _tempusCacheService.RecentActivityWithZonedData.CourseWR;
+                    recentRecords = _tempusCacheService.RecentActivityWithZonedData.CourseWr;
                     break;
                 case "bonus":
-                    recentRecords = _tempusCacheService.RecentActivityWithZonedData.BonusWR;
+                    recentRecords = _tempusCacheService.RecentActivityWithZonedData.BonusWr;
                     break;
                 default:
                     return BadRequest(nameof(recordType));
@@ -53,7 +53,7 @@ namespace TempusHubBlazor.Api
                 return NotFound();
             }
 
-            return Ok(TempusUtilities.GetWRSplitString(foundRecord.Record.CachedTime, foundRecord.ZonedData));
+            return Ok(TempusUtilities.GetWrSplitString(foundRecord.Record.CachedTime, foundRecord.ZonedData));
         }
     }
 }

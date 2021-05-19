@@ -62,47 +62,47 @@ namespace TempusHubBlazor.Api
         }
 
         [HttpGet("MapWR")]
-        public ActionResult<List<RecordResponse>> GetMapWR()
+        public ActionResult<List<RecordResponse>> GetMapWr()
         {
             if (_tempusCacheService.RecentActivityWithZonedData == null)
             {
                 return NoContent();
             }
 
-            return TransformRecordData(_tempusCacheService.RecentActivityWithZonedData.MapWR);
+            return TransformRecordData(_tempusCacheService.RecentActivityWithZonedData.MapWr);
         }
 
         [HttpGet("CourseWR")]
-        public ActionResult<List<RecordResponse>> GetCourseWR()
+        public ActionResult<List<RecordResponse>> GetCourseWr()
         {
             if (_tempusCacheService.RecentActivityWithZonedData == null)
             {
                 return NoContent();
             }
 
-            return TransformRecordData(_tempusCacheService.RecentActivityWithZonedData.CourseWR);
+            return TransformRecordData(_tempusCacheService.RecentActivityWithZonedData.CourseWr);
         }
 
         [HttpGet("BonusWR")]
-        public ActionResult<List<RecordResponse>> GetBonusWR()
+        public ActionResult<List<RecordResponse>> GetBonusWr()
         {
             if (_tempusCacheService.RecentActivityWithZonedData == null)
             {
                 return NoContent();
             }
 
-            return TransformRecordData(_tempusCacheService.RecentActivityWithZonedData.BonusWR);
+            return TransformRecordData(_tempusCacheService.RecentActivityWithZonedData.BonusWr);
         }
 
         [HttpGet("MapTT")]
-        public ActionResult<List<RecordResponse>> GetMapTT()
+        public ActionResult<List<RecordResponse>> GetMapTt()
         {
             if (_tempusCacheService.RecentActivityWithZonedData == null)
             {
                 return NoContent();
             }
 
-            return TransformRecordData(_tempusCacheService.RecentActivityWithZonedData.MapTT);
+            return TransformRecordData(_tempusCacheService.RecentActivityWithZonedData.MapTt);
         }
     }
 }

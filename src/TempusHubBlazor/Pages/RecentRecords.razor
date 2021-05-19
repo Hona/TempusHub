@@ -28,7 +28,7 @@
 </div>
 <br />
 
-@if (RecordsWithZonedData == null || RecordsWithZonedData.Count == 0)
+@if (_recordsWithZonedData == null || _recordsWithZonedData.Count == 0)
 {
     <p><em>Getting activity data...</em></p>
 }
@@ -45,7 +45,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var record in RecordsWithZonedData)
+            @foreach (var record in _recordsWithZonedData)
             {
             <tr>
                 <td><img width="24" height="24" src="@(record.Record.RecordInfo.Class == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /></td>
@@ -56,11 +56,11 @@ else
                         @(TempusUtilities.FormattedDuration(record.Record.RecordInfo.Duration))
                         @if (record.Record is MapTop mapTopRecord)
                         {
-                            @(" (#" + mapTopRecord.Rank + " WR +" + ((record.Record.CachedTime != null && record.Record.CachedTime.CurrentWRDuration.HasValue) ? TempusUtilities.FormattedDuration(record.Record.CachedTime.CurrentWRDuration.Value - record.Record.RecordInfo.Duration) : "N/A"));
+                            @(" (#" + mapTopRecord.Rank + " WR +" + ((record.Record.CachedTime != null && record.Record.CachedTime.CurrentWrDuration.HasValue) ? TempusUtilities.FormattedDuration(record.Record.CachedTime.CurrentWrDuration.Value - record.Record.RecordInfo.Duration) : "N/A"));
                         }
                         else
                         {
-                            @(" (" + TempusUtilities.GetWRSplitString(record.Record.CachedTime, record.ZonedData))
+                            @(" (" + TempusUtilities.GetWrSplitString(record.Record.CachedTime, record.ZonedData))
                         })
                     </a>
                 </td>
@@ -75,7 +75,7 @@ else
     [Parameter]
     public string RecentRecordType { get; set; }
 
-    List<RecordWithZonedData> RecordsWithZonedData = new();
+    List<RecordWithZonedData> _recordsWithZonedData = new();
 
     protected override void OnInitialized()
     {
@@ -107,22 +107,22 @@ else
         switch (RecentRecordType.ToLower())
         {
             case "map":
-                recordsWithZonedDataTemp = TempusCacheService.RecentActivityWithZonedData.MapWR;
+                recordsWithZonedDataTemp = TempusCacheService.RecentActivityWithZonedData.MapWr;
                 break;
             case "course":
-                recordsWithZonedDataTemp = TempusCacheService.RecentActivityWithZonedData.CourseWR;
+                recordsWithZonedDataTemp = TempusCacheService.RecentActivityWithZonedData.CourseWr;
                 break;
             case "bonus":
-                recordsWithZonedDataTemp = TempusCacheService.RecentActivityWithZonedData.BonusWR;
+                recordsWithZonedDataTemp = TempusCacheService.RecentActivityWithZonedData.BonusWr;
                 break;
             case "map_top":
-                recordsWithZonedDataTemp = TempusCacheService.RecentActivityWithZonedData.MapTT;
+                recordsWithZonedDataTemp = TempusCacheService.RecentActivityWithZonedData.MapTt;
                 break;
             default:
                 throw new Exception("No activity data for that type.");
         }
 
-        RecordsWithZonedData = recordsWithZonedDataTemp.OrderByDescending(x => x.Record.RecordInfo.Date).ToList();
+        _recordsWithZonedData = recordsWithZonedDataTemp.OrderByDescending(x => x.Record.RecordInfo.Date).ToList();
 
         if (forceUpdateState)
         {

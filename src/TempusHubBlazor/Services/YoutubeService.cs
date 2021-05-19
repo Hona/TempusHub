@@ -8,10 +8,10 @@ using Google.Apis.YouTube.v3.Data;
 
 namespace TempusHubBlazor.Services
 {
-    public class YoutubeAPIService
+    public class YoutubeApiService
     {
         private YouTubeService _youtubeService;
-        public YoutubeAPIService()
+        public YoutubeApiService()
         {
             var baseGoogleService = new BaseClientService.Initializer()
             {

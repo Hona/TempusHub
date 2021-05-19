@@ -18,7 +18,7 @@ namespace TempusHubBlazor.Services
     public class TempusCacheService
     {
         private readonly Timer _updateTimer;
-        private readonly TempusDataService TempusDataService;
+        private readonly TempusDataService _tempusDataService;
         public event EventHandler DataUpdated;
         public RecentActivityModel RecentActivity { get; private set; }
         public RecentActivityWithZonedData RecentActivityWithZonedData { get; private set; } = new();
@@ -32,7 +32,7 @@ namespace TempusHubBlazor.Services
 
         public TempusCacheService(TempusDataService tempusDataService)
         {
-            TempusDataService = tempusDataService;
+            _tempusDataService = tempusDataService;
             UpdateAllCachedDataAsync().GetAwaiter().GetResult();
             _updateTimer = new Timer(async callback => await UpdateAllCachedDataAsync().ConfigureAwait(false), null, TimeSpan.FromMinutes(1.5), TimeSpan.FromMinutes(1.5));
         }
@@ -70,17 +70,17 @@ namespace TempusHubBlazor.Services
         }
         private async Task UpdateRecentActivityAsync()
         {
-            RecentActivity = await TempusDataService.GetRecentActivityAsync().ConfigureAwait(false);
+            RecentActivity = await _tempusDataService.GetRecentActivityAsync().ConfigureAwait(false);
         }
         private async Task UpdateRecentActivityWithZonedDataAsync()
         {
             var recentActivityWithZonedData = new RecentActivityWithZonedData();
 
             var tasks = new List<Task>();
-            tasks.AddRange(RecentActivity.MapRecords.Select(async x => recentActivityWithZonedData.MapWR.Add(await TempusDataService.PopulateRecordDataAsync(x).ConfigureAwait(false))));
-            tasks.AddRange(RecentActivity.CourseRecords.Select(async x => recentActivityWithZonedData.CourseWR.Add(await TempusDataService.PopulateRecordDataAsync(x).ConfigureAwait(false))));
-            tasks.AddRange(RecentActivity.BonusRecords.Select(async x => recentActivityWithZonedData.BonusWR.Add(await TempusDataService.PopulateRecordDataAsync(x).ConfigureAwait(false))));
-            tasks.AddRange(RecentActivity.MapTopTimes.Select(async x => recentActivityWithZonedData.MapTT.Add(await TempusDataService.PopulateRecordDataAsync(x).ConfigureAwait(false))));
+            tasks.AddRange(RecentActivity.MapRecords.Select(async x => recentActivityWithZonedData.MapWr.Add(await _tempusDataService.PopulateRecordDataAsync(x).ConfigureAwait(false))));
+            tasks.AddRange(RecentActivity.CourseRecords.Select(async x => recentActivityWithZonedData.CourseWr.Add(await _tempusDataService.PopulateRecordDataAsync(x).ConfigureAwait(false))));
+            tasks.AddRange(RecentActivity.BonusRecords.Select(async x => recentActivityWithZonedData.BonusWr.Add(await _tempusDataService.PopulateRecordDataAsync(x).ConfigureAwait(false))));
+            tasks.AddRange(RecentActivity.MapTopTimes.Select(async x => recentActivityWithZonedData.MapTt.Add(await _tempusDataService.PopulateRecordDataAsync(x).ConfigureAwait(false))));
             await Task.WhenAll(tasks).ConfigureAwait(false);
 
             RecentActivityWithZonedData = recentActivityWithZonedData;
@@ -109,7 +109,7 @@ namespace TempusHubBlazor.Services
 
             // Query all at once for all users ranks
             var rankTasks = new List<Task<Rank>>();
-            rankTasks.AddRange(userIdStrings.Select(TempusDataService.GetUserRankAsync));
+            rankTasks.AddRange(userIdStrings.Select(_tempusDataService.GetUserRankAsync));
             var ranks = await Task.WhenAll(rankTasks).ConfigureAwait(false);
 
             // Get the users that actually have a rank (exclude unranks), and select the higher rank
@@ -159,7 +159,7 @@ namespace TempusHubBlazor.Services
         }
         private async Task UpdateDetailedMapListAsync()
         {
-            DetailedMapList = await TempusDataService.GetDetailedMapListAsync().ConfigureAwait(false);
+            DetailedMapList = await _tempusDataService.GetDetailedMapListAsync().ConfigureAwait(false);
             await Task.Run(() =>
             {
                 var lines = File.ReadAllLines(LocalFileConstants.MapClasses);
@@ -194,14 +194,14 @@ namespace TempusHubBlazor.Services
         {
             PlayerLeaderboards = new PlayerLeaderboards
             {
-                Overall = await TempusDataService.GetOverallRanksOverview().ConfigureAwait(false),
-                Soldier = await TempusDataService.GetSoldierRanksOverview().ConfigureAwait(false),
-                Demoman = await TempusDataService.GetDemomanRanksOverview().ConfigureAwait(false)
+                Overall = await _tempusDataService.GetOverallRanksOverview().ConfigureAwait(false),
+                Soldier = await _tempusDataService.GetSoldierRanksOverview().ConfigureAwait(false),
+                Demoman = await _tempusDataService.GetDemomanRanksOverview().ConfigureAwait(false)
             };
         }
         private async Task UpdateServerStatusListAsync()
         {
-            ServerStatusList = await TempusDataService.GetServerStatusAsync().ConfigureAwait(false);
+            ServerStatusList = await _tempusDataService.GetServerStatusAsync().ConfigureAwait(false);
 
             var servers = ServerStatusList.Where(x => x != null).ToList();
 
@@ -216,7 +216,7 @@ namespace TempusHubBlazor.Services
 
             if (usersWithoutId.Any())
             {
-                var tasks = usersWithoutId.Select(async x => (await TempusDataService.GetSearchResultAsync(x.Name).ConfigureAwait(false))?.Players?.FirstOrDefault(y => y.SteamId == x.SteamId));
+                var tasks = usersWithoutId.Select(async x => (await _tempusDataService.GetSearchResultAsync(x.Name).ConfigureAwait(false))?.Players?.FirstOrDefault(y => y.SteamId == x.SteamId));
                 var searchResults = await Task.WhenAll(tasks).ConfigureAwait(false);
 
                 foreach (var server in ServerStatusList.Where(x => x?.GameInfo?.Users != null))

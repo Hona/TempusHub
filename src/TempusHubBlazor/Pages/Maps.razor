@@ -11,7 +11,7 @@
 </div>
 <br />
 
-@if (MapList == null || MapList.Count() == 0)
+@if (_mapList == null || _mapList.Count() == 0)
 {
     <p><em>Getting map list data...</em></p>
 }
@@ -28,7 +28,7 @@ else
         </thead>
         <tbody>
             <!--Demo maps, includes maps that are for both classes-->
-            @foreach (var map in MapList.Where(x => x.IntendedClass != 'S'))
+            @foreach (var map in _mapList.Where(x => x.IntendedClass != 'S'))
             {
                 <tr>
                     <td><a href="maps/@map.Name">@map.Name</a></td>
@@ -49,7 +49,7 @@ else
         </thead>
         <tbody>
             <!--Soldier maps, includes maps that are for both classes-->
-            @foreach (var map in MapList.Where(x => x.IntendedClass != 'D'))
+            @foreach (var map in _mapList.Where(x => x.IntendedClass != 'D'))
             {
                 <tr>
                     <td><a href="maps/@map.Name">@map.Name</a></td>
@@ -63,10 +63,10 @@ else
 }
 
 @code{
-    List<DetailedMapOverviewModel> MapList;
+    List<DetailedMapOverviewModel> _mapList;
     protected override void OnInitialized()
     {
-        MapList = TempusCacheService.DetailedMapList;
+        _mapList = TempusCacheService.DetailedMapList;
     }
 
 }

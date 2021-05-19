@@ -105,30 +105,30 @@ namespace TempusHubBlazor.Data
             var tempNewCache = cached;
 
             // Check for no data
-            if (cached == null || !cached.CurrentWRDuration.HasValue && !cached.OldWRDuration.HasValue)
+            if (cached == null || !cached.CurrentWrDuration.HasValue && !cached.OldWrDuration.HasValue)
             {
                 // No data
                 tempNewCache = new MapRecordCache
                 {
                     MapId = map.MapInfo.Id,
-                    CurrentWRDuration = map.RecordInfo.Duration,
+                    CurrentWrDuration = map.RecordInfo.Duration,
                     ClassId = map.RecordInfo.Class,
                     ZoneType = map.ZoneInfo.Type,
-                    OldWRDuration = null,
+                    OldWrDuration = null,
                     ZoneId = map.ZoneInfo.Zoneindex
                 };
 
                 await TempusHubMySqlService.UpdateCachedRecordAsync(tempNewCache).ConfigureAwait(false);
             }
             // Check if the cached wr duration is slower to the new record
-            else if (cached.CurrentWRDuration.HasValue && 
-                     cached.CurrentWRDuration.Value.SlowerThan(map.RecordInfo.Duration))
+            else if (cached.CurrentWrDuration.HasValue && 
+                     cached.CurrentWrDuration.Value.SlowerThan(map.RecordInfo.Duration))
             {
                 tempNewCache = new MapRecordCache
                 {
                     MapId = map.MapInfo.Id,
-                    CurrentWRDuration = map.RecordInfo.Duration,
-                    OldWRDuration = cached.CurrentWRDuration,
+                    CurrentWrDuration = map.RecordInfo.Duration,
+                    OldWrDuration = cached.CurrentWrDuration,
                     ClassId = map.RecordInfo.Class,
                     ZoneType = map.ZoneInfo.Type,
                     ZoneId = map.ZoneInfo.Zoneindex
@@ -189,7 +189,7 @@ namespace TempusHubBlazor.Data
         {
             var zonedData = await GetTopZonedTimes(recordBase.MapInfo.Name, recordBase.ZoneInfo.Type, recordBase.ZoneInfo.Zoneindex).ConfigureAwait(false);
 
-            if (recordBase.CachedTime?.CurrentWRDuration == null)
+            if (recordBase.CachedTime?.CurrentWrDuration == null)
             {
                 recordBase.CachedTime = new MapRecordCache
                 {
@@ -198,7 +198,7 @@ namespace TempusHubBlazor.Data
                     ZoneId = recordBase.ZoneInfo.Zoneindex,
                     ZoneType = recordBase.ZoneInfo.Type,
                 };
-                recordBase.CachedTime.CurrentWRDuration = recordBase.RecordInfo.Class == 4 
+                recordBase.CachedTime.CurrentWrDuration = recordBase.RecordInfo.Class == 4 
                     ? zonedData.Runs.DemomanRuns.OrderByDuration().First().Duration 
                     : zonedData.Runs.SoldierRuns.OrderByDuration().First().Duration;
             }

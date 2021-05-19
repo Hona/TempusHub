@@ -41,12 +41,12 @@ namespace TempusHubBlazor.Utilities
         /// <param name="cache">The locally stored (MySQL) stored times</param>
         /// <param name="zonedResults">API request for the record</param>
         /// <returns>Formatted string showing the true WR time save</returns>
-        public static string GetWRSplitString(MapRecordCache cache, ZonedRecordsModel zonedResults)
+        public static string GetWrSplitString(MapRecordCache cache, ZonedRecordsModel zonedResults)
         {
             double slowRecord;
             // If the current wr doesn't have a value, it can be assumed there is no old duration
-            if (cache?.CurrentWRDuration == null || !cache.OldWRDuration.HasValue || 
-                TimesEqual(cache.CurrentWRDuration.Value, cache.OldWRDuration.Value))
+            if (cache?.CurrentWrDuration == null || !cache.OldWrDuration.HasValue || 
+                TimesEqual(cache.CurrentWrDuration.Value, cache.OldWrDuration.Value))
             {
                 // Get #2 time
                 var runs = cache.ClassId == 4 ? zonedResults.Runs.DemomanRuns 
@@ -62,10 +62,10 @@ namespace TempusHubBlazor.Utilities
             }
             else
             {
-                slowRecord = cache.OldWRDuration.Value;
+                slowRecord = cache.OldWrDuration.Value;
             }
 
-            var timeSplit = slowRecord - cache.CurrentWRDuration.Value;
+            var timeSplit = slowRecord - cache.CurrentWrDuration.Value;
 
             var symbol = TimesEqual(0, timeSplit) ? "-" : (timeSplit < 0 ? "+" : "-");
 

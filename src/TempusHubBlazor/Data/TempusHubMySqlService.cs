@@ -20,7 +20,7 @@ namespace TempusHubBlazor.Data
 
         internal async Task<MapRecordCache> GetCachedRecordsAsync(int mapId, int classId, string zoneType, int zoneId = 1)
         {
-            var query =
+            const string query =
                 @"select * from `worldRecordCache` where `mapId`=@MapId AND `classId`=@ClassId AND `zoneType`=@ZoneType and `zoneId`=@ZoneId";
 
             var param = new
@@ -31,14 +31,13 @@ namespace TempusHubBlazor.Data
                 ZoneId = zoneId
             };
 
-            var result = (await QueryAsync<MapRecordCache>(query, param));
+            var result = (await QueryAsync<MapRecordCache>(query, param).ConfigureAwait(false));
             return result?.FirstOrDefault();
         }
 
         internal async Task UpdateCachedRecordAsync(MapRecordCache newCache)
         {
-            var query =
-                @"INSERT INTO `worldRecordCache` VALUES (@MapId, @ClassId, @ZoneType, @ZoneId, @CurrentRecordDuration, @OldRecordDuration) ON DUPLICATE KEY UPDATE `currentWrDuration`=@CurrentRecordDuration, `oldWrDuration`=@OldRecordDuration";
+            const string query = @"INSERT INTO `worldRecordCache` VALUES (@MapId, @ClassId, @ZoneType, @ZoneId, @CurrentRecordDuration, @OldRecordDuration) ON DUPLICATE KEY UPDATE `currentWrDuration`=@CurrentRecordDuration, `oldWrDuration`=@OldRecordDuration";
 
             var param = new
             {
@@ -46,8 +45,8 @@ namespace TempusHubBlazor.Data
                 ClassId = newCache.ClassId,
                 ZoneType = newCache.ZoneType,
                 ZoneId = newCache.ZoneId,
-                CurrentRecordDuration = newCache.CurrentWRDuration ?? null,
-                OldRecordDuration = newCache.OldWRDuration ?? null
+                CurrentRecordDuration = newCache.CurrentWrDuration ?? null,
+                OldRecordDuration = newCache.OldWrDuration ?? null
             };
 
             await ExecuteAsync(query, param).ConfigureAwait(false);
