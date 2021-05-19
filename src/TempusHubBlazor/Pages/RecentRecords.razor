@@ -80,7 +80,7 @@ else
     protected override void OnInitialized()
     {
         TempusCacheService.DataUpdated += OnDataUpdated;
-        LoadData(forceUpdateState: false);
+        LoadData(false);
     }
 
     private void OnDataUpdated(object sender, EventArgs e)
@@ -91,7 +91,7 @@ else
 
     void LoadData()
     {
-        LoadData(forceUpdateState: true);
+        LoadData(true);
     }
 
     void LoadData(bool forceUpdateState)

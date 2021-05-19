@@ -43,7 +43,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Videos = await YoutubeAPIService.GetAllVideosAsync(Channel, IsId, pages:1);
+        Videos = await YoutubeAPIService.GetAllVideosAsync(Channel, IsId, 1);
     }
 
     protected override async Task OnParametersSetAsync() => await OnInitializedAsync();
