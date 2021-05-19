@@ -13,7 +13,7 @@ namespace TempusHubBlazor.Data
 {
     public class MySqlDataAccessBase : IDisposable
     {
-        private SemaphoreSlim _queryLock = new SemaphoreSlim(1, 1);
+        private SemaphoreSlim _queryLock = new(1, 1);
         private readonly string _connectionString;
         private MySqlConnection _connection;
 

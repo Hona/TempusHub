@@ -75,7 +75,7 @@ else
     [Parameter]
     public string RecentRecordType { get; set; }
 
-    List<RecordWithZonedData> RecordsWithZonedData = new List<RecordWithZonedData>();
+    List<RecordWithZonedData> RecordsWithZonedData = new();
 
     protected override void OnInitialized()
     {

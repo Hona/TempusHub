@@ -76,7 +76,7 @@ else {
 @code {
     [Parameter]
     public string ServerParam { get; set; }
-    public List<RankedServerPlayerModel> RankedPlayers { get; set; } = new List<RankedServerPlayerModel>();
+    public List<RankedServerPlayerModel> RankedPlayers { get; set; } = new();
     public ServerStatusModel ServerInfo { get; set; }
     public List<ServerDemoModel> Demos { get; set; }
 

@@ -35,7 +35,7 @@ namespace TempusHubBlazor.Data
         {
             await _tempusRecordCacheService.CacheAllRecordsAsync().ConfigureAwait(false);
         }
-        private static readonly HttpClient HttpClient = new HttpClient
+        private static readonly HttpClient HttpClient = new()
         {
             BaseAddress = new Uri("https://tempus.xyz")
         };

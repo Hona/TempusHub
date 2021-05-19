@@ -9,7 +9,7 @@ namespace TempusHubBlazor.Utilities
 {
     public static class TempusDataTransformationExtensions
     {
-        public static RecordModel ToRecordModel(this RecordInfoShort record) => new RecordModel
+        public static RecordModel ToRecordModel(this RecordInfoShort record) => new()
         {
             Duration = record.Duration,
             Id = record.Id,

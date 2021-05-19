@@ -17,7 +17,7 @@ namespace TempusHubBlazor.Utilities
         /// <summary>
         /// The time that the API uses as 0 seconds
         /// </summary>
-        private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1);
+        private static readonly DateTime UnixEpoch = new(1970, 1, 1);
         /// <summary>
         /// Returns DateTime from tempus API seconds
         /// </summary>
@@ -96,7 +96,7 @@ namespace TempusHubBlazor.Utilities
         /// Converts TF2 game ticks into a TimeSpan
         /// </summary>
         /// <param name="ticks">TF2 game ticks</param>
-        public static TimeSpan TicksToTimeSpan(long ticks) => new TimeSpan(ticks * 149998);
+        public static TimeSpan TicksToTimeSpan(long ticks) => new(ticks * 149998);
         public static string GetYoutubeUrl(string id)
         {
             if (id == null)

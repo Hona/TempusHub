@@ -7,7 +7,7 @@ namespace TempusHubBlazor.Logging
 {
     public static class Logger
     {
-        private static object _lock = new object();
+        private static object _lock = new();
         public static void LogInfo(string message) => LogToConsole(new LogMessage(LogType.Info, message));
         public static void LogWarning(string message) => LogToConsole(new LogMessage(LogType.Warning, message));
         public static void LogError(string message, Exception exception = null) => LogToConsole(new LogMessage(LogType.Error, message, exception));

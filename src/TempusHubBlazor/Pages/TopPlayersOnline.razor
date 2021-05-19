@@ -85,7 +85,7 @@ else if (string.Equals(DisplayType, "server", StringComparison.InvariantCultureI
 @code {
     [Parameter]
     public string DisplayType { get; set; }
-    List<TopPlayerOnline> _topPlayerOnline = new List<TopPlayerOnline>();
+    List<TopPlayerOnline> _topPlayerOnline = new();
 
     protected override void OnInitialized()
     {

@@ -21,8 +21,8 @@ namespace TempusHubBlazor.Services
         private readonly TempusDataService TempusDataService;
         public event EventHandler DataUpdated;
         public RecentActivityModel RecentActivity { get; private set; }
-        public RecentActivityWithZonedData RecentActivityWithZonedData { get; private set; } = new RecentActivityWithZonedData();
-        public List<TopPlayerOnline> TopPlayersOnline { get; private set; } = new List<TopPlayerOnline>();
+        public RecentActivityWithZonedData RecentActivityWithZonedData { get; private set; } = new();
+        public List<TopPlayerOnline> TopPlayersOnline { get; private set; } = new();
         public List<DetailedMapOverviewModel> DetailedMapList { get; set; }
         public PlayerLeaderboards PlayerLeaderboards { get; set; }
         public List<ServerStatusModel> ServerStatusList { get; set; }
