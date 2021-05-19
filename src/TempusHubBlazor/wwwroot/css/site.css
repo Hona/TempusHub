@@ -7,7 +7,7 @@ html, body {
 }
 
 a, .btn-link {
-    color: #039cd6;
+    color: #71d8ff;
 }
 
 table.multi-table {
@@ -323,4 +323,9 @@ body > app > div.main > div.top-row.px-4 > div .dropdown, .dropdown-header, .dro
         /* Never collapse the sidebar for wide screens */
         display: block;
     }
+}
+
+
+.text-muted {
+    color: #bdcddb!important;
 }

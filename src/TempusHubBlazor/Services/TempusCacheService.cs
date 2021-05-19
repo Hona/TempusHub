@@ -159,7 +159,7 @@ namespace TempusHubBlazor.Services
         }
         private async Task UpdateDetailedMapListAsync()
         {
-            DetailedMapList = await TempusDataService.GetDetailedMapListAsync();
+            DetailedMapList = await TempusDataService.GetDetailedMapListAsync().ConfigureAwait(false);
             await Task.Run(() =>
             {
                 var lines = File.ReadAllLines(LocalFileConstants.MapClasses);
@@ -188,15 +188,15 @@ namespace TempusHubBlazor.Services
                     Logger.LogWarning("No class data for " + noClassDataMaps[i].Name);
                     noClassDataMaps[i].IntendedClass = 'B';
                 }
-            });
+            }).ConfigureAwait(false);
         }
         private async Task UpdatePlayerLeaderboardsAsync()
         {
             PlayerLeaderboards = new PlayerLeaderboards
             {
-                Overall = await TempusDataService.GetOverallRanksOverview(),
-                Soldier = await TempusDataService.GetSoldierRanksOverview(),
-                Demoman = await TempusDataService.GetDemomanRanksOverview()
+                Overall = await TempusDataService.GetOverallRanksOverview().ConfigureAwait(false),
+                Soldier = await TempusDataService.GetSoldierRanksOverview().ConfigureAwait(false),
+                Demoman = await TempusDataService.GetDemomanRanksOverview().ConfigureAwait(false)
             };
         }
         private async Task UpdateServerStatusListAsync()
