@@ -15,4 +15,4 @@ jobs:
         dotnet-version: '6.x'
         include-prerelease: true
     - name: Build with dotnet
-      run: dotnet build --configuration Release
+      run: dotnet build TempusHubBlazor.sln --configuration Release
