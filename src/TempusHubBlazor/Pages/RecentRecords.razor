@@ -87,38 +87,22 @@ else
         InvokeAsync(StateHasChanged);
     }
 
-    void LoadData()
-    {
-        LoadData(true);
-    }
-
-    void LoadData(bool forceUpdateState)
+    void LoadData(bool forceUpdateState = true)
     {
         List<RecordWithZonedData> recordsWithZonedDataTemp = new List<RecordWithZonedData>();
         if (string.IsNullOrWhiteSpace(RecentRecordType))
         {
             RecentRecordType = "Map";
         }
-        var allActivity = _tempusCacheService.RecentActivity;
 
-
-        switch (RecentRecordType.ToLower())
+        recordsWithZonedDataTemp = RecentRecordType.ToLower() switch
         {
-            case "map":
-                recordsWithZonedDataTemp = _tempusCacheService.RecentActivityWithZonedData.MapWr;
-                break;
-            case "course":
-                recordsWithZonedDataTemp = _tempusCacheService.RecentActivityWithZonedData.CourseWr;
-                break;
-            case "bonus":
-                recordsWithZonedDataTemp = _tempusCacheService.RecentActivityWithZonedData.BonusWr;
-                break;
-            case "map_top":
-                recordsWithZonedDataTemp = _tempusCacheService.RecentActivityWithZonedData.MapTt;
-                break;
-            default:
-                throw new Exception("No activity data for that type.");
-        }
+            "map" => _tempusCacheService.RecentActivityWithZonedData.MapWr,
+            "course" => _tempusCacheService.RecentActivityWithZonedData.CourseWr,
+            "bonus" => _tempusCacheService.RecentActivityWithZonedData.BonusWr,
+            "map_top" => _tempusCacheService.RecentActivityWithZonedData.MapTt,
+            _ => throw new Exception("No activity data for that type.")
+        };
 
         _recordsWithZonedData = recordsWithZonedDataTemp.OrderByDescending(x => x.Record.RecordInfo.Date).ToList();
 
