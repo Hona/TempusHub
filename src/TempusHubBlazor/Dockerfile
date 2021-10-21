@@ -7,7 +7,7 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["TempusHubBlazor/TempusHubBlazor.csproj", "TempusHubBlazor/"]
+COPY ["src/TempusHubBlazor/TempusHubBlazor.csproj", "TempusHubBlazor/"]
 RUN dotnet restore "TempusHubBlazor/TempusHubBlazor.csproj"
 COPY . .
 WORKDIR "/src/TempusHubBlazor"
