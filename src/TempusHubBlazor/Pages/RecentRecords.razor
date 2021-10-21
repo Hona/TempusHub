@@ -47,7 +47,7 @@ else
             {
             <tr>
                 <td><img width="24" height="24" src="@(record.Record.RecordInfo.Class == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /></td>
-                <td><a href="@HrefHelper.GetMapInfoPath(record.Record.MapInfo.Name)">@(record.Record.MapInfo.Name + " " + (record.Record.ZoneInfo.Type == "map" ? "" : record.Record.ZoneInfo.Type == "course" ? "C" + record.Record.ZoneInfo.Zoneindex + " " : "B" + record.Record.ZoneInfo.Zoneindex))</a></td>
+                <td><a href="@HrefHelper.GetMapInfoPath(record.Record.MapInfo.Name)">@(record.Record.MapInfo.Name + " " + (record.Record.ZoneInfo.Type == "map" ? "" : record.Record.ZoneInfo.Type == "course" ? "C" + record.Record.ZoneInfo.ZoneIndex + " " : "B" + record.Record.ZoneInfo.ZoneIndex))</a></td>
                 <td><a href="@HrefHelper.GetPlayerInfoPath(record.Record.PlayerInfo.Id)">@(_tempusCacheService.GetRealName(record.Record.PlayerInfo.Id) ?? record.Record.PlayerInfo.Name)</a></td>
                 <td>
                     <a href="@HrefHelper.GetRunInfoPath(record.Record.RecordInfo.Id)">
