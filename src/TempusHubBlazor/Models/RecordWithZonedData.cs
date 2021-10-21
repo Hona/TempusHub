@@ -1,11 +1,10 @@
 ﻿using TempusHubBlazor.Models.Tempus.Activity;
 using TempusHubBlazor.Models.Tempus.Responses;
 
-namespace TempusHubBlazor.Models
+namespace TempusHubBlazor.Models;
+
+public class RecordWithZonedData
 {
-    public class RecordWithZonedData
-    {
-        public TempusRecordBase Record { get; set; }
-        public ZonedRecordsModel ZonedData { get; set; }
-    }
+    public TempusRecordBase Record { get; set; }
+    public ZonedRecordsModel ZonedData { get; set; }
 }

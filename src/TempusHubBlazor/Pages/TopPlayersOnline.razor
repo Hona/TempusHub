@@ -6,8 +6,8 @@
 @using TempusHubBlazor.Models
 @using TempusHubBlazor.Services
 
-@inject TempusDataService TempusDataService
-@inject TempusCacheService TempusCacheService
+@inject TempusDataService _tempusDataService
+@inject TempusCacheService _tempusCacheService
 
 @implements IDisposable
 
@@ -43,7 +43,7 @@ else if (string.IsNullOrWhiteSpace(DisplayType) || string.Equals(DisplayType, "l
             {
                 <tr>
                     <td><img width="24" height="24" src="@(player.RankClass == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /> @player.Rank</td>
-                    <td><a href="@HrefHelper.GetPlayerInfoPath(player.Id)">@(TempusCacheService.GetRealName(player.Id) ?? player.Name)</a></td>
+                    <td><a href="@HrefHelper.GetPlayerInfoPath(player.Id)">@(_tempusCacheService.GetRealName(player.Id) ?? player.Name)</a></td>
                     <td><a href="@HrefHelper.GetMapInfoPath(player.Server.GameInfo.CurrentMap)">@player.Server.GameInfo.CurrentMap</a></td>
                     <td><a href="@HrefHelper.GetServerInfoPath(player.Server.ServerInfo.Shortname)">@player.Server.ServerInfo.Shortname</a> | <a href="steam://connect/@player.Server.ServerInfo.Addr:@player.Server.ServerInfo.Port">Connect</a></td>
                 </tr>
@@ -66,7 +66,7 @@ else if (string.Equals(DisplayType, "server", StringComparison.InvariantCultureI
                             {
                                 <BSListGroupItem class="country-group-list-item text-white">
                                     <img width="24" height="24" src="@(player.RankClass == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /> @player.Rank 
-                                    <a href="@HrefHelper.GetPlayerInfoPath(player.Id)">@(TempusCacheService.GetRealName(player.Id) ?? player.Name)</a>
+                                    <a href="@HrefHelper.GetPlayerInfoPath(player.Id)">@(_tempusCacheService.GetRealName(player.Id) ?? player.Name)</a>
                                 </BSListGroupItem>
                             }
                         </BSListGroup>
@@ -85,14 +85,14 @@ else if (string.Equals(DisplayType, "server", StringComparison.InvariantCultureI
 
     protected override void OnInitialized()
     {
-        TempusCacheService.DataUpdated += OnDataUpdated;
+        _tempusCacheService.DataUpdated += OnDataUpdated;
 
         LoadData();
     }
 
     void LoadData()
     {
-        _topPlayerOnline = TempusCacheService.TopPlayersOnline;
+        _topPlayerOnline = _tempusCacheService.TopPlayersOnline;
     }
 
     private void OnDataUpdated(object sender, EventArgs e)
@@ -103,7 +103,7 @@ else if (string.Equals(DisplayType, "server", StringComparison.InvariantCultureI
 
     public void Dispose()
     {
-        TempusCacheService.DataUpdated -= OnDataUpdated;
+        _tempusCacheService.DataUpdated -= OnDataUpdated;
     }
 
     protected override void OnParametersSet() => LoadData();

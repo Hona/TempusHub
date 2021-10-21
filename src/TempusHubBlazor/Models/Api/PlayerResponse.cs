@@ -1,9 +1,8 @@
 ﻿using TempusHubBlazor.Models.Tempus.Activity;
 
-namespace TempusHubBlazor.Models.Api
+namespace TempusHubBlazor.Models.Api;
+
+public class PlayerResponse : PlayerInfo
 {
-    public class PlayerResponse : PlayerInfo
-    {
-        public string RealName { get; set; }
-    }
+    public string RealName { get; set; }
 }

@@ -3,13 +3,13 @@
 @using TempusHubBlazor.Constants
 @using TempusHubBlazor.Services
 
-@inject TempusCacheService TempusCacheService
+@inject TempusCacheService _tempusCacheService
 <div class="heading-wrapper">
     <h1 class="slim-center">Tempus Map List</h1>
 </div>
 <br />
 
-@if (_mapList == null || _mapList.Count() == 0)
+@if (_mapList == null || !_mapList.Any())
 {
     <p><em>Getting map list data...</em></p>
 }
@@ -64,7 +64,7 @@ else
     List<DetailedMapOverviewModel> _mapList;
     protected override void OnInitialized()
     {
-        _mapList = TempusCacheService.DetailedMapList;
+        _mapList = _tempusCacheService.DetailedMapList;
     }
 
 }

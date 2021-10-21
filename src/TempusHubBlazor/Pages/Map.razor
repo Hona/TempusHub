@@ -12,8 +12,8 @@
 @using TempusHubBlazor.Services
 @using TempusHubBlazor.Utilities
 
-@inject TempusCacheService TempusCacheService
-@inject TempusDataService TempusDataService
+@inject TempusCacheService _tempusCacheService
+@inject TempusDataService _tempusDataService
 <div class="heading-wrapper">
     <h1 class="slim-center">@(ParsedMap?.Name ?? MapName)</h1>
 </div>
@@ -89,7 +89,7 @@ else
                 {
                     <tr>
                         <td>#@(i + 1): @TempusUtilities.FormattedDuration(ZonedSoldierRecords[i].Duration)</td>
-                        <td><a href="@HrefHelper.GetPlayerInfoPath(ZonedSoldierRecords[i].Id)">@(TempusCacheService.GetRealName(ZonedSoldierRecords[i].Id) ?? ZonedSoldierRecords[i].Name)</a></td>
+                        <td><a href="@HrefHelper.GetPlayerInfoPath(ZonedSoldierRecords[i].Id)">@(_tempusCacheService.GetRealName(ZonedSoldierRecords[i].Id) ?? ZonedSoldierRecords[i].Name)</a></td>
                     </tr>
                 }
             </tbody>
@@ -112,7 +112,7 @@ else
                 {
                     <tr>
                         <td>#@(i + 1): @TempusUtilities.FormattedDuration(ZonedDemomanRecords[i].Duration)</td>
-                        <td><a href="@HrefHelper.GetPlayerInfoPath(ZonedDemomanRecords[i].Id)">@(TempusCacheService.GetRealName(ZonedDemomanRecords[i].Id) ?? ZonedDemomanRecords[i].Name)</a></td>
+                        <td><a href="@HrefHelper.GetPlayerInfoPath(ZonedDemomanRecords[i].Id)">@(_tempusCacheService.GetRealName(ZonedDemomanRecords[i].Id) ?? ZonedDemomanRecords[i].Name)</a></td>
                     </tr>
                 }
             </tbody>
@@ -136,7 +136,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         ParsedMap = MapFromPartialName(MapName);
-        FullMapOverView = await TempusDataService.GetFullMapOverViewAsync(MapName);
+        FullMapOverView = await _tempusDataService.GetFullMapOverViewAsync(MapName);
 
         if (string.IsNullOrWhiteSpace(ZoneSelector))
         {
@@ -153,24 +153,24 @@ else
         else if (ZoneSelector.Contains("c", StringComparison.InvariantCultureIgnoreCase)
             && int.TryParse(string.Join(string.Empty, ZoneSelector.Skip(1)), out var zoneCourseIndex))
         {
-            var zonedTimes = await TempusDataService.GetTopZonedTimes(ParsedMap.Name, "course", zoneCourseIndex);
+            var zonedTimes = await _tempusDataService.GetTopZonedTimes(ParsedMap.Name, "course", zoneCourseIndex);
             ZonedSoldierRecords = zonedTimes.Runs.SoldierRuns.Select(x => x.ToRecordModel()).ToList();
             ZonedDemomanRecords = zonedTimes.Runs.DemomanRuns.Select(x => x.ToRecordModel()).ToList();
         }
         else if (ZoneSelector.Contains("b", StringComparison.InvariantCultureIgnoreCase)
             && int.TryParse(string.Join(string.Empty, ZoneSelector.Skip(1)), out var zoneBonusIndex))
         {
-            var zonedTimes = await TempusDataService.GetTopZonedTimes(ParsedMap.Name, "bonus", zoneBonusIndex);
+            var zonedTimes = await _tempusDataService.GetTopZonedTimes(ParsedMap.Name, "bonus", zoneBonusIndex);
             ZonedSoldierRecords = zonedTimes.Runs.SoldierRuns.Select(x => x.ToRecordModel()).ToList();
             ZonedDemomanRecords = zonedTimes.Runs.DemomanRuns.Select(x => x.ToRecordModel()).ToList();
         }
-        this.StateHasChanged();
+        StateHasChanged();
     }
 
     DetailedMapOverviewModel MapFromPartialName(string partialName)
     {
-        var parsedMapName = TempusDataService.ParseMapName(partialName);
-        return TempusCacheService.DetailedMapList.FirstOrDefault(x => x.Name == parsedMapName);
+        var parsedMapName = _tempusDataService.ParseMapName(partialName);
+        return _tempusCacheService.DetailedMapList.FirstOrDefault(x => x.Name == parsedMapName);
     }
 
     protected override async Task OnParametersSetAsync() => await OnInitializedAsync();

@@ -10,70 +10,69 @@ using Serilog;
 using TempusHubBlazor.Data;
 using TempusHubBlazor.Services;
 
-namespace TempusHubBlazor
+namespace TempusHubBlazor;
+
+public class Startup
 {
-    public class Startup
+    public Startup(IConfiguration configuration)
     {
-        public Startup(IConfiguration configuration)
+        Configuration = configuration;
+    }
+
+    public IConfiguration Configuration { get; }
+
+    // This method gets called by the runtime. Use this method to add services to the container.
+    // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddRazorPages();
+        services.AddServerSideBlazor();
+        services.AddControllers();
+        var tempusHubMySqlService = new TempusHubMySqlService(Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING"));
+        services.AddSingleton(tempusHubMySqlService);
+        var tempusDataService = new TempusDataService(tempusHubMySqlService);
+        if (Environment.GetEnvironmentVariable("CACHE_ALL_RECORDS")?.ToLower() == "true")
         {
-            Configuration = configuration;
+            tempusDataService.CacheAllWRsAsync().GetAwaiter().GetResult();
+        }
+        services.AddSingleton(tempusDataService);
+        services.AddSingleton<TempusCacheService>();
+        services.AddSingleton<YoutubeApiService>();
+        services.AddBootstrapCss();
+        services.AddSwaggerGen();
+    }
+
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage();
+        }
+        else
+        {
+            app.UseExceptionHandler("/Error");
+            // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
         }
 
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
-        public void ConfigureServices(IServiceCollection services)
+        app.UseForwardedHeaders(new ForwardedHeadersOptions
         {
-            services.AddRazorPages();
-            services.AddServerSideBlazor();
-            services.AddControllers();
-            var tempusHubMySqlService = new TempusHubMySqlService(Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING"));
-            services.AddSingleton(tempusHubMySqlService);
-            var tempusDataService = new TempusDataService(tempusHubMySqlService);
-            if (Environment.GetEnvironmentVariable("CACHE_ALL_RECORDS")?.ToLower() == "true")
-            {
-                tempusDataService.CacheAllWRsAsync().GetAwaiter().GetResult();
-            }
-            services.AddSingleton(tempusDataService);
-            services.AddSingleton(new TempusCacheService(tempusDataService));
-            services.AddSingleton<YoutubeApiService>();
-            services.AddBootstrapCss();
-            services.AddSwaggerGen();
-        }
+            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+        });
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        app.UseSerilogRequestLogging();
+
+        app.UseSwagger();
+        app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "TempusHub API V1"); });
+
+        //app.UseHttpsRedirection();
+        app.UseStaticFiles();
+        app.UseRouting();
+        app.UseEndpoints(endpoints =>
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-            }
-
-            app.UseForwardedHeaders(new ForwardedHeadersOptions
-            {
-                ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-            });
-
-            app.UseSerilogRequestLogging();
-
-            app.UseSwagger();
-            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "TempusHub API V1"); });
-
-            //app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseRouting();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapBlazorHub();
-                endpoints.MapFallbackToPage("/_Host");
-                endpoints.MapControllers();
-            });
-        }
+            endpoints.MapBlazorHub();
+            endpoints.MapFallbackToPage("/_Host");
+            endpoints.MapControllers();
+        });
     }
 }

@@ -3,13 +3,12 @@ using System.Linq;
 using TempusHubBlazor.Models.Tempus;
 using TempusHubBlazor.Models.Tempus.Activity;
 
-namespace TempusHubBlazor.Utilities
+namespace TempusHubBlazor.Utilities;
+
+public static class RecordExtensions
 {
-    public static class RecordExtensions
-    {
-        public static RecordInfoShort[] OrderByDuration(this List<RecordInfoShort> records)
-            => records.OrderBy(x => x.Duration).ToArray();
-        public static RecordModel[] OrderByDuration(this List<RecordModel> records)
-            => records.OrderBy(x => x.Duration).ToArray();
-    }
+    public static RecordInfoShort[] OrderByDuration(this List<RecordInfoShort> records)
+        => records.OrderBy(x => x.Duration).ToArray();
+    public static RecordModel[] OrderByDuration(this List<RecordModel> records)
+        => records.OrderBy(x => x.Duration).ToArray();
 }

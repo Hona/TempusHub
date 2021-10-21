@@ -3,8 +3,8 @@
 @using TempusHubBlazor.Models.Tempus.Responses
 @using TempusHubBlazor.Data
 
-@inject TempusDataService TempusDataService
-@inject IJSRuntime JsRuntime
+@inject TempusDataService _tempusDataService
+@inject IJSRuntime _jsRuntime
 
 <BSDropdown>
     <BSBasicInput Class="search-bar" InputType="InputType.Text" PlaceHolder="Search"
@@ -51,7 +51,7 @@
         PlayerMapSearchResult = null;
         if (!string.IsNullOrWhiteSpace(SearchText))
         {
-            PlayerMapSearchResult = await TempusDataService.GetSearchResultAsync(SearchText);
+            PlayerMapSearchResult = await _tempusDataService.GetSearchResultAsync(SearchText);
         }
     }
 
@@ -61,7 +61,7 @@
             string.Equals(e.Key, "Return", StringComparison.InvariantCultureIgnoreCase) ||
             string.Equals(e.Key, "NumpadEnter", StringComparison.InvariantCultureIgnoreCase))
         {
-            await JsRuntime.InvokeVoidAsync(
+            await _jsRuntime.InvokeVoidAsync(
                 "searchFunctions.clickSearch",
                 "searchButton");
         }

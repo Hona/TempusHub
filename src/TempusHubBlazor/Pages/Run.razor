@@ -6,8 +6,8 @@
 @using TempusHubBlazor.Services
 @using TempusHubBlazor.Utilities
 
-@inject TempusCacheService TempusCacheService
-@inject TempusDataService TempusDataService
+@inject TempusCacheService _tempusCacheService
+@inject TempusDataService _tempusDataService
 
 @if (RunInfo == null || Server == null)
 {<span><i>Loading...</i></span> }
@@ -30,7 +30,7 @@ else
         <tbody>
             <tr>
                 <td><img width="24" height="24" src="@(RunInfo.RecordInfo.Class == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /></td>
-                <td><a href="@HrefHelper.GetPlayerInfoPath(RunInfo.Player.Id ?? 0)">@(TempusCacheService.GetRealName(RunInfo.Player.Id ?? 0) ?? RunInfo.Player.Name)</a></td>
+                <td><a href="@HrefHelper.GetPlayerInfoPath(RunInfo.Player.Id ?? 0)">@(_tempusCacheService.GetRealName(RunInfo.Player.Id ?? 0) ?? RunInfo.Player.Name)</a></td>
                 <td>@(RunInfo.RecordZoneInfo.Type.ToLower() == "map" ? "Map" : RunInfo.RecordZoneInfo.Type.ToStandardCasing() + " " + RunInfo.RecordZoneInfo.ZoneIndex)</td>
                 <td>#@RunInfo.RecordInfo.Rank: @(TempusUtilities.FormattedDuration(RunInfo.RecordInfo.Duration))</td>
                 <td>@TempusUtilities.GetDateFromSeconds(RunInfo.RecordInfo.Date).GetTimeStringSinceDateTime()</td>
@@ -49,8 +49,8 @@ else
     {
         if (int.TryParse(RunId, out var parsedRunId))
         {
-            RunInfo = await TempusDataService.GetRunInfoAsync(parsedRunId);
-            Server = TempusCacheService.ServerStatusList.First(x => x.ServerInfo.Id == RunInfo.RecordInfo.ServerId);
+            RunInfo = await _tempusDataService.GetRunInfoAsync(parsedRunId);
+            Server = _tempusCacheService.ServerStatusList.First(x => x.ServerInfo.Id == RunInfo.RecordInfo.ServerId);
         }
         else
         {

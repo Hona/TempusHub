@@ -5,7 +5,7 @@
 @using TempusHubBlazor.Services
 @using TempusHubBlazor.Utilities
 
-@inject TempusCacheService TempusCacheService
+@inject TempusCacheService _tempusCacheService
 
 @implements IDisposable
 
@@ -95,14 +95,14 @@ else if (string.IsNullOrWhiteSpace(ServerDisplayType) || string.Equals(ServerDis
 
     protected override void OnInitialized()
     {
-        TempusCacheService.DataUpdated += OnDataUpdated;
+        _tempusCacheService.DataUpdated += OnDataUpdated;
 
-        if (TempusCacheService.ServerStatusList == null || TempusCacheService.ServerStatusList.Count == 0)
+        if (_tempusCacheService.ServerStatusList == null || _tempusCacheService.ServerStatusList.Count == 0)
         {
             return;
         }
 
-        ServerStatusList = TempusCacheService.ServerStatusList
+        ServerStatusList = _tempusCacheService.ServerStatusList
             .Where(x => x?.ServerInfo != null && x.GameInfo != null && !x.ServerInfo.Hidden)
             .OrderByDescending(x => x.GameInfo.PlayerCount).ToList();
     }
@@ -111,11 +111,11 @@ else if (string.IsNullOrWhiteSpace(ServerDisplayType) || string.Equals(ServerDis
       
     private void OnDataUpdated(object sender, EventArgs e)
     {
-        ServerStatusList = TempusCacheService.ServerStatusList;
+        ServerStatusList = _tempusCacheService.ServerStatusList;
     }
 
     public void Dispose()
     {
-        TempusCacheService.DataUpdated -= OnDataUpdated;
+        _tempusCacheService.DataUpdated -= OnDataUpdated;
     }
 }

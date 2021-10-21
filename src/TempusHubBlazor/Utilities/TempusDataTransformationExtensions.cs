@@ -1,16 +1,15 @@
 ﻿using TempusHubBlazor.Models.Tempus;
 using TempusHubBlazor.Models.Tempus.Activity;
 
-namespace TempusHubBlazor.Utilities
+namespace TempusHubBlazor.Utilities;
+
+public static class TempusDataTransformationExtensions
 {
-    public static class TempusDataTransformationExtensions
+    public static RecordModel ToRecordModel(this RecordInfoShort record) => new()
     {
-        public static RecordModel ToRecordModel(this RecordInfoShort record) => new()
-        {
-            Duration = record.Duration,
-            Id = record.Id,
-            Name = record.Name,
-            SteamId = record.PlayerInfo.SteamId
-        };
-    }
+        Duration = record.Duration,
+        Id = record.Id,
+        Name = record.Name,
+        SteamId = record.PlayerInfo.SteamId
+    };
 }

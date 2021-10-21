@@ -3,7 +3,7 @@
 @using TempusHubBlazor.Services
 @using TempusHubBlazor.Utilities
 
-@inject YoutubeApiService YoutubeApiService
+@inject YoutubeApiService _youtubeApiService
 
 @if (Videos == null || Videos.Count == 0)
 {
@@ -43,7 +43,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        Videos = await YoutubeApiService.GetAllVideosAsync(Channel, IsId, 1);
+        Videos = await _youtubeApiService.GetAllVideosAsync(Channel, IsId, 1);
     }
 
     protected override async Task OnParametersSetAsync() => await OnInitializedAsync();

@@ -1,6 +1,5 @@
-﻿namespace TempusHubBlazor.Models.Tempus.Rank
+﻿namespace TempusHubBlazor.Models.Tempus.Rank;
+
+public class SoldierRank : BaseRank
 {
-    public class SoldierRank : BaseRank
-    {
-    }
 }

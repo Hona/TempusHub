@@ -8,8 +8,8 @@
 @using TempusHubBlazor.Constants
 @using TempusHubBlazor.Models;
 
-@inject TempusDataService TempusDataService
-@inject TempusCacheService TempusCacheService
+@inject TempusDataService _tempusDataService
+@inject TempusCacheService _tempusCacheService
 
 @if (PlayerStats == null)
 {
@@ -18,7 +18,7 @@
 else
 {
     <div class="heading-wrapper">
-        <h1><span style="color: @RankColor.BracketsColor">[</span><span style="color: @RankColor.TitleColor">@(HigherRankInfo.Title)</span><span style="color: @RankColor.BracketsColor">] </span><span style="color: @RankColor.NameColor">@(TempusCacheService.GetRealName(PlayerStats.PlayerInfo.Id) ?? PlayerStats.PlayerInfo.Name)</span></h1>
+        <h1><span style="color: @RankColor.BracketsColor">[</span><span style="color: @RankColor.TitleColor">@(HigherRankInfo.Title)</span><span style="color: @RankColor.BracketsColor">] </span><span style="color: @RankColor.NameColor">@(_tempusCacheService.GetRealName(PlayerStats.PlayerInfo.Id) ?? PlayerStats.PlayerInfo.Name)</span></h1>
     </div>
     <div class="slim-center">
         <br />
@@ -91,12 +91,12 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var playerStats = await TempusDataService.GetUserStatsAsync(PlayerId);
+        var playerStats = await _tempusDataService.GetUserStatsAsync(PlayerId);
         playerStats.ClassRankInfo.DemoRank.Title ??= "Peon";
         playerStats.ClassRankInfo.SoldierRank.Title ??= "Peon";
         PlayerStats = playerStats;
-        HigherRankInfo = PlayerStats.ClassRankInfo.DemoRank.Rank <= PlayerStats.ClassRankInfo.SoldierRank.Rank ? (BaseRank)PlayerStats.ClassRankInfo.DemoRank : (BaseRank)PlayerStats.ClassRankInfo.SoldierRank;
-        RankColor = TempusCacheService.TempusRankColors.First(x => string.Equals(x.Title, HigherRankInfo.Title ?? "Peon", StringComparison.CurrentCultureIgnoreCase));
+        HigherRankInfo = PlayerStats.ClassRankInfo.DemoRank.Rank <= PlayerStats.ClassRankInfo.SoldierRank.Rank ? PlayerStats.ClassRankInfo.DemoRank : PlayerStats.ClassRankInfo.SoldierRank;
+        RankColor = _tempusCacheService.TempusRankColors.First(x => string.Equals(x.Title, HigherRankInfo.Title ?? "Peon", StringComparison.CurrentCultureIgnoreCase));
     }
 
     protected override async Task OnParametersSetAsync() => await OnInitializedAsync();

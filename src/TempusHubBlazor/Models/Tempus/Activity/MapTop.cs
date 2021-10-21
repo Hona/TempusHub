@@ -1,14 +1,9 @@
 using Newtonsoft.Json;
 
-namespace TempusHubBlazor.Models.Tempus.Activity
+namespace TempusHubBlazor.Models.Tempus.Activity;
+
+public class MapTop : TempusRecordBase
 {
-    public class MapTop : TempusRecordBase
-    {
-
-
-        [JsonProperty(PropertyName = "rank")]
-        public int Rank { get; set; }
-
-
-    }
+    [JsonProperty(PropertyName = "rank")]
+    public int Rank { get; set; }
 }

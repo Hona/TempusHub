@@ -1,7 +1,6 @@
-namespace TempusHubBlazor.Models.Tempus.Rank
-{
-    public class DemoRank : BaseRank
-    {
+namespace TempusHubBlazor.Models.Tempus.Rank;
 
-    }
+public class DemoRank : BaseRank
+{
+
 }

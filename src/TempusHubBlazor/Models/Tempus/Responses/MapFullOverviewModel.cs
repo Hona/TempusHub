@@ -3,38 +3,37 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using TempusHubBlazor.Models.Tempus.DetailedMapList;
 
-namespace TempusHubBlazor.Models.Tempus.Responses
+namespace TempusHubBlazor.Models.Tempus.Responses;
+
+public class MapFullOverviewModel
 {
-    public class MapFullOverviewModel
+    [JsonProperty(PropertyName = "videos")]
+    public VideosModel Videos { get; set; }
+
+    [JsonProperty(PropertyName = "tier_info")]
+    public TierInfoModel TierInfo { get; set; }
+
+    [JsonProperty(PropertyName = "demoman_runs")]
+    public List<RecordModel> DemomanRuns { get; set; }
+
+    [JsonProperty(PropertyName = "authors")]
+    public List<AuthorModel> Authors { get; set; }
+
+    [JsonProperty(PropertyName = "map_info")]
+    public MapInfoModel MapInfo { get; set; }
+
+    [JsonProperty(PropertyName = "soldier_runs")]
+    public List<RecordModel> SoldierRuns { get; set; }
+
+    [JsonProperty(PropertyName = "zone_counts")]
+    public ZoneCounts ZoneCounts { get; set; }
+    public List<RecordModel> GetClassRuns(int id)
     {
-        [JsonProperty(PropertyName = "videos")]
-        public VideosModel Videos { get; set; }
-
-        [JsonProperty(PropertyName = "tier_info")]
-        public TierInfoModel TierInfo { get; set; }
-
-        [JsonProperty(PropertyName = "demoman_runs")]
-        public List<RecordModel> DemomanRuns { get; set; }
-
-        [JsonProperty(PropertyName = "authors")]
-        public List<AuthorModel> Authors { get; set; }
-
-        [JsonProperty(PropertyName = "map_info")]
-        public MapInfoModel MapInfo { get; set; }
-
-        [JsonProperty(PropertyName = "soldier_runs")]
-        public List<RecordModel> SoldierRuns { get; set; }
-
-        [JsonProperty(PropertyName = "zone_counts")]
-        public ZoneCounts ZoneCounts { get; set; }
-        public List<RecordModel> GetClassRuns(int id)
+        return id switch
         {
-            return id switch
-            {
-                3 => SoldierRuns,
-                4 => DemomanRuns,
-                _ => throw new ArgumentOutOfRangeException("No such class id exists"),
-            };
-        }
+            3 => SoldierRuns,
+            4 => DemomanRuns,
+            _ => throw new ArgumentOutOfRangeException("No such class id exists"),
+        };
     }
 }

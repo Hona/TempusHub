@@ -1,16 +1,15 @@
 using Newtonsoft.Json;
 
-namespace TempusHubBlazor.Models.Tempus.Activity
+namespace TempusHubBlazor.Models.Tempus.Activity;
+
+public class PlayerInfo
 {
-    public class PlayerInfo
-    {
-        [JsonProperty(PropertyName = "steamid")]
-        public string Steamid { get; set; }
+    [JsonProperty(PropertyName = "steamid")]
+    public string SteamId { get; set; }
 
-        [JsonProperty(PropertyName = "id")]
-        public int Id { get; set; }
+    [JsonProperty(PropertyName = "id")]
+    public int Id { get; set; }
 
-        [JsonProperty(PropertyName = "name")]
-        public string Name { get; set; }
-    }
+    [JsonProperty(PropertyName = "name")]
+    public string Name { get; set; }
 }

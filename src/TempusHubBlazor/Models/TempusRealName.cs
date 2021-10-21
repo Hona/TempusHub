@@ -1,12 +1,11 @@
 ﻿using Newtonsoft.Json;
 
-namespace TempusHubBlazor.Models
+namespace TempusHubBlazor.Models;
+
+public class TempusRealName
 {
-    public class TempusRealName
-    {
-        [JsonProperty(PropertyName = "id")]
-        public int Id { get; set; }
-        [JsonProperty(PropertyName = "nickname")]
-        public string RealName { get; set; }
-    }
+    [JsonProperty(PropertyName = "id")]
+    public int Id { get; set; }
+    [JsonProperty(PropertyName = "nickname")]
+    public string RealName { get; set; }
 }

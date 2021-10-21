@@ -8,8 +8,8 @@
 @using TempusHubBlazor.Services
 @using Constants
 
-@inject TempusDataService TempusDataService
-@inject TempusCacheService TempusCacheService
+@inject TempusDataService _tempusDataService
+@inject TempusCacheService _tempusCacheService
 
 @implements IDisposable
 
@@ -48,7 +48,7 @@ else
             <tr>
                 <td><img width="24" height="24" src="@(record.Record.RecordInfo.Class == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /></td>
                 <td><a href="@HrefHelper.GetMapInfoPath(record.Record.MapInfo.Name)">@(record.Record.MapInfo.Name + " " + (record.Record.ZoneInfo.Type == "map" ? "" : record.Record.ZoneInfo.Type == "course" ? "C" + record.Record.ZoneInfo.Zoneindex + " " : "B" + record.Record.ZoneInfo.Zoneindex))</a></td>
-                <td><a href="@HrefHelper.GetPlayerInfoPath(record.Record.PlayerInfo.Id)">@(TempusCacheService.GetRealName(record.Record.PlayerInfo.Id) ?? record.Record.PlayerInfo.Name)</a></td>
+                <td><a href="@HrefHelper.GetPlayerInfoPath(record.Record.PlayerInfo.Id)">@(_tempusCacheService.GetRealName(record.Record.PlayerInfo.Id) ?? record.Record.PlayerInfo.Name)</a></td>
                 <td>
                     <a href="@HrefHelper.GetRunInfoPath(record.Record.RecordInfo.Id)">
                         @(TempusUtilities.FormattedDuration(record.Record.RecordInfo.Duration))
@@ -77,7 +77,7 @@ else
 
     protected override void OnInitialized()
     {
-        TempusCacheService.DataUpdated += OnDataUpdated;
+        _tempusCacheService.DataUpdated += OnDataUpdated;
         LoadData(false);
     }
 
@@ -99,22 +99,22 @@ else
         {
             RecentRecordType = "Map";
         }
-        var allActivity = TempusCacheService.RecentActivity;
+        var allActivity = _tempusCacheService.RecentActivity;
 
 
         switch (RecentRecordType.ToLower())
         {
             case "map":
-                recordsWithZonedDataTemp = TempusCacheService.RecentActivityWithZonedData.MapWr;
+                recordsWithZonedDataTemp = _tempusCacheService.RecentActivityWithZonedData.MapWr;
                 break;
             case "course":
-                recordsWithZonedDataTemp = TempusCacheService.RecentActivityWithZonedData.CourseWr;
+                recordsWithZonedDataTemp = _tempusCacheService.RecentActivityWithZonedData.CourseWr;
                 break;
             case "bonus":
-                recordsWithZonedDataTemp = TempusCacheService.RecentActivityWithZonedData.BonusWr;
+                recordsWithZonedDataTemp = _tempusCacheService.RecentActivityWithZonedData.BonusWr;
                 break;
             case "map_top":
-                recordsWithZonedDataTemp = TempusCacheService.RecentActivityWithZonedData.MapTt;
+                recordsWithZonedDataTemp = _tempusCacheService.RecentActivityWithZonedData.MapTt;
                 break;
             default:
                 throw new Exception("No activity data for that type.");
@@ -124,7 +124,7 @@ else
 
         if (forceUpdateState)
         {
-            base.StateHasChanged();
+            StateHasChanged();
         }
     }
 
@@ -132,6 +132,6 @@ else
       
     public void Dispose()
     {
-        TempusCacheService.DataUpdated -= OnDataUpdated;
+        _tempusCacheService.DataUpdated -= OnDataUpdated;
     }
 }

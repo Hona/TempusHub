@@ -1,13 +1,12 @@
 ﻿using Newtonsoft.Json;
 
-namespace TempusHubBlazor.Models.Tempus
-{
-    public class AuthorModel
-    {
-        [JsonProperty(PropertyName = "name")]
-        public string Name { get; set; }
+namespace TempusHubBlazor.Models.Tempus;
 
-        [JsonProperty(PropertyName = "id")]
-        public int Id { get; set; }
-    }
+public class AuthorModel
+{
+    [JsonProperty(PropertyName = "name")]
+    public string Name { get; set; }
+
+    [JsonProperty(PropertyName = "id")]
+    public int Id { get; set; }
 }

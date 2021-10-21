@@ -6,8 +6,8 @@
 @using TempusHubBlazor.Services
 @using TempusHubBlazor.Utilities
 
-@inject TempusCacheService TempusCacheService
-@inject TempusDataService TempusDataService
+@inject TempusCacheService _tempusCacheService
+@inject TempusDataService _tempusDataService
 @if (DemoInfo == null) { <span><i>Loading...</i></span> }
 else
 {
@@ -33,7 +33,7 @@ else
         {
             <tr>
                 <td><img width="24" height="24" src="@(run.RunInfo.PlayerClass == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /></td>
-                <td><a href="@HrefHelper.GetPlayerInfoPath(run.PlayerInfo.Id ?? 0)">@(TempusCacheService.GetRealName(run.PlayerInfo.Id ?? 0) ?? run.PlayerInfo.Name)</a></td>
+                <td><a href="@HrefHelper.GetPlayerInfoPath(run.PlayerInfo.Id ?? 0)">@(_tempusCacheService.GetRealName(run.PlayerInfo.Id ?? 0) ?? run.PlayerInfo.Name)</a></td>
                 <td>@(run.RunType.ToUpper() == "TOP" ? "Top" : run.RunType.ToUpper())</td>
                 <td>@(run.RecordZoneInfo.Type.ToLower() == "map" ? "Map" : run.RecordZoneInfo.Type.ToStandardCasing() + " " + run.RecordZoneInfo.ZoneIndex)</td>
                 <td><a href="@HrefHelper.GetRunInfoPath(run.RunInfo.Id)">@(TempusUtilities.FormattedDuration(run.RunInfo.Duration))</a></td>
@@ -52,7 +52,7 @@ else
     {
         if (int.TryParse(DemoId, out var parsedDemoId))
         {
-            DemoInfo = await TempusDataService.GetDemoInfoAsync(parsedDemoId);
+            DemoInfo = await _tempusDataService.GetDemoInfoAsync(parsedDemoId);
         }
         else
         {

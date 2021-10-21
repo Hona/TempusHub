@@ -7,8 +7,8 @@
 @using TempusHubBlazor.Utilities
 @using TempusHubBlazor.Constants
 
-@inject TempusDataService TempusDataService
-@inject TempusCacheService TempusCacheService
+@inject TempusDataService _tempusDataService
+@inject TempusCacheService _tempusCacheService
 
 <div class="heading-wrapper">
     <h1 class="slim-center">@(ServerInfo?.ServerInfo.Name ?? "No Server found")</h1>
@@ -43,7 +43,7 @@
                 {
                     <td>Unranked</td>
                 }
-                <td><a href="@HrefHelper.GetPlayerInfoPath(user.Player.Id ?? 0)">@(TempusCacheService.GetRealName(user.Player.Id ?? 0) ?? user.Player.Name)</a></td>
+                <td><a href="@HrefHelper.GetPlayerInfoPath(user.Player.Id ?? 0)">@(_tempusCacheService.GetRealName(user.Player.Id ?? 0) ?? user.Player.Name)</a></td>
             </tr>
         }
     </tbody>
@@ -85,24 +85,18 @@ else {
         RankedPlayers = new List<RankedServerPlayerModel>();
         if (int.TryParse(ServerParam, out var serverId))
         {
-            ServerInfo = TempusCacheService.ServerStatusList.FirstOrDefault(x => x.ServerInfo.Id == serverId);
+            ServerInfo = _tempusCacheService.ServerStatusList.FirstOrDefault(x => x.ServerInfo.Id == serverId);
         }
         else
         {
-            ServerInfo = TempusCacheService.ServerStatusList.FirstOrDefault(x => x.ServerInfo.Shortname.ToLower() == ServerParam.ToLower());
-
-            // Check if it wasn't the short name
-            if (ServerInfo == null)
-            {
-                ServerInfo = TempusCacheService.ServerStatusList.FirstOrDefault(x => x.ServerInfo.Name.ToLower().Contains(ServerParam.ToLower()));
-            }
+            ServerInfo = _tempusCacheService.ServerStatusList.FirstOrDefault(x => string.Equals(x.ServerInfo.Shortname, ServerParam, StringComparison.CurrentCultureIgnoreCase)) ?? _tempusCacheService.ServerStatusList.FirstOrDefault(x => x.ServerInfo.Name.ToLower().Contains(ServerParam.ToLower()));
         }
 
         if (ServerInfo?.GameInfo.Users != null && ServerInfo.GameInfo.Users.Count > 0)
         {
             foreach (var user in ServerInfo.GameInfo.Users)
             {
-                var rankedUser = TempusCacheService.TopPlayersOnline.FirstOrDefault(x => x.Id == user.Id || x.SteamId == user.SteamId);
+                var rankedUser = _tempusCacheService.TopPlayersOnline.FirstOrDefault(x => x.Id == user.Id || x.SteamId == user.SteamId);
                 RankedPlayers.Add(new RankedServerPlayerModel
                 {
                     Player = user,
@@ -121,6 +115,6 @@ else {
             }
         }
 
-        Demos = await TempusDataService.GetServerDemosAsync(ServerInfo.ServerInfo.Id);
+        Demos = await _tempusDataService.GetServerDemosAsync(ServerInfo.ServerInfo.Id);
     }
 }

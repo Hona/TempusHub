@@ -5,7 +5,7 @@
 @using TempusHubBlazor.Models.Tempus.Responses
 @using TempusHubBlazor.Utilities
 
-@inject TempusCacheService TempusCacheService
+@inject TempusCacheService _tempusCacheService
 <div class="heading-wrapper">
     <h1 class="slim-center">@RankType.ToStandardCasing() Leaderboard</h1><BSDropdown DropdownDirection="DropdownDirection.Left" Class="bsDropDown">
         <BSDropdownToggle Color="Color.Primary">@RankType.ToStandardCasing()</BSDropdownToggle>
@@ -37,7 +37,7 @@ else
             {
                 <tr>
                     <td>@player.Rank</td>
-                    <td><a href="@HrefHelper.GetPlayerInfoPath(player.Id)">@(TempusCacheService.GetRealName(player.Id) ?? player.Name)</a></td>
+                    <td><a href="@HrefHelper.GetPlayerInfoPath(player.Id)">@(_tempusCacheService.GetRealName(player.Id) ?? player.Name)</a></td>
                     <td>@player.Points</td>
                 </tr>
             }
@@ -59,20 +59,13 @@ else
             RankType = "overall";
         }
 
-        switch (RankType.ToLower())
+        RanksOverview = RankType.ToLower() switch
         {
-            case "overall":
-                RanksOverview = TempusCacheService.PlayerLeaderboards.Overall;
-                break;
-            case "soldier":
-                RanksOverview = TempusCacheService.PlayerLeaderboards.Soldier;
-                break;
-            case "demoman":
-                RanksOverview = TempusCacheService.PlayerLeaderboards.Demoman;
-                break;
-            default:
-                throw new Exception("No rank for that type");
-        }
+            "overall" => _tempusCacheService.PlayerLeaderboards.Overall,
+            "soldier" => _tempusCacheService.PlayerLeaderboards.Soldier,
+            "demoman" => _tempusCacheService.PlayerLeaderboards.Demoman,
+            _ => throw new Exception("No rank for that type")
+        };
     }
 
     protected override async Task OnParametersSetAsync() => await OnInitializedAsync();
