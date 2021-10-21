@@ -5,9 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 using TempusHubBlazor.Constants;
 using TempusHubBlazor.Data;
-using TempusHubBlazor.Logging;
 using TempusHubBlazor.Models;
 using TempusHubBlazor.Models.Tempus.DetailedMapList;
 using TempusHubBlazor.Models.Tempus.Rank;
@@ -15,7 +15,7 @@ using TempusHubBlazor.Models.Tempus.Responses;
 
 namespace TempusHubBlazor.Services
 {
-    public class TempusCacheService
+    public sealed class TempusCacheService : IDisposable
     {
         private readonly Timer _updateTimer;
         private readonly TempusDataService _tempusDataService;
@@ -65,7 +65,7 @@ namespace TempusHubBlazor.Services
             }
             catch (Exception e)
             {
-                Logger.LogException(e);
+                Log.Fatal(e, "Unhandled exception while caching all data");
             }
         }
         private async Task UpdateRecentActivityAsync()
@@ -91,7 +91,7 @@ namespace TempusHubBlazor.Services
 
             if (ServerStatusList.Count == 0)
             {
-                Logger.LogError("Could not get any server status's");
+                Log.Error("Could not get any server status's");
                 return;
             }
 
@@ -105,7 +105,7 @@ namespace TempusHubBlazor.Services
 
 
             // Get the user IDs as strings
-            var userIdStrings = (usersWithId.Where(user => user?.Id != null).Select(user => user.Id.ToString())).ToList().Distinct();
+            var userIdStrings = usersWithId.Where(user => user?.Id != null).Select(user => user.Id.ToString()).ToList().Distinct();
 
             // Query all at once for all users ranks
             var rankTasks = new List<Task<Rank>>();
@@ -141,7 +141,7 @@ namespace TempusHubBlazor.Services
                 var server = ServerStatusList
                     .FirstOrDefault(x =>
                         x.GameInfo?.Users != null &&
-                        x.GameInfo.Users.Any(z => (z.Id.HasValue && z.Id == rankedUser.Player.Id) || z.SteamId == rankedUser.Player.SteamId));
+                        x.GameInfo.Users.Any(z => z.Id.HasValue && z.Id == rankedUser.Player.Id || z.SteamId == rankedUser.Player.SteamId));
                 if (server == null || rankedUser.Player.Id == null) continue;
 
                 tempTopPlayersOnline.Add(new TopPlayerOnline
@@ -173,7 +173,7 @@ namespace TempusHubBlazor.Services
                     var matchedDetailedMapInfo = DetailedMapList.FirstOrDefault(x => x.Name.ToLower() == mapName.ToLower());
                     if (matchedDetailedMapInfo == null)
                     {
-                        Logger.LogWarning("Could not find map data for: " + mapName);
+                        Log.Warning("Could not find map data for: {MapName}", mapName);
                     }
                     else
                     {
@@ -183,10 +183,10 @@ namespace TempusHubBlazor.Services
 
                 // Check if there are maps with no 
                 var noClassDataMaps = DetailedMapList.Where(x => x.IntendedClass == default).ToArray();
-                for (int i = 0; i < noClassDataMaps.Length; i++)
+                foreach (var noClassDataMap in noClassDataMaps)
                 {
-                    Logger.LogWarning("No class data for " + noClassDataMaps[i].Name);
-                    noClassDataMaps[i].IntendedClass = 'B';
+                    Log.Warning("No class data for {MapName}", noClassDataMap.Name);
+                    noClassDataMap.IntendedClass = 'B';
                 }
             }).ConfigureAwait(false);
         }
@@ -251,7 +251,12 @@ namespace TempusHubBlazor.Services
             return RealNames.FirstOrDefault(x => x.Id == tempusId)?.RealName;
         }
 
-        protected virtual void OnDataUpdated(EventArgs e) 
+        private void OnDataUpdated(EventArgs e) 
             => DataUpdated?.Invoke(this, e);
+
+        public void Dispose()
+        {
+            _updateTimer?.Dispose();
+        }
     }
 }

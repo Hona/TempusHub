@@ -1,22 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using TempusHubBlazor.Constants;
+using Serilog;
 using TempusHubBlazor.Models.Tempus.DetailedMapList;
-using TempusHubBlazor.Models.Tempus.Rank;
 using TempusHubBlazor.Models.Tempus.Responses;
-using TempusHubBlazor.Logging;
-using Newtonsoft.Json;
-using TempusHubBlazor.Models.MySQL;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using TempusHubBlazor.Models.Tempus.Activity;
-using TempusHubBlazor.Models;
 using TempusHubBlazor.Utilities;
 
 namespace TempusHubBlazor.Data
@@ -30,7 +17,7 @@ namespace TempusHubBlazor.Data
         }
         public async Task CacheAllRecordsAsync()
         {
-            Logger.LogInfo($"Caching all {_tempusDataService.MapList.Count} maps");
+            Log.Information("Caching all {Count} maps", _tempusDataService.MapList.Count);
             foreach (var map in _tempusDataService.MapList)
             {
                 await CacheAllRecordsOnMapAsync(map).ConfigureAwait(false);

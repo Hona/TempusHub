@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using TempusHubBlazor.Constants;
 using TempusHubBlazor.Models.MySQL;
 using TempusHubBlazor.Models.Tempus.Responses;
 
@@ -67,7 +62,7 @@ namespace TempusHubBlazor.Utilities
 
             var timeSplit = slowRecord - cache.CurrentWrDuration.Value;
 
-            var symbol = TimesEqual(0, timeSplit) ? "-" : (timeSplit < 0 ? "+" : "-");
+            var symbol = TimesEqual(0, timeSplit) ? "-" : timeSplit < 0 ? "+" : "-";
 
 
             return "WR " + symbol + FormattedDuration(timeSplit);

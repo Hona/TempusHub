@@ -8,9 +8,9 @@ using Google.Apis.YouTube.v3.Data;
 
 namespace TempusHubBlazor.Services
 {
-    public class YoutubeApiService
+    public sealed class YoutubeApiService : IDisposable
     {
-        private YouTubeService _youtubeService;
+        private readonly YouTubeService _youtubeService;
         public YoutubeApiService()
         {
             var baseGoogleService = new BaseClientService.Initializer()
@@ -36,7 +36,7 @@ namespace TempusHubBlazor.Services
             }
 
             // Get the response
-            var channelResponse = await channelRequest.ExecuteAsync();
+            var channelResponse = await channelRequest.ExecuteAsync().ConfigureAwait(false);
             var channel = channelResponse.Items.First();
             var uploadPlaylistId = channel.ContentDetails.RelatedPlaylists.Uploads;
 
@@ -49,7 +49,7 @@ namespace TempusHubBlazor.Services
                 uploadListRequest.MaxResults = 50;
                 uploadListRequest.PageToken = nextUploadPageToken;
 
-                var uploadListResponse = await uploadListRequest.ExecuteAsync();
+                var uploadListResponse = await uploadListRequest.ExecuteAsync().ConfigureAwait(false);
                 var uploads = uploadListResponse.Items;
 
                 output.AddRange(uploads);
@@ -64,6 +64,11 @@ namespace TempusHubBlazor.Services
             }
 
             return output;
+        }
+
+        public void Dispose()
+        {
+            _youtubeService?.Dispose();
         }
     }
 }

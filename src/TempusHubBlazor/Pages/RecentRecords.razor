@@ -3,11 +3,9 @@
 
 @using TempusHubBlazor.Data
 @using TempusHubBlazor.Models.Tempus.Activity
-@using TempusHubBlazor.Models.Tempus.Responses
 @using TempusHubBlazor.Utilities
 @using TempusHubBlazor.Models
 @using TempusHubBlazor.Services
-@using BlazorStrap
 @using Constants
 
 @inject TempusDataService TempusDataService
@@ -56,7 +54,7 @@ else
                         @(TempusUtilities.FormattedDuration(record.Record.RecordInfo.Duration))
                         @if (record.Record is MapTop mapTopRecord)
                         {
-                            @(" (#" + mapTopRecord.Rank + " WR +" + ((record.Record.CachedTime != null && record.Record.CachedTime.CurrentWrDuration.HasValue) ? TempusUtilities.FormattedDuration(record.Record.CachedTime.CurrentWrDuration.Value - record.Record.RecordInfo.Duration) : "N/A"));
+                            @(" (#" + mapTopRecord.Rank + " WR +" + (record.Record.CachedTime != null && record.Record.CachedTime.CurrentWrDuration.HasValue ? TempusUtilities.FormattedDuration(record.Record.CachedTime.CurrentWrDuration.Value - record.Record.RecordInfo.Duration) : "N/A"));
                         }
                         else
                         {

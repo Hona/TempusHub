@@ -1,6 +1,4 @@
 ﻿using Dapper.FluentMap;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TempusHubBlazor.Data.Mapping;
@@ -31,7 +29,7 @@ namespace TempusHubBlazor.Data
                 ZoneId = zoneId
             };
 
-            var result = (await QueryAsync<MapRecordCache>(query, param).ConfigureAwait(false));
+            var result = await QueryAsync<MapRecordCache>(query, param).ConfigureAwait(false);
             return result?.FirstOrDefault();
         }
 
@@ -41,12 +39,12 @@ namespace TempusHubBlazor.Data
 
             var param = new
             {
-                MapId = newCache.MapId,
-                ClassId = newCache.ClassId,
-                ZoneType = newCache.ZoneType,
-                ZoneId = newCache.ZoneId,
-                CurrentRecordDuration = newCache.CurrentWrDuration ?? null,
-                OldRecordDuration = newCache.OldWrDuration ?? null
+                newCache.MapId,
+                newCache.ClassId,
+                newCache.ZoneType,
+                newCache.ZoneId,
+                CurrentRecordDuration = newCache.CurrentWrDuration,
+                OldRecordDuration = newCache.OldWrDuration
             };
 
             await ExecuteAsync(query, param).ConfigureAwait(false);

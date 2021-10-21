@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using MySql.Data.MySqlClient;
 using TempusHubBlazor.Models;
 using TempusHubBlazor.Models.Api;
-using TempusHubBlazor.Models.Tempus.Activity;
-using TempusHubBlazor.Models.Tempus.Responses;
 using TempusHubBlazor.Services;
 
 namespace TempusHubBlazor.Api

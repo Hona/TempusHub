@@ -1,21 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
-using TempusHubBlazor.Constants;
 using TempusHubBlazor.Models.Tempus.DetailedMapList;
 using TempusHubBlazor.Models.Tempus.Rank;
 using TempusHubBlazor.Models.Tempus.Responses;
-using TempusHubBlazor.Logging;
 using Newtonsoft.Json;
 using TempusHubBlazor.Models.MySQL;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Web;
+using Serilog;
 using TempusHubBlazor.Models.Tempus.Activity;
 using TempusHubBlazor.Models;
 using TempusHubBlazor.Utilities;
@@ -71,17 +65,15 @@ namespace TempusHubBlazor.Data
                     object stringValue = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     var duration = DateTime.Now - startTime;
 
-                    Logger.LogInfo("Tempus /api" + request + " " + duration.TotalMilliseconds + "ms");
+                    Log.Information("Tempus /api {Request} {Milliseconds} ms", request, duration.TotalMilliseconds);
                     // If T is a string, don't deserialise
                     return typeof(T) == typeof(string)
                         ? (T)stringValue
                         : JsonConvert.DeserializeObject<T>((string)stringValue);
                 }
-                else
-                {
-                    Logger.LogError("Couldn't get Tempus API request: " + fullPath);
-                    throw new Exception("Couldn't get Tempus API request: " + fullPath);
-                }
+
+                Log.Error("Couldn't get Tempus API request: {FullPath}", fullPath);
+                throw new Exception("Couldn't get Tempus API request: " + fullPath);
             }
             catch
             {

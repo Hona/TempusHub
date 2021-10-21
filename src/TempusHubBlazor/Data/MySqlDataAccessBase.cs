@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 using Dapper;
 using Dapper.FluentMap;
 using MySql.Data.MySqlClient;
-using TempusHubBlazor.Logging;
+using Serilog;
 
 namespace TempusHubBlazor.Data
 {
     public class MySqlDataAccessBase : IDisposable
     {
-        private SemaphoreSlim _queryLock = new(1, 1);
+        private readonly SemaphoreSlim _queryLock = new(1, 1);
         private readonly string _connectionString;
         private MySqlConnection _connection;
 
-        protected MySqlDataAccessBase(string connectionString)
+        internal MySqlDataAccessBase(string connectionString)
         {
             _connectionString = connectionString;
             CheckConnectionAsync().GetAwaiter().GetResult();
@@ -25,7 +25,7 @@ namespace TempusHubBlazor.Data
 
         private async Task OpenConnectionAsync()
         {
-            Logger.LogInfo("Opening MySQL connection");
+            Log.Information("Opening MySQL connection");
             _connection ??= new MySqlConnection(_connectionString);
             await _connection.OpenAsync().ConfigureAwait(false);
         }
@@ -37,36 +37,7 @@ namespace TempusHubBlazor.Data
                 await OpenConnectionAsync().ConfigureAwait(false);
         }
 
-        private async Task CloseAsync()
-        {
-            if (_connection == null) return;
-            await _connection.CloseAsync().ConfigureAwait(false);
-            await _connection.ClearAllPoolsAsync().ConfigureAwait(false);
-            _connection.Dispose();
-            _connection = null;
-        }
-
-        protected async Task<List<T>> QueryAsync<T>(string query)
-        {
-            try
-            {
-                await _queryLock.WaitAsync().ConfigureAwait(false);
-                await CheckConnectionAsync().ConfigureAwait(false);
-                var result = (await _connection.QueryAsync<T>(query).ConfigureAwait(false)).ToList();
-                return result;
-            }
-            catch (Exception e)
-            {
-                Logger.LogException(e);
-                return null;
-            }
-            finally
-            {
-                _queryLock.Release();
-            }
-        }
-
-        protected async Task<List<T>> QueryAsync<T>(string query, object param)
+        public async Task<List<T>> QueryAsync<T>(string query, object param)
         {
             try
             {
@@ -77,7 +48,7 @@ namespace TempusHubBlazor.Data
             }
             catch (Exception e)
             {
-                Logger.LogException(e);
+                Log.Fatal(e, "Unhandled exception while running a MySQL query");
                 return null;
             }
             finally
@@ -86,7 +57,7 @@ namespace TempusHubBlazor.Data
             }
         }
 
-        protected async Task ExecuteAsync(string query, object param)
+        public async Task ExecuteAsync(string query, object param)
         {
             try
             {
@@ -96,7 +67,7 @@ namespace TempusHubBlazor.Data
             }
             catch (Exception e)
             {
-                Logger.LogException(e);
+                Log.Fatal(e, "Unhandled exception while running a MySQL command");
             }
             finally
             {

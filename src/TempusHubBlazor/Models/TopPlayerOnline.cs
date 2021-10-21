@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using TempusHubBlazor.Models.Tempus;
-using TempusHubBlazor.Models.Tempus.Responses;
+﻿using TempusHubBlazor.Models.Tempus.Responses;
 
 namespace TempusHubBlazor.Models
 {

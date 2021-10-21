@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using TempusHubBlazor.Models.Tempus.Activity;
 
 namespace TempusHubBlazor.Models.Tempus.Responses
@@ -19,7 +17,7 @@ namespace TempusHubBlazor.Models.Tempus.Responses
             {
                 3 => SoldierRuns,
                 4 => DemomanRuns,
-                _ => throw new ArgumentOutOfRangeException("No such class id exists"),
+                _ => throw new ArgumentOutOfRangeException(nameof(id)),
             };
         }
     }

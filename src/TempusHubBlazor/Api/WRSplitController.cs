@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using TempusHubBlazor.Constants;
-using TempusHubBlazor.Data;
 using TempusHubBlazor.Models;
-using TempusHubBlazor.Models.Tempus.Activity;
 using TempusHubBlazor.Services;
 using TempusHubBlazor.Utilities;
 
@@ -29,16 +25,21 @@ namespace TempusHubBlazor.Api
         [HttpGet("{mapId}/{playerClass}/{recordType}/{zoneIndex?}")]
         public ActionResult<string> Get(int mapId, int playerClass, string recordType, int zoneIndex = 1)
         {
-            List<RecordWithZonedData> recentRecords;
-            switch (recordType.ToLowerInvariant())
+            if (recordType is null)
             {
-                case "map":
+                throw new ArgumentNullException(nameof(recordType));
+            }
+            
+            List<RecordWithZonedData> recentRecords;
+            switch (recordType.ToUpperInvariant())
+            {
+                case "MAP":
                     recentRecords = _tempusCacheService.RecentActivityWithZonedData.MapWr;
                     break;
-                case "course":
+                case "COURSE":
                     recentRecords = _tempusCacheService.RecentActivityWithZonedData.CourseWr;
                     break;
-                case "bonus":
+                case "BONUS":
                     recentRecords = _tempusCacheService.RecentActivityWithZonedData.BonusWr;
                     break;
                 default:
