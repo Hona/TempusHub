@@ -3,10 +3,11 @@ services:
   tempus-hub:
     build:
       dockerfile: src/TempusHubBlazor/Dockerfile
+      context: .
     image: tempus-hub
     container_name: tempus-hub
     ports:
-      - "9001:5000"
+      - "9001:80"
     restart: always
     env_file:
       - env-vars.env
