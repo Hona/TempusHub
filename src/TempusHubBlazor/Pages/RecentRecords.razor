@@ -14,11 +14,11 @@
 
 @implements IDisposable
 
-<MudText Typo="Typo.h4" 
+<MudText Typo="Typo.h4"
          Style="display: flex; justify-content: space-between; align-items: center"
          Class="page-header-dropdown">
     Recent Records
-    
+
     <MudSelect T="string"
                Label="Filter"
                Strict="true"
@@ -39,10 +39,10 @@
 
 
 
-    <MudTable Items="@_recordsWithZonedData" 
+    <MudTable Items="@_recordsWithZonedData"
               Hover
-              Breakpoint="Breakpoint.Sm" 
-              Loading="@(_recordsWithZonedData == null)" 
+              Breakpoint="Breakpoint.Sm"
+              Loading="@(_recordsWithZonedData == null)"
               LoadingProgressColor="Color.Info">
         <HeaderContent>
             <MudTh>Class</MudTh>
@@ -75,8 +75,8 @@
                     @TempusUtilities.FormattedDuration(context.Record.RecordInfo.Duration)
                     @if (context.Record is MapTop mapTopRecord)
                     {
-                        @(" (#" + mapTopRecord.Rank + " WR +" + (context.Record.CachedTime is {CurrentWrDuration: { } } 
-                            ? TempusUtilities.FormattedDuration(context.Record.CachedTime.CurrentWrDuration.Value - context.Record.RecordInfo.Duration) 
+                        @(" (#" + mapTopRecord.Rank + " WR +" + (context.Record.CachedTime is {CurrentWrDuration: { } }
+                            ? TempusUtilities.FormattedDuration(context.Record.CachedTime.CurrentWrDuration.Value - context.Record.RecordInfo.Duration)
                             : "N/A"));
                     }
                     else
@@ -105,7 +105,7 @@
 
     private void OnDataUpdated(object sender, EventArgs e)
     {
-        LoadData();
+        LoadData(false);
         InvokeAsync(StateHasChanged);
     }
 
