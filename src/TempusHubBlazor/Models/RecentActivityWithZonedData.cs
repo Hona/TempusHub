@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace TempusHubBlazor.Models;
 
@@ -6,15 +7,15 @@ public class RecentActivityWithZonedData
 {
     public RecentActivityWithZonedData()
     {
-        MapWr = new List<RecordWithZonedData>();
-        CourseWr = new List<RecordWithZonedData>();
-        BonusWr = new List<RecordWithZonedData>();
-        MapTt = new List<RecordWithZonedData>();
+        MapWr = new ConcurrentBag<RecordWithZonedData>();
+        CourseWr = new ConcurrentBag<RecordWithZonedData>();
+        BonusWr = new ConcurrentBag<RecordWithZonedData>();
+        MapTt = new ConcurrentBag<RecordWithZonedData>();
     }
-    public List<RecordWithZonedData> MapWr { get; set; }
-    public List<RecordWithZonedData> CourseWr { get; set; }
+    public ConcurrentBag<RecordWithZonedData> MapWr { get; set; }
+    public ConcurrentBag<RecordWithZonedData> CourseWr { get; set; }
 
-    public List<RecordWithZonedData> BonusWr { get; set; }
+    public ConcurrentBag<RecordWithZonedData> BonusWr { get; set; }
 
-    public List<RecordWithZonedData> MapTt { get; set; }
+    public ConcurrentBag<RecordWithZonedData> MapTt { get; set; }
 }

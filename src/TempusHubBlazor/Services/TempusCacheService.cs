@@ -36,10 +36,10 @@ public sealed class TempusCacheService : IDisposable
         UpdateAllCachedDataAsync().GetAwaiter().GetResult();
         _updateTimer = new Timer(async _ => await UpdateAllCachedDataAsync().ConfigureAwait(false), null, TimeSpan.FromMinutes(1.5), TimeSpan.FromMinutes(1.5));
     }
-        
+
     private async Task UpdateAllCachedDataAsync()
     {
-        try 
+        try
         {
             var tasks = new List<Task>
             {
@@ -160,35 +160,32 @@ public sealed class TempusCacheService : IDisposable
     private async Task UpdateDetailedMapListAsync()
     {
         DetailedMapList = await _tempusDataService.GetDetailedMapListAsync().ConfigureAwait(false);
-        await Task.Run(() =>
+        var lines = await File.ReadAllLinesAsync(LocalFileConstants.MapClasses).ConfigureAwait(false);
+        foreach (var line in lines)
         {
-            var lines = File.ReadAllLines(LocalFileConstants.MapClasses);
-            foreach (var line in lines)
-            {
-                var lineData = line.Split(',');
+            var lineData = line.Split(',');
 
-                // Will always only be 1 char, also converts it to a char by calling .First()
-                var classChar = lineData[0].First();
-                var mapName = lineData[1];
-                var matchedDetailedMapInfo = DetailedMapList.FirstOrDefault(x => x.Name.ToLower() == mapName.ToLower());
-                if (matchedDetailedMapInfo == null)
-                {
-                    Log.Warning("Could not find map data for: {MapName}", mapName);
-                }
-                else
-                {
-                    matchedDetailedMapInfo.IntendedClass = classChar;
-                }
-            }
-
-            // Check if there are maps with no 
-            var noClassDataMaps = DetailedMapList.Where(x => x.IntendedClass == default).ToArray();
-            foreach (var noClassDataMap in noClassDataMaps)
+            // Will always only be 1 char, also converts it to a char by calling .First()
+            var classChar = lineData[0].First();
+            var mapName = lineData[1];
+            var matchedDetailedMapInfo = DetailedMapList.FirstOrDefault(x => string.Equals(x.Name, mapName, StringComparison.InvariantCultureIgnoreCase));
+            if (matchedDetailedMapInfo == null)
             {
-                Log.Warning("No class data for {MapName}", noClassDataMap.Name);
-                noClassDataMap.IntendedClass = 'B';
+                Log.Warning("Could not find map data for: {MapName}", mapName);
             }
-        }).ConfigureAwait(false);
+            else
+            {
+                matchedDetailedMapInfo.IntendedClass = classChar;
+            }
+        }
+
+        // Check if there are maps with no
+        var noClassDataMaps = DetailedMapList.Where(x => x.IntendedClass == default).ToArray();
+        foreach (var noClassDataMap in noClassDataMaps)
+        {
+            Log.Warning("No class data for {MapName}", noClassDataMap.Name);
+            noClassDataMap.IntendedClass = 'B';
+        }
     }
     private async Task UpdatePlayerLeaderboardsAsync()
     {
@@ -212,7 +209,7 @@ public sealed class TempusCacheService : IDisposable
                                             x.GameInfo.Users.Count != 0)
             .SelectMany(x => x.GameInfo.Users).ToList();
 
-        var usersWithoutId = validUsers.Where(x => x != null && x.Id == null).ToList();
+        var usersWithoutId = validUsers.Where(x => x is { Id: null }).ToList();
 
         if (usersWithoutId.Any())
         {
@@ -232,26 +229,20 @@ public sealed class TempusCacheService : IDisposable
     }
     private async Task UpdateRealNamesAsync()
     {
-        await Task.Run(() => 
-        {
-            var jsonText = File.ReadAllText(LocalFileConstants.TempusNames);
-            RealNames = JsonConvert.DeserializeObject<List<TempusRealName>>(jsonText);
-        }).ConfigureAwait(false);
+        var jsonText = await File.ReadAllTextAsync(LocalFileConstants.TempusNames).ConfigureAwait(false);
+        RealNames = JsonConvert.DeserializeObject<List<TempusRealName>>(jsonText);
     }
     private async Task UpdateTempusColorsAsync()
     {
-        await Task.Run(() =>
-        {
-            var jsonText = File.ReadAllText(LocalFileConstants.TempusColors);
-            TempusRankColors = JsonConvert.DeserializeObject<List<TempusRankColor>>(jsonText);
-        }).ConfigureAwait(false);
+        var jsonText = await File.ReadAllTextAsync(LocalFileConstants.TempusColors).ConfigureAwait(false);
+        TempusRankColors = JsonConvert.DeserializeObject<List<TempusRankColor>>(jsonText);
     }
     public string GetRealName(int tempusId)
     {
         return RealNames.FirstOrDefault(x => x.Id == tempusId)?.RealName;
     }
 
-    private void OnDataUpdated(EventArgs e) 
+    private void OnDataUpdated(EventArgs e)
         => DataUpdated?.Invoke(this, e);
 
     public void Dispose()
