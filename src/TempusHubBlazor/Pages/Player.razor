@@ -11,74 +11,81 @@
 @inject TempusDataService _tempusDataService
 @inject TempusCacheService _tempusCacheService
 
-@if (PlayerStats == null)
+@if (PlayerStats is null)
 {
-    <i>Loading player data...</i>
+    <MudProgressCircular Color="Color.Info" Indeterminate="true" />
 }
 else
 {
-    <div class="heading-wrapper">
-        <h1><span style="color: @RankColor.BracketsColor">[</span><span style="color: @RankColor.TitleColor">@(HigherRankInfo.Title)</span><span style="color: @RankColor.BracketsColor">] </span><span style="color: @RankColor.NameColor">@(_tempusCacheService.GetRealName(PlayerStats.PlayerInfo.Id) ?? PlayerStats.PlayerInfo.Name)</span></h1>
-    </div>
-    <div class="slim-center">
-        <br />
-        @if (PlayerStats.PlayerInfo.Country != null)
+    <MudText Typo="Typo.h4">
+        <span style="color: @RankColor.BracketsColor">[</span>
+        <span style="color: @RankColor.TitleColor">@(HigherRankInfo.Title)</span>
+        <span style="color: @RankColor.BracketsColor">] </span>
+        <span style="color: @RankColor.NameColor">@(_tempusCacheService.GetRealName(PlayerStats.PlayerInfo.Id) ?? PlayerStats.PlayerInfo.Name)</span>
+    </MudText>
+    <MudDivider Style="margin: 1rem 0 1rem 0"/>
+    @if (PlayerStats.PlayerInfo.Country != null)
+    {
+        <MudText>From @PlayerStats.PlayerInfo.Country</MudText>
+    }
+    @if (PlayerStats.PlayerInfo.LastSeen.HasValue)
+    {
+        <MudText>First played @(TempusUtilities.GetDateFromSeconds(PlayerStats.PlayerInfo.FirstSeen).GetTimeStringSinceDateTime())</MudText>
+    }
+    @if (PlayerStats.ClassRankInfo.SoldierRank.Rank > 0)
+    {
+        <MudText Typo="Typo.h6">
+            <img class="rank-icon" width="32" height="32" src="@LocalFileConstants.SoldierIcon"/> Rank @PlayerStats.ClassRankInfo.SoldierRank.Rank · @PlayerStats.ClassRankInfo.SoldierRank.Points points
+        </MudText>
+    }
+    @if (PlayerStats.ClassRankInfo.DemoRank.Rank > 0)
+    {
+        <MudText Typo="Typo.h6">
+            <img class="rank-icon" width="32" height="32" src="@LocalFileConstants.DemomanIcon"/> Rank @PlayerStats.ClassRankInfo.DemoRank.Rank · @PlayerStats.ClassRankInfo.DemoRank.Points points
+        </MudText>
+    }
+    @if (PlayerStats.WorldRecordStats != null)
+    {
+        <MudText Typo="Typo.h6">
+            World Records
+        </MudText>
+        @if (PlayerStats.WorldRecordStats.Map != null)
         {
-            <span>From @PlayerStats.PlayerInfo.Country</span>
+            <MudText>Map: @(PlayerStats.WorldRecordStats.Map.Count) - @PlayerStats.WorldRecordStats.Map.Points points</MudText>
         }
-        @if (PlayerStats.PlayerInfo.LastSeen.HasValue)
+        @if (PlayerStats.WorldRecordStats.Course != null)
         {
-            <p>First played @(TempusUtilities.GetDateFromSeconds(PlayerStats.PlayerInfo.FirstSeen).GetTimeStringSinceDateTime())</p>
+            <MudText>Course: @(PlayerStats.WorldRecordStats.Course.Count) - @PlayerStats.WorldRecordStats.Course.Points points</MudText>
         }
-        @if (PlayerStats.ClassRankInfo.SoldierRank.Rank > 0)
+        @if (PlayerStats.WorldRecordStats.Bonus != null)
         {
-            <h3><img width="32" height="32" src="@LocalFileConstants.SoldierIcon" /> Rank @PlayerStats.ClassRankInfo.SoldierRank.Rank | @PlayerStats.ClassRankInfo.SoldierRank.Points points</h3>
+            <MudText>Bonus: @(PlayerStats.WorldRecordStats.Bonus.Count) - @PlayerStats.WorldRecordStats.Bonus.Points points</MudText>
         }
-        @if (PlayerStats.ClassRankInfo.DemoRank.Rank > 0)
+        @if (PlayerStats.WorldRecordStats.Trick != null)
         {
-            <h3><img width="32" height="32" src="@LocalFileConstants.DemomanIcon" /> Rank @PlayerStats.ClassRankInfo.DemoRank.Rank | @PlayerStats.ClassRankInfo.DemoRank.Points points</h3>
+            <MudText>Trick: @(PlayerStats.WorldRecordStats.Trick.Count) - @PlayerStats.WorldRecordStats.Trick.Points points</MudText>
         }
-        @if (PlayerStats.WorldRecordStats != null)
+    }
+    @if (PlayerStats.TopTimeStats != null)
+    {
+        <MudText Typo="Typo.h6">Top Times</MudText>
+        @if (PlayerStats.TopTimeStats.Map != null)
         {
-            <h4>World Records</h4>
-            @if (PlayerStats.WorldRecordStats.Map != null)
-            {
-                <p>Map: @(PlayerStats.WorldRecordStats.Map.Count) - @PlayerStats.WorldRecordStats.Map.Points points</p>
-            }
-            @if (PlayerStats.WorldRecordStats.Course != null)
-            {
-                <p>Course: @(PlayerStats.WorldRecordStats.Course.Count) - @PlayerStats.WorldRecordStats.Course.Points points</p>
-            }
-            @if (PlayerStats.WorldRecordStats.Bonus != null)
-            {
-                <p>Bonus: @(PlayerStats.WorldRecordStats.Bonus.Count) - @PlayerStats.WorldRecordStats.Bonus.Points points</p>
-            }
-            @if (PlayerStats.WorldRecordStats.Trick != null)
-            {
-                <p>Trick: @(PlayerStats.WorldRecordStats.Trick.Count) - @PlayerStats.WorldRecordStats.Trick.Points points</p>
-            }
+            <MudText>Map: @(PlayerStats.TopTimeStats.Map.Count) - @PlayerStats.TopTimeStats.Map.Points points</MudText>
         }
-        @if (PlayerStats.TopTimeStats != null)
+        @if (PlayerStats.TopTimeStats.Course != null)
         {
-            <h4>Top Times</h4>
-            @if (PlayerStats.TopTimeStats.Map != null)
-            {
-                <p>Map: @(PlayerStats.TopTimeStats.Map.Count) - @PlayerStats.TopTimeStats.Map.Points points</p>
-            }
-            @if (PlayerStats.TopTimeStats.Course != null)
-            {
-                <p>Course: @(PlayerStats.TopTimeStats.Course.Count) - @PlayerStats.TopTimeStats.Course.Points points</p>
-            }
-            @if (PlayerStats.TopTimeStats.Bonus != null)
-            {
-                <p>Bonus: @(PlayerStats.TopTimeStats.Bonus.Count) - @PlayerStats.TopTimeStats.Bonus.Points points</p>
-            }
-            @if (PlayerStats.TopTimeStats.Trick != null)
-            {
-                <p>Trick: @(PlayerStats.TopTimeStats.Trick.Count) - @PlayerStats.TopTimeStats.Trick.Points points</p>
-            }
+            <MudText>Course: @(PlayerStats.TopTimeStats.Course.Count) - @PlayerStats.TopTimeStats.Course.Points points</MudText>
         }
-    </div>
+        @if (PlayerStats.TopTimeStats.Bonus != null)
+        {
+            <MudText>Bonus: @(PlayerStats.TopTimeStats.Bonus.Count) - @PlayerStats.TopTimeStats.Bonus.Points points</MudText>
+        }
+        @if (PlayerStats.TopTimeStats.Trick != null)
+        {
+            <MudText>Trick: @(PlayerStats.TopTimeStats.Trick.Count) - @PlayerStats.TopTimeStats.Trick.Points points</MudText>
+        }
+    }
 }
 
 @code{

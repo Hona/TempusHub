@@ -12,4 +12,6 @@ public class ServerPlayerModel
 
     [JsonProperty(PropertyName = "id")]
     public int? Id { get; set; }
+
+    public override string ToString() => $"🧑 {Name}";
 }

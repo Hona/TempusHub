@@ -1,18 +1,102 @@
 ﻿@inject TempusDataService _tempusDataService
 @using TempusHubBlazor.Data
 @inherits LayoutComponentBase
-<div class="sidebar">
-    <NavMenu />
-</div>
 
-<div class="main">
-    <div class="top-row px-4">
+@inject Blazored.LocalStorage.ILocalStorageService _localStorage
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(_ => DrawerToggle())" />
+        <MudLink Color="Color.Inherit" Href="/" Typo="Typo.h5" Style="@(_themeToggled ? "margin-left: 1rem" : "margin-left: 1rem; color: #fff")" Underline="Underline.None">
+            Tempus Hub
+        </MudLink>
+        <MudSpacer />
         <SearchBar />
-        <iframe src="https://github.com/sponsors/Hona/button" title="Sponsor Hona" height="35" width="116" style="border: 0;"></iframe>
-        <a href="https://discordapp.com/invite/q2F6kTK" target="_blank"><span class="fab fa-discord fa-2x"></span></a> <a href="https://github.com/Hona/TempusHub" target="_blank"><span class="fab fa-github fa-2x"></span></a> <a href="https://tempus.xyz" target="_blank">Tempus Jump Network</a>
-    </div>
+        <div>
+            <MudButton Link="https://github.com/sponsors/Hona?o=esb" 
+                       Target="_blank" 
+                       Variant="Variant.Filled" 
+                       Color="Color.Secondary" 
+                       StartIcon="@Icons.Material.Filled.Favorite">
+                Sponsor Hona
+            </MudButton>
+            <MudToggleIconButton Title="Dark Mode" Icon="@Icons.Material.Filled.DarkMode"
+                                 ToggledTitle="Light Mode" ToggledIcon="@Icons.Material.Filled.LightMode"
+                                 @bind-Toggled="_themeToggled"
+                                 Color="Color.Inherit"/>
+            <MudIconButton Color="Color.Inherit" Icon="@Icons.Custom.Brands.Discord" Title="Discord" Link="https://discordapp.com/invite/q2F6kTK" Target="_blank"/>
+            <MudIconButton Color="Color.Inherit" Icon="@Icons.Custom.Brands.GitHub" Title="GitHub" Link="https://github.com/Hona/TempusHub" Target="_blank"/>
+            <MudButton Color="Color.Inherit" Link="https://tempus.xyz" Target="_blank">
+                Tempus.xyz
+            </MudButton>
+        </div>
+    </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+        <NavMenu />
+    </MudDrawer>
+    <MudMainContent >
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge" Style="padding-top: 1rem">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
 
-    <div class="content px-4">
-        @Body
-    </div>
-</div>
+<MudThemeProvider Theme="CurrentTheme"/>
+
+@code 
+{
+    private bool _themeToggled;
+    private bool _themeToggledOnLocalStorage;
+    
+    private MudTheme CurrentTheme => _themeToggled ? _darkTheme : _lightTheme;
+
+    private MudTheme _lightTheme = new();
+    private MudTheme _darkTheme = new()
+    {
+        Palette = new Palette()
+        {
+            Black = "#27272f",
+            Background = "#32333d",
+            BackgroundGrey = "#27272f",
+            Surface = "#373740",
+            DrawerBackground = "#27272f",
+            DrawerText = "rgba(255,255,255, 0.50)",
+            DrawerIcon = "rgba(255,255,255, 0.50)",
+            AppbarBackground = "#27272f",
+            AppbarText = "rgba(255,255,255, 0.70)",
+            TextPrimary = "rgba(255,255,255, 0.70)",
+            TextSecondary = "rgba(255,255,255, 0.50)",
+            ActionDefault = "#adadb1",
+            ActionDisabled = "rgba(255,255,255, 0.26)",
+            ActionDisabledBackground = "rgba(255,255,255, 0.12)",
+            Divider = "rgba(255,255,255, 0.12)",
+            DividerLight = "rgba(255,255,255, 0.06)",
+            TableLines = "rgba(255,255,255, 0.12)",
+            LinesDefault = "rgba(255,255,255, 0.12)",
+            LinesInputs = "rgba(255,255,255, 0.3)",
+            TextDisabled = "rgba(255,255,255, 0.2)",
+            Primary = "#FF72A2"
+        }
+    };
+    
+    bool _drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _themeToggled = await _localStorage.GetItemAsync<bool>("dark-theme");
+            _themeToggledOnLocalStorage = _themeToggled;
+            StateHasChanged();
+        }
+        else if (_themeToggled != _themeToggledOnLocalStorage)
+        {
+            await _localStorage.SetItemAsync("dark-theme", _themeToggled);
+        }
+    }
+}

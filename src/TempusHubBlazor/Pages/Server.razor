@@ -10,68 +10,71 @@
 @inject TempusDataService _tempusDataService
 @inject TempusCacheService _tempusCacheService
 
-<div class="heading-wrapper">
-    <h1 class="slim-center">@(ServerInfo?.ServerInfo.Name ?? "No Server found")</h1>
-
-    <br />
-
-    <br />
-
-
-</div>
-
-<span class="slim-center">
-    <p><a href="@HrefHelper.GetMapInfoPath(ServerInfo.GameInfo.CurrentMap)">@ServerInfo.GameInfo.CurrentMap</a> (@(ServerInfo.GameInfo.PlayerCount)/@ServerInfo.GameInfo.MaxPlayers)</p>
+<MudText Typo="Typo.h4">@(ServerInfo?.ServerInfo.Name ?? "No Server found")</MudText>
+<span>
+    <MudLink Href="@HrefHelper.GetMapInfoPath(ServerInfo.GameInfo.CurrentMap)">
+        @ServerInfo.GameInfo.CurrentMap
+    </MudLink> (@(ServerInfo.GameInfo.PlayerCount)/@ServerInfo.GameInfo.MaxPlayers)
 </span>
-<h4 class="slim-center">Players</h4>
-<table align="center" class="table table-dark table-bordered slim-center">
-    <thead>
-        <tr>
-            <th>Rank</th>
-            <th>Player</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var user in RankedPlayers)
+
+<MudText Typo="Typo.h5">Players</MudText>
+
+<MudTable Items="RankedPlayers"
+          Breakpoint="Breakpoint.Sm">
+    <HeaderContent>
+        <MudTh>Rank</MudTh>
+        <MudTh>Player</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        @if (context.Rank.HasValue)
         {
-            <tr>
-                @if (user.Rank.HasValue)
-                {
-                    <td><img width="24" height="24" src="@(user.Class == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)"/> @(user.Rank.Value.ToString())</td>
-                }
-                else
-                {
-                    <td>Unranked</td>
-                }
-                <td><a href="@HrefHelper.GetPlayerInfoPath(user.Player.Id ?? 0)">@(_tempusCacheService.GetRealName(user.Player.Id ?? 0) ?? user.Player.Name)</a></td>
-            </tr>
+            <MudTd DataLabel="Rank">
+                <div>
+                    <img class="rank-icon" width="24" height="24" src="@(context.Class == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)"/>
+                    @(context.Rank.Value.ToString())
+                </div>
+            </MudTd>
         }
-    </tbody>
-</table>
-<br />
-@if (Demos == null)
+        else
+        {
+            <MudTd DataLabel="Rank">Unranked</MudTd>
+        }
+        <MudTd DataLabel="Player">
+            <MudLink Href="@HrefHelper.GetPlayerInfoPath(context.Player.Id ?? 0)">
+                @(_tempusCacheService.GetRealName(context.Player.Id ?? 0) ?? context.Player.Name)
+            </MudLink>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+<MudDivider Style="margin: 1rem 0 1rem 0" />
+
+@if (Demos is null)
 {
-    <div class="slim-center"><i>Loading demos...</i></div>
+    <MudProgressCircular Color="Color.Info" Indeterminate="true" />
 }
-else { 
-    <h4 class="slim-center">Demos</h4>
-    <table align="center" class="table table-dark table-bordered slim-center">
-        <thead>
-            <tr>
-                <th>Map</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (var i = 0; i < Demos.Count; i++)
-            {
-                <tr>
-                    <td>@(Demos[i].Recording == true ? "Recording | " : "")<a href="@HrefHelper.GetDemoInfoPath(Demos[i].DemoId)">@Demos[i].MapName</a></td>
-                    <td>@(TempusUtilities.GetDateFromSeconds(Demos[i].Date).GetTimeStringSinceDateTime())</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+else 
+{ 
+    <MudText Typo="Typo.h4">
+        Demos
+    </MudText>
+    <MudTable Items="Demos">
+        <HeaderContent>
+            <MudTh>Map</MudTh>
+            <MudTh>Date</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>
+                @(context.Recording ? "Recording · " : "")
+                <MudLink Href="@HrefHelper.GetDemoInfoPath(context.DemoId)">
+                    @context.MapName
+                </MudLink>
+            </MudTd>
+            <MudTd>
+                @(TempusUtilities.GetDateFromSeconds(context.Date).GetTimeStringSinceDateTime())
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
 }
 @code {
     [Parameter]

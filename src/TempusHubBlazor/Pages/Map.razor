@@ -14,111 +14,156 @@
 
 @inject TempusCacheService _tempusCacheService
 @inject TempusDataService _tempusDataService
-<div class="heading-wrapper">
-    <h1 class="slim-center">@(ParsedMap?.Name ?? MapName)</h1>
-</div>
-<br />
+@inject NavigationManager _navigationManager
 
-@if (string.IsNullOrWhiteSpace(MapName) || ParsedMap == null || FullMapOverView == null)
+<MudText Typo="Typo.h4">
+    @(ParsedMap?.Name ?? MapName)
+</MudText>
+
+@if (string.IsNullOrWhiteSpace(MapName))
 {
-    <p>Loading map... If your can read this entire thing several times then the map isn't found</p>
+    <MudText Color="Color.Error">
+        Invalid map name... (is it blank?)
+    </MudText>
+}
+@if (ParsedMap == null || FullMapOverView == null)
+{
+    <MudProgressCircular Color="Color.Info" Indeterminate="true" />
 }
 else
 {
-    <p class="slim-center"><img width="32" height="32" src="@LocalFileConstants.SoldierIcon"> T@(ParsedMap.TierInfo.Soldier)  <img width="32" height="32" src="@LocalFileConstants.DemomanIcon"> T@(ParsedMap.TierInfo.Demoman)</p>
-    <p class="slim-center">
-        <img width="32" height="32" src="@LocalFileConstants.SoldierIcon"> @if (!string.IsNullOrWhiteSpace(ParsedMap.Videos.Soldier))
-        {<a href="@(TempusUtilities.GetYoutubeUrl(ParsedMap.Videos.Soldier))">Showcase</a>}
+    <div style="display: flex; justify-content: flex-start; align-items: center">
+        <img class="rank-icon" width="32" height="32" src="@LocalFileConstants.SoldierIcon"> T@(ParsedMap.TierInfo.Soldier)  
+        <img class="rank-icon" width="32" height="32" src="@LocalFileConstants.DemomanIcon"> T@(ParsedMap.TierInfo.Demoman)
+    </div>
+    <div style="display: flex; justify-content: flex-start; align-items: center">
+        <img class="rank-icon" width="32" height="32" src="@LocalFileConstants.SoldierIcon"> 
+        @if (!string.IsNullOrWhiteSpace(ParsedMap.Videos.Soldier))
+        {
+            <MudLink Href="@(TempusUtilities.GetYoutubeUrl(ParsedMap.Videos.Soldier))">
+                Showcase
+            </MudLink>
+        }
         else
-        { <span>No showcase</span>}  <img width="32" height="32" src="@LocalFileConstants.DemomanIcon"> @if (!string.IsNullOrWhiteSpace(ParsedMap.Videos.Demoman))
-        {<a href="@(TempusUtilities.GetYoutubeUrl(ParsedMap.Videos.Demoman))">Showcase</a>}
+        {
+            <MudText>
+                No showcase
+            </MudText>
+        }  
+        <img class="rank-icon" width="32" height="32" src="@LocalFileConstants.DemomanIcon"> 
+        @if (!string.IsNullOrWhiteSpace(ParsedMap.Videos.Demoman))
+        {
+            <MudLink Href="@(TempusUtilities.GetYoutubeUrl(ParsedMap.Videos.Demoman))">
+                Showcase
+            </MudLink>
+        }
         else
-        { <span>No showcase</span>}
-    </p>
-    <br />
+        {
+            <MudText>
+                No showcase
+            </MudText>
+        }
+    </div>
 }
 
 @if (FullMapOverView == null)
 {
-    <p>Loading map runs data...</p>
+    <MudProgressCircular Color="Color.Info" Indeterminate="true" />
 }
 else
 {
+    <MudSelect T="string"
+               Label="View"
+               Strict="true"
+               Variant="Variant.Outlined"
+               AnchorOrigin="Origin.BottomCenter"
+               Value="ZoneSelector"
+               ValueChanged="@(x => { _navigationManager.NavigateTo("/map/" + (ParsedMap?.Name ?? MapName) + "/" + x); })"
+               ToStringFunc="@(x => x is null 
+                                 ? "Map" 
+                                 : x.StartsWith("b") 
+                                     ? "Bonus " + x.Substring(1,x.Length - 1) 
+                                     : "Course " + x.Substring(1,x.Length - 1))"
+               Style="max-width: 150px; width: 150px">
+        <MudSelectItem T="string" Value="@null"/>
+        @if ((FullMapOverView.ZoneCounts.Course ?? 0) > 1)
+        {
+            for (int i = 1; i <= FullMapOverView.ZoneCounts.Course.Value; i++)
+            {
+                var index = i;
+                <MudSelectItem T="string" Value="@("c" + index)"/>
+            }
+        }
+        @if ((FullMapOverView.ZoneCounts.Bonus ?? 0) >= 1)
+        {
+            for (int i = 1; i <= FullMapOverView.ZoneCounts.Bonus.Value; i++)
+            {
+                var index = i;
+                <MudSelectItem T="string" Value="@("b" + index)"/>
+            }
+        }
+    </MudSelect>
+    
+    <MudGrid Spacing="2">
+        <MudItem>
+            @if (ZonedSoldierRecords.Count == 0)
+            {
+                <MudText>
+                    No soldier runs
+                </MudText>
+            }
+            else
+            {
+                <MudTable Items="ZonedSoldierRecords.Select((x, i) => (Index: i, Record: x))"
+                          Hover
+                          Breakpoint="Breakpoint.Sm">
+                    <HeaderContent>
+                        <MudTh colspan="2">Soldier</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd>
+                            #@(context.Index + 1): @TempusUtilities.FormattedDuration(context.Record.Duration)
+                        </MudTd>
+                        <MudTd>
+                            <MudLink Href="@HrefHelper.GetPlayerInfoPath(context.Record.Id)">
+                                @(_tempusCacheService.GetRealName(context.Record.Id) ?? context.Record.Name)
+                            </MudLink>
+                        </MudTd>
+                    </RowTemplate>
+                </MudTable>
+            }
+        </MudItem>
+        
+        <MudItem>
+            @if (ZonedDemomanRecords.Count == 0)
+            {
+                <MudText>
+                    No demoman runs
+                </MudText>
+            }
+            else
+            {
+                <MudTable Items="ZonedDemomanRecords.Select((x, i) => (Index: i, Record: x))"
+                          Hover
+                          Breakpoint="Breakpoint.Sm">
+                    <HeaderContent>
+                        <MudTh colspan="2">Demoman</MudTh>
+                    </HeaderContent>
+                    <RowTemplate>
+                        <MudTd>
+                            #@(context.Index + 1): @TempusUtilities.FormattedDuration(context.Record.Duration)
+                        </MudTd>
+                        <MudTd>
+                            <MudLink Href="@HrefHelper.GetPlayerInfoPath(context.Record.Id)">
+                                @(_tempusCacheService.GetRealName(context.Record.Id) ?? context.Record.Name)
+                            </MudLink>
+                        </MudTd>
+                    </RowTemplate>
+                </MudTable>
+            }
+        </MudItem>
 
-<div class="slim-center">
-    <div class="heading-wrapper">
-        <BSDropdown DropdownDirection="DropdownDirection.Down" Class="bsDropDown bsDropDownZones">
-            <BSDropdownToggle Color="Color.Primary">@ZoneSelector.ToStandardCasing()</BSDropdownToggle>
-            <BSDropdownMenu Class="bsDropdown-menu">
-                <BSDropdownItem OnClick=@(async () => { ZoneSelector = "Map"; await OnInitializedAsync(); })>Map</BSDropdownItem>
-                @if ((FullMapOverView.ZoneCounts.Course ?? 0) > 1)
-                {
-                    for (int i = 1; i <= FullMapOverView.ZoneCounts.Course.Value; i++)
-                    {
-                        var index = i;
-                        <BSDropdownItem Href="@("/maps/"+ FullMapOverView.MapInfo.Name + "/c" + index)" OnClick=@(async () => { ZoneSelector = "Course " + index.ToString(); await OnInitializedAsync(); })>@("Course " + index)</BSDropdownItem>
-                    }
-                }
-                @if ((FullMapOverView.ZoneCounts.Bonus ?? 0) >= 1)
-                {
-                    for (int i = 1; i <= FullMapOverView.ZoneCounts.Bonus.Value; i++)
-                    {
-                        var index = i;
-                        <BSDropdownItem Href="@("/maps/"+ FullMapOverView.MapInfo.Name + "/b" + index)" OnClick=@(async () => { ZoneSelector = "Bonus " + index.ToString(); await OnInitializedAsync(); })>Bonus @index</BSDropdownItem>
-                    }
-                }
-
-
-            </BSDropdownMenu>
-        </BSDropdown>
-    </div>
-    @if (ZonedSoldierRecords.Count == 0)
-    {
-        <p>No soldier runs.</p>
-    }
-    else
-    {
-        <table align="center" class="table table-dark table-bordered slim-center multi-table">
-            <thead>
-                <tr>
-                    <th colspan="2">Soldier</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (var i = 0; i < ZonedSoldierRecords.Count; i++)
-                {
-                    <tr>
-                        <td>#@(i + 1): @TempusUtilities.FormattedDuration(ZonedSoldierRecords[i].Duration)</td>
-                        <td><a href="@HrefHelper.GetPlayerInfoPath(ZonedSoldierRecords[i].Id)">@(_tempusCacheService.GetRealName(ZonedSoldierRecords[i].Id) ?? ZonedSoldierRecords[i].Name)</a></td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-    @if (ZonedDemomanRecords.Count == 0)
-    {
-        <p>No demoman runs.</p>
-    }
-    else
-    {
-        <table class="table table-dark table-bordered slim-center multi-table">
-            <thead>
-                <tr>
-                    <th colspan="2">Demoman</th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (var i = 0; i < ZonedDemomanRecords.Count; i++)
-                {
-                    <tr>
-                        <td>#@(i + 1): @TempusUtilities.FormattedDuration(ZonedDemomanRecords[i].Duration)</td>
-                        <td><a href="@HrefHelper.GetPlayerInfoPath(ZonedDemomanRecords[i].Id)">@(_tempusCacheService.GetRealName(ZonedDemomanRecords[i].Id) ?? ZonedDemomanRecords[i].Name)</a></td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-</div>
+    </MudGrid>
 }
 
 @code{

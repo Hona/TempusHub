@@ -10,77 +10,119 @@
 @inject TempusCacheService _tempusCacheService
 
 @implements IDisposable
+@inject NavigationManager _navigationManager
 
-<div class="heading-wrapper">
-    <h1 class="slim-center">Top Players Online</h1>
-    <BSDropdown DropdownDirection="DropdownDirection.Left" Class="bsDropDown">
-        <BSDropdownToggle Color="Color.Primary">@(DisplayType?.ToStandardCasing() ?? "List")</BSDropdownToggle>
-        <BSDropdownMenu>
-            <BSDropdownItem Href="/topplayersonline/list" OnClick=@(() => { DisplayType = "List"; StateHasChanged(); })>List</BSDropdownItem>
-            <BSDropdownItem Href="/topplayersonline/server" OnClick=@(() => { DisplayType = "Server"; StateHasChanged(); })>Server Cards</BSDropdownItem>
-        </BSDropdownMenu>
-    </BSDropdown>
-</div>
-<br />
+<MudText Typo="Typo.h4" 
+         Style="display: flex; justify-content: space-between; align-items: center"
+         Class="page-header-dropdown">
+    Top Players Online
+    
+    <MudSelect T="string"
+               Label="View"
+               Strict="true"
+               Variant="Variant.Outlined"
+               AnchorOrigin="Origin.BottomCenter"
+               Value="DisplayType"
+               ValueChanged="@(x => { _navigationManager.NavigateTo("/topplayersonline/" + x); })"
+               ToStringFunc="@(x => x is null ? "List" : x.ToStandardCasing())"
+               Style="max-width: 150px; width: 150px">
+        <MudSelectItem T="string" Value='@("list")'/>
+        <MudSelectItem T="string" Value='@("server")'/>
+    </MudSelect>
+</MudText>
 
-@if (_topPlayerOnline == null || _topPlayerOnline.Count == 0)
+@if (string.IsNullOrWhiteSpace(DisplayType) || string.Equals(DisplayType, "list", StringComparison.InvariantCultureIgnoreCase))
 {
-    <p><em>Getting top player online data...</em></p>
-}
-else if (string.IsNullOrWhiteSpace(DisplayType) || string.Equals(DisplayType, "list", StringComparison.InvariantCultureIgnoreCase))
-{
-    <table align="center" class="table table-dark table-bordered slim-center">
-        <thead>
-            <tr>
-                <th>Rank</th>
-                <th>Player</th>
-                <th>Map</th>
-                <th>Server</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var player in _topPlayerOnline)
-            {
-                <tr>
-                    <td><img width="24" height="24" src="@(player.RankClass == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /> @player.Rank</td>
-                    <td><a href="@HrefHelper.GetPlayerInfoPath(player.Id)">@(_tempusCacheService.GetRealName(player.Id) ?? player.Name)</a></td>
-                    <td><a href="@HrefHelper.GetMapInfoPath(player.Server.GameInfo.CurrentMap)">@player.Server.GameInfo.CurrentMap</a></td>
-                    <td><a href="@HrefHelper.GetServerInfoPath(player.Server.ServerInfo.Shortname)">@player.Server.ServerInfo.Shortname</a> | <a href="steam://connect/@player.Server.ServerInfo.Addr:@player.Server.ServerInfo.Port">Connect</a></td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <MudTable Items="_topPlayerOnline" 
+              Hover 
+              Breakpoint="Breakpoint.Sm" 
+              Loading="_topPlayerOnline == null"
+              LoadingProgressColor="Color.Info">
+        <HeaderContent>
+            <MudTh>Rank</MudTh>
+            <MudTh>Player</MudTh>
+            <MudTh>Map</MudTh>
+            <MudTh>Server</MudTh>
+            <MudTh></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Rank">
+                <div style="display: flex; align-items: center">
+                    <img class="rank-icon" width="24" height="24" src="@(context.RankClass == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)"/>
+                    @context.Rank
+                </div>
+            </MudTd>
+            <MudTd DataLabel="Player">
+                <MudLink Href="@HrefHelper.GetPlayerInfoPath(context.Id)">
+                    @(_tempusCacheService.GetRealName(context.Id) ?? context.Name)
+                </MudLink>
+            </MudTd>
+            <MudTd DataLabel="Map">
+                <MudLink Href="@HrefHelper.GetMapInfoPath(context.Server.GameInfo.CurrentMap)">
+                    @context.Server.GameInfo.CurrentMap
+                </MudLink>
+            </MudTd>
+            <MudTd DataLabel="Server">
+                <MudLink Href="@HrefHelper.GetServerInfoPath(context.Server.ServerInfo.Shortname)">
+                    @context.Server.ServerInfo.Shortname
+                </MudLink>
+            </MudTd>
+            <MudTh>
+                <MudButton Link="@($"steam://connect/{context.Server.ServerInfo.Addr}:{context.Server.ServerInfo.Port}")">Connect</MudButton>
+            </MudTh>
+        </RowTemplate>
+    </MudTable>
 }
 else if (string.Equals(DisplayType, "server", StringComparison.InvariantCultureIgnoreCase))
 {
-    <BSCard IsOutline="true" IsInverse="true" CardType="CardType.Columns">
+    <MudGrid Spacing="2">
         @foreach (var serverGroup in _topPlayerOnline.GroupBy(x => x.Server))
         {
-            <BSCard IsInverse="true">
-                <BSCard CardType="CardType.Body">
-                    <BSCard CardType="CardType.Title">@serverGroup.Key.ServerInfo.Name</BSCard>
-                    <BSCard CardType="CardType.Subtitle">@serverGroup.Key.GameInfo.CurrentMap</BSCard>
-                    <BSCard CardType="CardType.Text">
-                        <BSListGroup class="country-group-list">
+            <MudItem>
+                <MudCard>
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h6">
+                                @serverGroup.Key.ServerInfo.Name
+                            </MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudText Typo="Typo.overline">
+                            @serverGroup.Key.GameInfo.CurrentMap
+                        </MudText>
+                        <MudDivider Style="margin: 0.5rem 0 0.5rem 0"/>
+                        <MudList>
                             @foreach (var player in serverGroup)
                             {
-                                <BSListGroupItem class="country-group-list-item text-white">
-                                    <img width="24" height="24" src="@(player.RankClass == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /> @player.Rank 
-                                    <a href="@HrefHelper.GetPlayerInfoPath(player.Id)">@(_tempusCacheService.GetRealName(player.Id) ?? player.Name)</a>
-                                </BSListGroupItem>
+                                <MudListItem Style="display: flex; justify-content: space-between; align-items: center">
+                                    <img class="rank-icon" width="24" height="24" src="@(player.RankClass == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /> @player.Rank 
+                                    <MudLink Href="@HrefHelper.GetPlayerInfoPath(player.Id)">
+                                        @(_tempusCacheService.GetRealName(player.Id) ?? player.Name)
+                                    </MudLink>
+                                </MudListItem>
                             }
-                        </BSListGroup>
-                    </BSCard>
-                    <a href="steam://connect/@serverGroup.First().Server.ServerInfo.Addr:@serverGroup.First().Server.ServerInfo.Port" class="btn btn-secondary btn-sm">Connect</a>
-                </BSCard>
-            </BSCard>
+                        </MudList>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton Href="@($"steam://connect/{serverGroup.First().Server.ServerInfo.Addr}:{@serverGroup.First().Server.ServerInfo.Port}")">
+                            Connect
+                        </MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
         }
-    </BSCard>
+    </MudGrid>
+}
+else
+{
+    <MudText Color="Color.Warning">How did you get here..?</MudText>
 }
 
 @code {
+
     [Parameter]
-    public string DisplayType { get; set; }
+    public string DisplayType { get; set; } = "list";
     List<TopPlayerOnline> _topPlayerOnline = new();
 
     protected override void OnInitialized()

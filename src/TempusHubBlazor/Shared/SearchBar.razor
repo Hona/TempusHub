@@ -1,69 +1,84 @@
-﻿@using InputType = BlazorStrap.InputType
-@using TempusHubBlazor.Utilities
+﻿@using TempusHubBlazor.Utilities
 @using TempusHubBlazor.Models.Tempus.Responses
 @using TempusHubBlazor.Data
+@using OneOf
+@using TempusHubBlazor.Models.Tempus
+@using TempusHubBlazor.Models.Tempus.Activity
 
 @inject TempusDataService _tempusDataService
-@inject IJSRuntime _jsRuntime
+@inject NavigationManager _navigationManager
 
-<BSDropdown>
-    <BSBasicInput Class="search-bar" InputType="InputType.Text" PlaceHolder="Search"
-                  Value="@SearchText" ValueChanged="async (string search) => await SearchChanged(search)"
-                  @onkeydown="OnKeyDown" />
-    <BSDropdownToggle id="searchButton" IsSplit="false" Color="Color.Primary"><span class="oi oi-magnifying-glass"></span></BSDropdownToggle>
-    <BSDropdownMenu class="dropdown-style" @ref="DropdownMenu">
-        @if (PlayerMapSearchResult != null)
-        {
-            if (PlayerMapSearchResult.Maps.Any())
+<div class="search-bar" style="padding-right: 1rem">
+    <MudPaper>
+        <MudTextField @bind-Value="_searchText"
+                      Label="Search"
+                      Adornment="Adornment.End"
+                      AdornmentIcon="@Icons.Filled.Search"
+                      DebounceInterval="500"
+                      OnDebounceIntervalElapsed="HandleIntervalElapsed"
+                      Style="width: clamp(100px, 250px, 250px)"
+                      Variant="Variant.Filled"
+                      Margin="Margin.Dense"/>
+    </MudPaper>
+
+    <MudPopover @onfocusout="() => _searchResults = null"
+                Paper
+                RelativeWidth
+                Open="@(_searchResults is not null)"
+                TransformOrigin="Origin.TopCenter"
+                AnchorOrigin="Origin.BottomCenter"
+                MaxHeight="500"
+                OverflowBehavior="OverflowBehavior.FlipNever">
+        <MudList Clickable>
+            <MudListSubheader>
+                Maps
+            </MudListSubheader>
+            @foreach (var map in _searchResults.Maps)
             {
-                <BSDropdownHeader>Maps</BSDropdownHeader>
+                <MudListItem OnClick="() => { _searchResults = null; _navigationManager.NavigateTo(HrefHelper.GetMapInfoPath(map.Name)); }">
+                    @(map.ToString())
+                </MudListItem>
             }
-            foreach (var map in PlayerMapSearchResult.Maps)
+            <MudListSubheader>
+                Players
+            </MudListSubheader>
+            @foreach (var player in _searchResults.Players)
             {
-                <BSDropdownItem class="dropdown-style" href="@HrefHelper.GetMapInfoPath(map.Name)">@map.Name</BSDropdownItem>
+                <MudListItem OnClick="() => { _searchResults = null; _navigationManager.NavigateTo(HrefHelper.GetPlayerInfoPath(player.Id ?? 0)); }">
+                    @(player.ToString())
+                </MudListItem>
             }
-            if (PlayerMapSearchResult.Maps.Any() && PlayerMapSearchResult.Players.Any())
-            {
-                <BSDropdownItem IsDivider="true"/>
-            }
-            if (PlayerMapSearchResult.Players.Any())
-            {
-                <BSDropdownHeader>Players</BSDropdownHeader>
-            }
-            foreach (var player in PlayerMapSearchResult.Players)
-            {
-                <BSDropdownItem class="dropdown-style" href="@HrefHelper.GetPlayerInfoPath(player.Id ?? 0)">@player.Name</BSDropdownItem>
-            }
-        }
-        else
-        {
-            <BSDropdownItem class="spinner-item"><div class="spinner"></div></BSDropdownItem>
-        }
-    </BSDropdownMenu>
-</BSDropdown>
-@code {
-    public PlayerMapSearchResult PlayerMapSearchResult { get; set; }
-    public string SearchText { get; set; }
-    public BSDropdownMenu DropdownMenu { get; set; }
-    public async Task SearchChanged(string search)
+        </MudList>
+    </MudPopover>
+</div>
+
+
+
+
+@code 
+{
+    private string _searchText;
+    
+    private PlayerMapSearchResult _searchResults; 
+
+    private async Task HandleIntervalElapsed(string debouncedText)
     {
-        SearchText = search;
-        PlayerMapSearchResult = null;
-        if (!string.IsNullOrWhiteSpace(SearchText))
+        if (string.IsNullOrWhiteSpace(debouncedText))
         {
-            PlayerMapSearchResult = await _tempusDataService.GetSearchResultAsync(SearchText);
+            _searchResults = null;
+            return;
         }
+
+        _searchResults = await _tempusDataService.GetSearchResultAsync(debouncedText);
     }
 
-    private async Task OnKeyDown(KeyboardEventArgs e)
+    private void HandleValueClicked(OneOf<ServerPlayerModel, MapInfo> value) => value.Switch(player =>
     {
-        if (string.Equals(e.Key, "Enter", StringComparison.InvariantCultureIgnoreCase) ||
-            string.Equals(e.Key, "Return", StringComparison.InvariantCultureIgnoreCase) ||
-            string.Equals(e.Key, "NumpadEnter", StringComparison.InvariantCultureIgnoreCase))
-        {
-            await _jsRuntime.InvokeVoidAsync(
-                "searchFunctions.clickSearch",
-                "searchButton");
-        }
-    }
+        _navigationManager.NavigateTo(HrefHelper.GetPlayerInfoPath(player.Id ?? 0));
+    }, map =>
+    {
+        _navigationManager.NavigateTo(HrefHelper.GetPlayerInfoPath(map.Name));
+    });
+
+    private string ToStringFunc(OneOf<ServerPlayerModel, MapInfo> arg) => arg.Value?.ToString();
 }

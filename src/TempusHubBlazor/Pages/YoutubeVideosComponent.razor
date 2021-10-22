@@ -1,32 +1,53 @@
-﻿@using BlazorStrap
-@using Google.Apis.YouTube.v3.Data;
+﻿@using Google.Apis.YouTube.v3.Data;
 @using TempusHubBlazor.Services
 @using TempusHubBlazor.Utilities
 
 @inject YoutubeApiService _youtubeApiService
-
 @if (Videos == null || Videos.Count == 0)
 {
     <span>No videos found</span>
 }
 else
 {
-<div>
-<h4><a href="https://youtube.com/channel/@Videos.First().Snippet.ChannelId">@Videos.First().Snippet.ChannelTitle</a></h4>
-<BSCard IsOutline="true" IsInverse="true" CardType="@ParentCardType">
-    @foreach (var video in Videos.OrderByDescending(x => x.Snippet.PublishedAt != null ? DateTime.Parse(x.Snippet.PublishedAt, null, System.Globalization.DateTimeStyles.RoundtripKind) : DateTime.MinValue).Take(VideoCount).ToArray())
-    {
-        <BSCard IsOutline="true" IsInverse="true">
-            <a href="@TempusUtilities.GetYoutubeUrl(video.Snippet.ResourceId.VideoId)"><BSCard CardType="CardType.Image" VerticalAlignment="VerticalAlignment.Top" src="@(video.Snippet.Thumbnails.Maxres?.Url ?? video.Snippet.Thumbnails.Medium.Url)" /></a>
-            <BSCard IsOutline="true" IsInverse="true" CardType="CardType.Body">
-                <BSCard IsOutline="true" IsInverse="true" CardType="CardType.Title"><a href="@TempusUtilities.GetYoutubeUrl(video.Snippet.ResourceId.VideoId)">@video.Snippet.Title</a></BSCard>
-                <BSCard IsOutline="true" IsInverse="true" CardType="CardType.Subtitle">@(new string(video.Snippet.Description.Take(50).ToArray())+"...")</BSCard>
-                <BSCard IsOutline="true" IsInverse="true" CardType="CardType.Text"><small class="text-muted">@DateTime.Parse(video.Snippet.PublishedAt, null, System.Globalization.DateTimeStyles.RoundtripKind).GetTimeStringSinceDateTime()</small></BSCard>
-            </BSCard>
-        </BSCard>
-    }
-</BSCard>
-</div>
+    <MudLink Href=@($"https://youtube.com/channel/{Videos.First().Snippet.ChannelId}")
+             Typo="Typo.h4">
+        @Videos.First().Snippet.ChannelTitle
+    </MudLink>
+    
+    <MudGrid Spacing="2" Justify="Justify.Center">
+
+        @foreach (var video in Videos.OrderByDescending(x => x.Snippet.PublishedAt != null 
+            ? DateTime.Parse(x.Snippet.PublishedAt, null, System.Globalization.DateTimeStyles.RoundtripKind) 
+            : DateTime.MinValue)
+            .Take(VideoCount)
+            .ToArray())
+        {
+            <MudItem>
+                <MudCard Style="margin: 0.5rem" Elevation="2">
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h6">
+                                @video.Snippet.Title
+                            </MudText>
+                            <MudText Typo="Typo.body2">
+                                @(video.Snippet.Description[..50])...
+                            </MudText>
+                            <MudText Typo="Typo.caption">
+                                @DateTime.Parse(video.Snippet.PublishedAt, null, System.Globalization.DateTimeStyles.RoundtripKind).GetTimeStringSinceDateTime()
+                            </MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardMedia Image="@(video.Snippet.Thumbnails.Maxres?.Url ?? video.Snippet.Thumbnails.Medium.Url)" Height="200" />
+                    <MudCardActions>
+                        <MudButton Link="@TempusUtilities.GetYoutubeUrl(video.Snippet.ResourceId.VideoId)" 
+                                   StartIcon="@Icons.Custom.Brands.YouTube">
+                            Watch
+                        </MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
 }
 
 @code{
@@ -36,8 +57,6 @@ else
     public string Channel { get; set; }
     [Parameter]
     public bool IsId { get; set; }
-    [Parameter]
-    public CardType ParentCardType { get; set; }
     [Parameter]
     public int VideoCount { get; set; }
 

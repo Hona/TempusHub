@@ -10,64 +10,86 @@
 
 @inject TempusDataService _tempusDataService
 @inject TempusCacheService _tempusCacheService
+@inject NavigationManager _navigationManager
 
 @implements IDisposable
 
-<div class="heading-wrapper">
-    <h1 class="slim-center">Recent Records</h1><BSDropdown DropdownDirection="DropdownDirection.Left" Class="bsDropDown">
-        <BSDropdownToggle Color="Color.Primary">@RecentRecordType.ToStandardCasing()</BSDropdownToggle>
-        <BSDropdownMenu>
-            <BSDropdownItem Href="/recentrecords/map" OnClick=@(() => { RecentRecordType = "Map"; LoadData(); })>Map WR</BSDropdownItem>
-            <BSDropdownItem Href="/recentrecords/course" OnClick=@(() => { RecentRecordType = "Course"; LoadData(); })>Course WR</BSDropdownItem>
-            <BSDropdownItem Href="/recentrecords/bonus" OnClick=@(() => { RecentRecordType = "Bonus"; LoadData(); })>Bonus WR</BSDropdownItem>
-            <BSDropdownItem Href="/recentrecords/map_top" OnClick=@(() => { RecentRecordType = "Map_Top"; LoadData(); })>Map Top</BSDropdownItem>
-        </BSDropdownMenu>
-    </BSDropdown>
-</div>
-<br />
+<MudText Typo="Typo.h4" 
+         Style="display: flex; justify-content: space-between; align-items: center"
+         Class="page-header-dropdown">
+    Recent Records
+    
+    <MudSelect T="string"
+               Label="Filter"
+               Strict="true"
+               Variant="Variant.Outlined"
+               AnchorOrigin="Origin.BottomCenter"
+               Value="RecentRecordType"
+               ValueChanged="@(x => { _navigationManager.NavigateTo("/recentrecords/" + x); })"
+               ToStringFunc="@(x => x is null ? "All" : x.ToStandardCasing())"
+               Style="max-width: 150px; width: 150px">
+        <MudSelectItem T="string" Value="@(null)"/>
+        <MudSelectItem T="string" Value='@("map")'/>
+        <MudSelectItem T="string" Value='@("course")'/>
+        <MudSelectItem T="string" Value='@("bonus")'/>
+        <MudSelectItem T="string" Value='@("map_top")'/>
+    </MudSelect>
+</MudText>
 
-@if (_recordsWithZonedData == null || _recordsWithZonedData.Count == 0)
-{
-    <p><em>Getting activity data...</em></p>
-}
-else
-{
-    <table align="center" class="table table-dark table-bordered slim-center">
-        <thead>
-            <tr>
-                <th>Class</th>
-                <th>Map</th>
-                <th>Player</th>
-                <th>Time</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var record in _recordsWithZonedData)
-            {
-            <tr>
-                <td><img width="24" height="24" src="@(record.Record.RecordInfo.Class == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /></td>
-                <td><a href="@HrefHelper.GetMapInfoPath(record.Record.MapInfo.Name)">@(record.Record.MapInfo.Name + " " + (record.Record.ZoneInfo.Type == "map" ? "" : record.Record.ZoneInfo.Type == "course" ? "C" + record.Record.ZoneInfo.ZoneIndex + " " : "B" + record.Record.ZoneInfo.ZoneIndex))</a></td>
-                <td><a href="@HrefHelper.GetPlayerInfoPath(record.Record.PlayerInfo.Id)">@(_tempusCacheService.GetRealName(record.Record.PlayerInfo.Id) ?? record.Record.PlayerInfo.Name)</a></td>
-                <td>
-                    <a href="@HrefHelper.GetRunInfoPath(record.Record.RecordInfo.Id)">
-                        @(TempusUtilities.FormattedDuration(record.Record.RecordInfo.Duration))
-                        @if (record.Record is MapTop mapTopRecord)
-                        {
-                            @(" (#" + mapTopRecord.Rank + " WR +" + (record.Record.CachedTime != null && record.Record.CachedTime.CurrentWrDuration.HasValue ? TempusUtilities.FormattedDuration(record.Record.CachedTime.CurrentWrDuration.Value - record.Record.RecordInfo.Duration) : "N/A"));
-                        }
-                        else
-                        {
-                            @(" (" + TempusUtilities.GetWrSplitString(record.Record.CachedTime, record.ZonedData))
-                        })
-                    </a>
-                </td>
-                <td>@TempusUtilities.GetDateFromSeconds(record.Record.RecordInfo.Date).GetTimeStringSinceDateTime()</td>
-            </tr>
-            }
-        </tbody>
-    </table>
-}
+
+
+
+    <MudTable Items="@_recordsWithZonedData" 
+              Hover
+              Breakpoint="Breakpoint.Sm" 
+              Loading="@(_recordsWithZonedData == null)" 
+              LoadingProgressColor="Color.Info">
+        <HeaderContent>
+            <MudTh>Class</MudTh>
+            <MudTh>Map</MudTh>
+            <MudTh>Player</MudTh>
+            <MudTh>Time</MudTh>
+            <MudTh>Date</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Class">
+                <img width="24" height="24" src="@(context.Record.RecordInfo.Class == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)"/>
+            </MudTd>
+            <MudTd DataLabel="Map">
+                <MudLink Href="@HrefHelper.GetMapInfoPath(context.Record.MapInfo.Name)">
+                    @(context.Record.MapInfo.Name + " " + context.Record.ZoneInfo.Type switch
+                    {
+                        "course" => "C" + context.Record.ZoneInfo.ZoneIndex + " ",
+                        "bonus" => "B" + context.Record.ZoneInfo.ZoneIndex,
+                        _ => ""
+                    })
+                </MudLink>
+            </MudTd>
+            <MudTd DataLabel="Player">
+                <MudLink Href="@HrefHelper.GetPlayerInfoPath(context.Record.PlayerInfo.Id)">
+                    @(_tempusCacheService.GetRealName(context.Record.PlayerInfo.Id) ?? context.Record.PlayerInfo.Name)
+                </MudLink>
+            </MudTd>
+            <MudTd DataLabel="Time">
+                <MudLink Href="@HrefHelper.GetRunInfoPath(context.Record.RecordInfo.Id)">
+                    @TempusUtilities.FormattedDuration(context.Record.RecordInfo.Duration)
+                    @if (context.Record is MapTop mapTopRecord)
+                    {
+                        @(" (#" + mapTopRecord.Rank + " WR +" + (context.Record.CachedTime is {CurrentWrDuration: { } } 
+                            ? TempusUtilities.FormattedDuration(context.Record.CachedTime.CurrentWrDuration.Value - context.Record.RecordInfo.Duration) 
+                            : "N/A"));
+                    }
+                    else
+                    {
+                        @(" (" + TempusUtilities.GetWrSplitString(context.Record.CachedTime, context.ZonedData))
+                    })
+                </MudLink>
+            </MudTd>
+            <MudTd DataLabel="Date">
+                @TempusUtilities.GetDateFromSeconds(context.Record.RecordInfo.Date).GetTimeStringSinceDateTime()
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
 
 @code {
     [Parameter]
@@ -112,8 +134,12 @@ else
         }
     }
 
-    protected override async Task OnParametersSetAsync() => await OnInitializedAsync();
-      
+    protected override void OnParametersSet()
+    {
+        OnInitialized();
+        base.OnParametersSet();
+    }
+
     public void Dispose()
     {
         _tempusCacheService.DataUpdated -= OnDataUpdated;

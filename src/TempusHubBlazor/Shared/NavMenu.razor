@@ -1,42 +1,10 @@
-﻿<div class="top-row pl-4 navbar navbar-dark nav-top-row">
-    <a class="navbar-brand" href="">Tempus Hub</a>
-    <button class="navbar-toggler" @onclick="ToggleNavMenu">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-</div>
-
-<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-    <ul class="nav flex-column">
-        <li class="nav-item px-3">
-            <NavLink class="nav-link" href="recentrecords">
-                <span class="oi oi-clock" aria-hidden="true"></span> Recent Records
-            </NavLink>
-            <NavLink class="nav-link" href="topplayersonline">
-                <span class="oi oi-people" aria-hidden="true"></span> Top Players Online
-            </NavLink>
-            <NavLink class="nav-link" href="servers">
-                <span class="oi oi-monitor" aria-hidden="true"></span> Server List
-            </NavLink>
-            <NavLink class="nav-link" href="players">
-                <span class="oi oi-list" aria-hidden="true"></span> Player Leaderboards
-            </NavLink>
-            <NavLink class="nav-link" href="maps">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Map List
-            </NavLink>
-            <NavLink class="nav-link" href="swagger">
-                <span class="oi oi-code" aria-hidden="true"></span> API Docs
-            </NavLink>
-        </li>
-    </ul>
-</div>
-
-@code {
-    bool _collapseNavMenu = true;
-
-    string NavMenuCssClass => _collapseNavMenu ? "collapse" : null;
-
-    void ToggleNavMenu()
-    {
-        _collapseNavMenu = !_collapseNavMenu;
-    }
-}
+﻿<MudPaper Width="250px" Class="py-3" Square="true" Elevation="0">
+    <MudNavMenu>
+        <MudNavLink Icon="@Icons.Material.Filled.AccessTime" Href="/recentrecords">Recent Records</MudNavLink>
+        <MudNavLink Icon="@Icons.Material.Filled.PeopleAlt" Href="/topplayersonline">Top Players Online</MudNavLink>
+        <MudNavLink Icon="@Icons.Material.Filled.LaptopChromebook" Href="/servers">Server List</MudNavLink>
+        <MudNavLink Icon="@Icons.Material.Filled.Leaderboard" Href="/players">Player Leaderboards</MudNavLink>
+        <MudNavLink Icon="@Icons.Material.Filled.Map" Href="/maps">Map List</MudNavLink>
+        <MudNavLink Icon="@Icons.Custom.FileFormats.FileCode" Href="/swagger">API Docs</MudNavLink>
+    </MudNavMenu>
+</MudPaper>
