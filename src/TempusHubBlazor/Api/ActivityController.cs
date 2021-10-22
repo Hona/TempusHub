@@ -17,7 +17,7 @@ public class ActivityController : ControllerBase
         _tempusCacheService = tempusCacheService;
     }
 
-    private List<RecordResponse> TransformRecordData(List<RecordWithZonedData> recordBase)
+    private List<RecordResponse> TransformRecordData(IEnumerable<RecordWithZonedData> recordBase)
     {
         var output = recordBase.Select(x => new RecordResponse
         {
@@ -37,9 +37,9 @@ public class ActivityController : ControllerBase
         foreach (var record in output)
         {
             var realName = _tempusCacheService.GetRealName(record.PlayerInfo.Id);
-                
+
             if (realName == null) continue;
-                
+
             var realNamePlayer = new PlayerResponse
             {
                 Id = record.PlayerInfo.Id,

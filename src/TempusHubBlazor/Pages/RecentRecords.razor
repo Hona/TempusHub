@@ -119,10 +119,10 @@
 
         recordsWithZonedDataTemp = RecentRecordType.ToLower() switch
         {
-            "map" => _tempusCacheService.RecentActivityWithZonedData.MapWr,
-            "course" => _tempusCacheService.RecentActivityWithZonedData.CourseWr,
-            "bonus" => _tempusCacheService.RecentActivityWithZonedData.BonusWr,
-            "map_top" => _tempusCacheService.RecentActivityWithZonedData.MapTt,
+            "map" => _tempusCacheService.RecentActivityWithZonedData.MapWr.ToList(),
+            "course" => _tempusCacheService.RecentActivityWithZonedData.CourseWr.ToList(),
+            "bonus" => _tempusCacheService.RecentActivityWithZonedData.BonusWr.ToList(),
+            "map_top" => _tempusCacheService.RecentActivityWithZonedData.MapTt.ToList(),
             _ => throw new Exception("No activity data for that type.")
         };
 

@@ -29,18 +29,18 @@ public class WrSplitController : ControllerBase
         {
             throw new ArgumentNullException(nameof(recordType));
         }
-            
+
         List<RecordWithZonedData> recentRecords;
         switch (recordType.ToUpperInvariant())
         {
             case "MAP":
-                recentRecords = _tempusCacheService.RecentActivityWithZonedData.MapWr;
+                recentRecords = _tempusCacheService.RecentActivityWithZonedData.MapWr.ToList();
                 break;
             case "COURSE":
-                recentRecords = _tempusCacheService.RecentActivityWithZonedData.CourseWr;
+                recentRecords = _tempusCacheService.RecentActivityWithZonedData.CourseWr.ToList();
                 break;
             case "BONUS":
-                recentRecords = _tempusCacheService.RecentActivityWithZonedData.BonusWr;
+                recentRecords = _tempusCacheService.RecentActivityWithZonedData.BonusWr.ToList();
                 break;
             default:
                 return BadRequest(nameof(recordType));
