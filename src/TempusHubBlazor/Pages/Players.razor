@@ -6,47 +6,55 @@
 @using TempusHubBlazor.Utilities
 
 @inject TempusCacheService _tempusCacheService
-<div class="heading-wrapper">
-    <h1 class="slim-center">@RankType.ToStandardCasing() Leaderboard</h1><BSDropdown DropdownDirection="DropdownDirection.Left" Class="bsDropDown">
-        <BSDropdownToggle Color="Color.Primary">@RankType.ToStandardCasing()</BSDropdownToggle>
-        <BSDropdownMenu>
-            <BSDropdownItem Href="/players/overall" OnClick=@(() => { RankType = "Overall"; OnInitialized(); })>Overview</BSDropdownItem>
-            <BSDropdownItem Href="/players/soldier" OnClick=@(() => { RankType = "Soldier"; OnInitialized(); })>Soldier</BSDropdownItem>
-            <BSDropdownItem Href="/players/demoman" OnClick=@(() => { RankType = "Demoman"; OnInitialized(); })>Demoman</BSDropdownItem>
-        </BSDropdownMenu>
-    </BSDropdown>
-</div>
-<br />
+@inject NavigationManager _navigationManager
 
-@if (RanksOverview == null || RanksOverview.TopPlayers.Count == 0)
-{
-    <span>Loading ranks overview</span>
-}
-else
-{
-    <table align="center" class="table table-dark table-bordered slim-center">
-        <thead>
-            <tr>
-                <th>Rank</th>
-                <th>Player</th>
-                <th>Points</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var player in RanksOverview.TopPlayers)
-            {
-                <tr>
-                    <td>@player.Rank</td>
-                    <td><a href="@HrefHelper.GetPlayerInfoPath(player.Id)">@(_tempusCacheService.GetRealName(player.Id) ?? player.Name)</a></td>
-                    <td>@player.Points</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+<MudText Typo="Typo.h4" 
+         Style="display: flex; justify-content: space-between; align-items: center"
+         Class="page-header-dropdown">
+    @RankType.ToStandardCasing() Leaderboard
+    
+    <MudSelect T="string"
+               Label="View"
+               Strict="true"
+               Variant="Variant.Outlined"
+               AnchorOrigin="Origin.BottomCenter"
+               Value="RankType"
+               ValueChanged="@(x => { _navigationManager.NavigateTo("/players/" + x); })"
+               ToStringFunc="@(x => x is null ? "Overall" : x.ToStandardCasing())"
+               Style="max-width: 150px; width: 150px">
+        <MudSelectItem T="string" Value="@null"/>
+        <MudSelectItem T="string" Value='@("soldier")'/>
+        <MudSelectItem T="string" Value='@("demoman")'/>
+    </MudSelect>
+</MudText>
 
-<br />
-@code{
+<MudTable Items="RanksOverview.TopPlayers" 
+          Loading="RanksOverview is null"
+          LoadingProgressColor="Color.Info"
+          Breakpoint="Breakpoint.Sm"
+          Hover>
+    <HeaderContent>
+        <MudTh>Rank</MudTh>
+        <MudTh>Player</MudTh>
+        <MudTh>Points</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Rank">
+            @context.Rank
+        </MudTd>
+        <MudTd DataLabel="Player">
+            <MudLink Href="@HrefHelper.GetPlayerInfoPath(context.Id)">
+                @(_tempusCacheService.GetRealName(context.Id) ?? context.Name)
+            </MudLink>
+        </MudTd>
+        <MudTd DataLabel="Points">
+            @context.Points
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code
+{
     [Parameter]
     public string RankType { get; set; }
 
@@ -61,12 +69,16 @@ else
 
         RanksOverview = RankType.ToLower() switch
         {
-            "overall" => _tempusCacheService.PlayerLeaderboards.Overall,
-            "soldier" => _tempusCacheService.PlayerLeaderboards.Soldier,
-            "demoman" => _tempusCacheService.PlayerLeaderboards.Demoman,
+            "overall" => _tempusCacheService.PlayerLeaderboards?.Overall,
+            "soldier" => _tempusCacheService.PlayerLeaderboards?.Soldier,
+            "demoman" => _tempusCacheService.PlayerLeaderboards?.Demoman,
             _ => throw new Exception("No rank for that type")
         };
     }
 
-    protected override async Task OnParametersSetAsync() => await OnInitializedAsync();
+    protected override void OnParametersSet()
+    {
+        OnInitialized();
+        base.OnParametersSet();
+    }
 }

@@ -4,63 +4,76 @@
 @using TempusHubBlazor.Services
 
 @inject TempusCacheService _tempusCacheService
-<div class="heading-wrapper">
-    <h1 class="slim-center">Tempus Map List</h1>
-</div>
-<br />
 
-@if (_mapList == null || !_mapList.Any())
+<MudText Typo="Typo.h4">
+    Tempus Map List
+</MudText>
+
+<MudGrid Spacing="2">
+    <MudItem>
+        <MudTable Items="_mapList.Where(x => x.IntendedClass != 'D')"
+                  Loading="_mapList is null"
+                  LoadingProgressColor="Color.Info"
+                  Hover
+                  Breakpoint="Breakpoint.Sm">
+            <HeaderContent>
+                <MudTh>Soldier Maps</MudTh>
+                <MudTh>
+                    <img width="24" height="24" src="@LocalFileConstants.SoldierIcon"/>
+                </MudTh>
+                <MudTh>
+                    <img width="24" height="24" src="@LocalFileConstants.DemomanIcon"/>
+                </MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Map">
+                    <MudLink Href="@($"maps/{context.Name}")">
+                        @context.Name
+                    </MudLink>
+                </MudTd>
+                <MudTd DataLabel="Soldier">
+                    T@(context.TierInfo.Soldier)
+                </MudTd>
+                <MudTd DataLabel="Demoman">
+                    T@(context.TierInfo.Demoman)
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudItem>
+    <MudItem>
+        <MudTable Items="_mapList.Where(x => x.IntendedClass != 'S')"
+                  Loading="_mapList is null"
+                  LoadingProgressColor="Color.Info"
+                  Hover
+                  Breakpoint="Breakpoint.Sm">
+            <HeaderContent>
+                <MudTh>Demoman Maps</MudTh>
+                <MudTh>
+                    <img width="24" height="24" src="@LocalFileConstants.SoldierIcon"/>
+                </MudTh>
+                <MudTh>
+                    <img width="24" height="24" src="@LocalFileConstants.DemomanIcon"/>
+                </MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Map">
+                    <MudLink Href="@($"maps/{context.Name}")">
+                        @context.Name
+                    </MudLink>
+                </MudTd>
+                <MudTd DataLabel="Soldier">
+                    T@(context.TierInfo.Soldier)
+                </MudTd>
+                <MudTd DataLabel="Demoman">
+                    T@(context.TierInfo.Demoman)
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudItem>
+</MudGrid>
+
+@code
 {
-    <p><em>Getting map list data...</em></p>
-}
-else
-{
-<div class="slim-center">
-    <table align="center" class="table table-dark table-bordered slim-center multi-table">
-        <thead>
-            <tr>
-                <th>Demoman Maps</th>
-                <th><img width="24" height="24" src="@LocalFileConstants.SoldierIcon" /></th>
-                <th><img width="24" height="24" src="@LocalFileConstants.DemomanIcon" /></th>
-            </tr>
-        </thead>
-        <tbody>
-            <!--Demo maps, includes maps that are for both classes-->
-            @foreach (var map in _mapList.Where(x => x.IntendedClass != 'S'))
-            {
-                <tr>
-                    <td><a href="maps/@map.Name">@map.Name</a></td>
-                    <td>T@(map.TierInfo.Soldier)</td>
-                    <td>T@(map.TierInfo.Demoman)</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-
-    <table class="table table-dark table-bordered slim-center multi-table">
-        <thead>
-            <tr>
-                <th>Soldier Maps</th>
-                <th><img width="24" height="24" src="@LocalFileConstants.SoldierIcon" /></th>
-                <th><img width="24" height="24" src="@LocalFileConstants.DemomanIcon" /></th>
-            </tr>
-        </thead>
-        <tbody>
-            <!--Soldier maps, includes maps that are for both classes-->
-            @foreach (var map in _mapList.Where(x => x.IntendedClass != 'D'))
-            {
-                <tr>
-                    <td><a href="maps/@map.Name">@map.Name</a></td>
-                    <td>T@(map.TierInfo.Soldier)</td>
-                    <td>T@(map.TierInfo.Demoman)</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-</div>
-}
-
-@code{
     List<DetailedMapOverviewModel> _mapList;
     protected override void OnInitialized()
     {

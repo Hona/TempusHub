@@ -10,36 +10,54 @@
 @inject TempusDataService _tempusDataService
 
 @if (RunInfo == null || Server == null)
-{<span><i>Loading...</i></span> }
+{
+    <MudProgressCircular Color="Color.Info" Indeterminate="true" />
+}
 else
 {
-    <div class="heading-wrapper">
-        <h1 class="slim-center"><a href="@HrefHelper.GetServerInfoPath(Server.ServerInfo.Shortname)">@Server.ServerInfo.Shortname</a> | <a href="@HrefHelper.GetMapInfoPath(RunInfo.MapInfo.Name)">@RunInfo.MapInfo.Name</a></h1>
-    </div>
-    <br />
-    <table align="center" class="table table-dark table-bordered slim-center">
-        <thead>
-            <tr>
-                <th>Class</th>
-                <th>Player</th>
-                <th>Zone</th>
-                <th>Time</th>
-                <th>Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><img width="24" height="24" src="@(RunInfo.RecordInfo.Class == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /></td>
-                <td><a href="@HrefHelper.GetPlayerInfoPath(RunInfo.Player.Id ?? 0)">@(_tempusCacheService.GetRealName(RunInfo.Player.Id ?? 0) ?? RunInfo.Player.Name)</a></td>
-                <td>@(RunInfo.RecordZoneInfo.Type.ToLower() == "map" ? "Map" : RunInfo.RecordZoneInfo.Type.ToStandardCasing() + " " + RunInfo.RecordZoneInfo.ZoneIndex)</td>
-                <td>#@RunInfo.RecordInfo.Rank: @(TempusUtilities.FormattedDuration(RunInfo.RecordInfo.Duration))</td>
-                <td>@TempusUtilities.GetDateFromSeconds(RunInfo.RecordInfo.Date).GetTimeStringSinceDateTime()</td>
-            </tr>
-        </tbody>
-    </table>
+    <MudText Typo="Typo.h4">
+        <MudLink Href="@HrefHelper.GetServerInfoPath(Server.ServerInfo.Shortname)">
+            @Server.ServerInfo.Shortname
+        </MudLink>
+        ·
+        <MudLink Href="@HrefHelper.GetMapInfoPath(RunInfo.MapInfo.Name)">
+            @RunInfo.MapInfo.Name
+        </MudLink>
+    </MudText>
+
+    <MudTable Items="@(new[] {RunInfo})"
+              Breakpoint="Breakpoint.Sm">
+        <HeaderContent>
+            <MudTh>Class</MudTh>
+            <MudTh>Player</MudTh>
+            <MudTh>Zone</MudTh>
+            <MudTh>Time</MudTh>
+            <MudTh>Date</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Class">
+                <img width="24" height="24" src="@(RunInfo.RecordInfo.Class == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)"/>
+            </MudTd>
+            <MudTd DataLabel="Player">
+                <MudLink Href="@HrefHelper.GetPlayerInfoPath(RunInfo.Player.Id ?? 0)">
+                    @(_tempusCacheService.GetRealName(RunInfo.Player.Id ?? 0) ?? RunInfo.Player.Name)
+                </MudLink>
+            </MudTd>
+            <MudTd DataLabel="Zone">
+                @(RunInfo.RecordZoneInfo.Type.ToLower() == "map" ? "Map" : RunInfo.RecordZoneInfo.Type.ToStandardCasing() + " " + RunInfo.RecordZoneInfo.ZoneIndex)
+            </MudTd>
+            <MudTd DataLabel="Time">
+                #@RunInfo.RecordInfo.Rank: @(TempusUtilities.FormattedDuration(RunInfo.RecordInfo.Duration))
+            </MudTd>
+            <MudTd DataLabel="Date">
+                @TempusUtilities.GetDateFromSeconds(RunInfo.RecordInfo.Date).GetTimeStringSinceDateTime()
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
 }
 
-@code {
+@code 
+{
     [Parameter]
     public string RunId { get; set; }
     public RunInfoModel RunInfo { get; set; }

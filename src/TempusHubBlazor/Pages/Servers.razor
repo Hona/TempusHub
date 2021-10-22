@@ -6,86 +6,116 @@
 @using TempusHubBlazor.Utilities
 
 @inject TempusCacheService _tempusCacheService
+@inject NavigationManager _navigationManager
 
 @implements IDisposable
 
-<div class="heading-wrapper">
-    <h1 class="slim-center">Servers</h1>
-    <BSDropdown DropdownDirection="DropdownDirection.Left" Class="bsDropDown">
-    <BSDropdownToggle Color="Color.Primary">@(ServerDisplayType?.ToStandardCasing() ?? "Country")</BSDropdownToggle>
-        <BSDropdownMenu>
-            <BSDropdownItem Href="/servers/country" OnClick=@(() => { ServerDisplayType = "Country"; StateHasChanged(); })>Country Cards</BSDropdownItem>
-            <BSDropdownItem Href="/servers/list" OnClick=@(() => { ServerDisplayType = "List"; StateHasChanged(); })>List</BSDropdownItem>
-        </BSDropdownMenu>
-</BSDropdown>
-</div>
-<br />
+<MudText Typo="Typo.h4" 
+         Style="display: flex; justify-content: space-between; align-items: center"
+         Class="page-header-dropdown">
+    Servers
+    
+    <MudSelect T="string"
+               Label="View"
+               Strict="true"
+               Variant="Variant.Outlined"
+               AnchorOrigin="Origin.BottomCenter"
+               Value="ServerDisplayType"
+               ValueChanged="@(x => { _navigationManager.NavigateTo("/servers/" + x); })"
+               ToStringFunc="@(x => x is null ? "List" : x.ToStandardCasing())"
+               Style="max-width: 150px; width: 150px">
+        <MudSelectItem T="string" Value='@("country")'/>
+        <MudSelectItem T="string" Value='@("list")'/>
+    </MudSelect>
+</MudText>
 
-@if (ServerStatusList == null || ServerStatusList.Count == 0)
+@if (string.Equals(ServerDisplayType, "List", StringComparison.InvariantCultureIgnoreCase))
 {
-    <span>Loading servers...</span>
+    <MudTable Items="ServerStatusList"
+              Loading="ServerStatusList is null"
+              LoadingProgressColor="Color.Inherit"
+              Hover
+              Breakpoint="Breakpoint.Sm">
+        <HeaderContent>
+            <MudTh>Name</MudTh>
+            <MudTh>Map</MudTh>
+            <MudTh>Players</MudTh>
+            <MudTh></MudTh>        
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Name">
+                <MudLink Href="@HrefHelper.GetServerInfoPath(context.ServerInfo.Shortname)">
+                    @context.ServerInfo.Shortname · @context.ServerInfo.Name
+                </MudLink>
+            </MudTd>
+            <MudTd DataLabel="Map">
+                <MudLink Href="@HrefHelper.GetMapInfoPath(context.GameInfo.CurrentMap)">
+                    @context.GameInfo.CurrentMap
+                </MudLink> 
+                @if (context.GameInfo.NextMap != null)
+                {
+                    <MudLink Href="@HrefHelper.GetMapInfoPath(context.GameInfo.NextMap.ToString())">
+                        (@context.GameInfo.NextMap.ToString())
+                    </MudLink>
+                }
+            </MudTd>
+            <MudTd DataLabel="Players">
+                @(context.GameInfo.PlayerCount)/@context.GameInfo.MaxPlayers
+            </MudTd>
+            <MudTd>
+                <MudButton Link="@($"steam://connect/{context.ServerInfo.Addr}:{context.ServerInfo.Port}")">
+                    Connect
+                </MudButton>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
 }
-else if (string.Equals(ServerDisplayType, "List", StringComparison.InvariantCultureIgnoreCase))
+else if (string.IsNullOrWhiteSpace(ServerDisplayType) || string.Equals(ServerDisplayType, "country", StringComparison.InvariantCultureIgnoreCase))
 {
-    <table align="center" class="table table-dark table-bordered slim-center">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Map</th>
-                <th>Players</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var server in ServerStatusList)
-            {
-                <tr>
-                    <td><a href="@HrefHelper.GetServerInfoPath(server.ServerInfo.Shortname)">@server.ServerInfo.Shortname | @server.ServerInfo.Name</a></td>
-                    <td>
-                        <a href="@HrefHelper.GetMapInfoPath(server.GameInfo.CurrentMap)">@server.GameInfo.CurrentMap</a> @if (server.GameInfo.NextMap != null)
-                        {<a href="@HrefHelper.GetMapInfoPath(server.GameInfo.NextMap.ToString())">(@server.GameInfo.NextMap.ToString())</a>}
-                    </td>
-                    <td>@(server.GameInfo.PlayerCount)/@server.GameInfo.MaxPlayers</td>
-                    <td><a href="steam://connect/@server.ServerInfo.Addr:@server.ServerInfo.Port">Connect</a></td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-else if (string.IsNullOrWhiteSpace(ServerDisplayType) || string.Equals(ServerDisplayType, "Country", StringComparison.InvariantCultureIgnoreCase))
-{
-    <BSCard IsOutline="true" IsInverse="true" CardType="CardType.Columns">
+    <MudGrid Spacing="2">
         @foreach (var countryGroup in ServerStatusList.GroupBy(x => x.ServerInfo.Country))
         {
-            <BSCard IsInverse="true">
-                <BSCard CardType="CardType.Body">
-                    <BSCard CardType="CardType.Title">@countryGroup.Key</BSCard>
-                    <BSCard CardType="CardType.Text">
-                        <BSListGroup class="country-group-list">
+            <MudItem>
+                <MudCard>
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h6">
+                            @countryGroup.Key
+                        </MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudList>
                             @foreach (var server in countryGroup)
                             {
-                                <BSListGroupItem class="country-group-list-item text-white text-center">
-                                    <p>
-                                        <a href="@HrefHelper.GetServerInfoPath(server.ServerInfo.Shortname)">
+                                <MudListItem>
+                                    <div>
+                                        <MudLink Href="@HrefHelper.GetServerInfoPath(server.ServerInfo.Shortname)">
                                             @server.ServerInfo.Name
-                                        </a>
-                                        |
-                                        <a href="@HrefHelper.GetMapInfoPath(server.GameInfo.CurrentMap)">@server.GameInfo.CurrentMap</a> |
-                                        @(server.GameInfo.PlayerCount)/@server.GameInfo.MaxPlayers
-                                    </p>
-                                    <div class="text-center">
-                                        <a href="steam://connect/@server.ServerInfo.Addr:@server.ServerInfo.Port" class="btn btn-secondary btn-sm">Connect</a>
+                                        </MudLink>
+                                        ·
+                                        <MudLink Href="@HrefHelper.GetMapInfoPath(server.GameInfo.CurrentMap)">
+                                            @server.GameInfo.CurrentMap
+                                        </MudLink> ·
+                                        @(server.GameInfo.PlayerCount)/@(server.GameInfo.MaxPlayers)
                                     </div>
-                                </BSListGroupItem>
+                                    <MudButton Link="@($"steam://connect/{server.ServerInfo.Addr}:{server.ServerInfo.Port}")">
+                                        Connect
+                                    </MudButton>
+                                </MudListItem>
                             }
-                        </BSListGroup>
-                    </BSCard>
-                </BSCard>
-            </BSCard>
+                        </MudList>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
         }
-    </BSCard>
+    </MudGrid>
+    
 }
-
+else
+{
+    <MudText Color="Color.Warning">
+        How did you get here..?
+    </MudText>
+}
 
 @code {
 

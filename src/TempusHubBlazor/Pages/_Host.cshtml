@@ -1,27 +1,8 @@
 ﻿@page "/"
 @namespace TempusHubBlazor.Pages
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    Layout = "_Layout";
+}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tempus Hub</title>
-    <base href="~/" />
-    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
-    <script src="_content/BlazorStrap/blazorStrap.js"></script>
-    <link rel="stylesheet" href="_content/BlazorStrap/css/submenu.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" /></head>
-    <link href="css/site.css" rel="stylesheet" />
-<body>
-    <app>
-        @(await Html.RenderComponentAsync<App>(RenderMode.Server))
-    </app>
-
-<script src="_framework/blazor.server.js"></script>
-<script src="js/interop_scripts.js"></script>
-<script src="_content/BlazorStrap/popper.min.js"></script>
-<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "05a1f21cd43c4fe7aacef01a31a77100"}'></script><!-- End Cloudflare Web Analytics -->
-</body>
-</html>
+<component type="typeof(App)" render-mode="ServerPrerendered"/>
