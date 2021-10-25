@@ -15,6 +15,12 @@
 {
     <MudProgressCircular Color="Color.Info" Indeterminate="true" />
 }
+else if (_playerNotFound)
+{
+    <MudText Color="Color.Warning">
+        That player was not found (this could be a bug with Tempus.xyz...)
+    </MudText>
+}
 else
 {
     <MudText Typo="Typo.h4">
@@ -88,7 +94,8 @@ else
     }
 }
 
-@code{
+@code
+{
     [Parameter]
     public string PlayerId { get; set; }
 
@@ -96,14 +103,31 @@ else
     public BaseRank HigherRankInfo { get; set; }
     public TempusRankColor RankColor { get; set; }
 
+    private bool _playerNotFound;
+
     protected override async Task OnInitializedAsync()
     {
+        _playerNotFound = false;       
+
         var playerStats = await _tempusDataService.GetUserStatsAsync(PlayerId);
+
+        if (playerStats is null)
+        {
+            _playerNotFound = true;
+            return;
+        }
+
         playerStats.ClassRankInfo.DemoRank.Title ??= "Peon";
         playerStats.ClassRankInfo.SoldierRank.Title ??= "Peon";
+        
         PlayerStats = playerStats;
-        HigherRankInfo = PlayerStats.ClassRankInfo.DemoRank.Rank <= PlayerStats.ClassRankInfo.SoldierRank.Rank ? PlayerStats.ClassRankInfo.DemoRank : PlayerStats.ClassRankInfo.SoldierRank;
-        RankColor = _tempusCacheService.TempusRankColors.First(x => string.Equals(x.Title, HigherRankInfo.Title ?? "Peon", StringComparison.CurrentCultureIgnoreCase));
+        
+        HigherRankInfo = PlayerStats.ClassRankInfo.DemoRank.Rank <= PlayerStats.ClassRankInfo.SoldierRank.Rank 
+            ? PlayerStats.ClassRankInfo.DemoRank 
+            : PlayerStats.ClassRankInfo.SoldierRank;
+        
+        RankColor = _tempusCacheService.TempusRankColors
+            .First(x => string.Equals(x.Title, HigherRankInfo.Title ?? "Peon", StringComparison.CurrentCultureIgnoreCase));
     }
 
     protected override async Task OnParametersSetAsync() => await OnInitializedAsync();

@@ -51,7 +51,7 @@ public class TempusDataService
 
     private List<string> MapNameList { get; set; }
     private static string GetFullApiPath(string partial) => "/api" + partial;
-    private async Task<T> GetResponseAsync<T>(string request)
+    private async Task<T> GetResponseAsync<T>(string request, bool throwOnFail = true)
     {
         var fullPath = GetFullApiPath(request);
             
@@ -60,24 +60,26 @@ public class TempusDataService
             var startTime = DateTime.Now;
             var response = await _httpClient.GetAsync(fullPath).ConfigureAwait(false);
 
-            if (response.IsSuccessStatusCode)
-            {
-                object stringValue = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var duration = DateTime.Now - startTime;
+            response.EnsureSuccessStatusCode();
 
-                Log.Information("Tempus /api {Request} {Milliseconds} ms", request, duration.TotalMilliseconds);
-                // If T is a string, don't deserialise
-                return typeof(T) == typeof(string)
-                    ? (T)stringValue
-                    : JsonConvert.DeserializeObject<T>((string)stringValue);
-            }
+            object stringValue = await response.Content
+                .ReadAsStringAsync().ConfigureAwait(false);
+            var duration = DateTime.Now - startTime;
 
-            Log.Error("Couldn't get Tempus API request: {FullPath}", fullPath);
-            throw new Exception("Couldn't get Tempus API request: " + fullPath);
+            Log.Information("Tempus /api {Request} {Milliseconds} ms", request, duration.TotalMilliseconds);
+            // If T is a string, don't deserialise
+            return typeof(T) == typeof(string)
+                ? (T)stringValue
+                : JsonConvert.DeserializeObject<T>((string)stringValue);
         }
-        catch
+        catch (Exception e)
         {
-            throw new Exception("Failed on: " + fullPath);
+            if (throwOnFail)
+            {
+                throw new Exception("Failed on: " + fullPath, e);
+            }
+            
+            return default;
         }
     }
 
@@ -181,7 +183,7 @@ public class TempusDataService
         await GetResponseAsync<RanksOverviewModel>("/ranks/class/3").ConfigureAwait(false);
     public async Task<Rank> GetUserRankAsync(string id) => await GetResponseAsync<Rank>($"/players/id/{id}/rank").ConfigureAwait(false);
     public async Task<PlayerStatsModel> GetUserStatsAsync(string id) =>
-        await GetResponseAsync<PlayerStatsModel>($"/players/id/{id}/stats").ConfigureAwait(false);
+        await GetResponseAsync<PlayerStatsModel>($"/players/id/{id}/stats", throwOnFail: false).ConfigureAwait(false);
     public async Task<RecordWithZonedData> PopulateRecordDataAsync(TempusRecordBase recordBase)
     {
         if (recordBase is null)
