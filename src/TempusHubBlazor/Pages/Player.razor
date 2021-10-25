@@ -11,15 +11,15 @@
 @inject TempusDataService _tempusDataService
 @inject TempusCacheService _tempusCacheService
 
-@if (PlayerStats is null && !_playerNotFound)
-{
-    <MudProgressCircular Color="Color.Info" Indeterminate="true" />
-}
-else if (_playerNotFound)
+@if (_playerNotFound)
 {
     <MudText Color="Color.Warning">
         That player was not found (this could be a bug with Tempus.xyz...)
     </MudText>
+}
+else if (PlayerStats is null)
+{
+    <MudProgressCircular Color="Color.Info" Indeterminate="true" />
 }
 else
 {
