@@ -1,0 +1,85 @@
+﻿@using OneOf
+@using TempusApi
+@using TempusApi.Models
+@using TempusApi.Models.Activity
+@using TempusApi.Models.Responses
+@using TempusHub.Core.Utilities
+@using TempusHub.Infrastructure
+
+@inject Tempus _tempusDataService
+@inject NavigationManager _navigationManager
+
+<div class="search-bar" style="padding-right: 1rem">
+    <MudPaper>
+        <MudTextField @bind-Value="_searchText"
+                      Label="Search"
+                      Adornment="Adornment.End"
+                      AdornmentIcon="@Icons.Filled.Search"
+                      DebounceInterval="500"
+                      OnDebounceIntervalElapsed="HandleIntervalElapsed"
+                      Style="width: clamp(100px, 250px, 250px)"
+                      Variant="Variant.Filled"
+                      Margin="Margin.Dense"/>
+    </MudPaper>
+
+    <MudPopover @onfocusout="() => _searchResults = null"
+                Paper
+                RelativeWidth
+                Open="@(_searchResults is not null)"
+                TransformOrigin="Origin.TopCenter"
+                AnchorOrigin="Origin.BottomCenter"
+                MaxHeight="500"
+                OverflowBehavior="OverflowBehavior.FlipNever">
+        <MudList Clickable>
+            <MudListSubheader>
+                Maps
+            </MudListSubheader>
+            @foreach (var map in _searchResults.Maps)
+            {
+                <MudListItem OnClick="() => { _searchResults = null; _navigationManager.NavigateTo(HrefHelper.GetMapInfoPath(map.Name)); }">
+                    @(map.ToString())
+                </MudListItem>
+            }
+            <MudListSubheader>
+                Players
+            </MudListSubheader>
+            @foreach (var player in _searchResults.Players)
+            {
+                <MudListItem OnClick="() => { _searchResults = null; _navigationManager.NavigateTo(HrefHelper.GetPlayerInfoPath(player.Id ?? 0)); }">
+                    @(player.ToString())
+                </MudListItem>
+            }
+        </MudList>
+    </MudPopover>
+</div>
+
+
+
+
+@code 
+{
+    private string _searchText;
+    
+    private PlayerMapSearchResult _searchResults; 
+
+    private async Task HandleIntervalElapsed(string debouncedText)
+    {
+        if (string.IsNullOrWhiteSpace(debouncedText))
+        {
+            _searchResults = null;
+            return;
+        }
+
+        _searchResults = await _tempusDataService.GetSearchResultAsync(debouncedText);
+    }
+
+    private void HandleValueClicked(OneOf<ServerPlayerModel, MapInfo> value) => value.Switch(player =>
+    {
+        _navigationManager.NavigateTo(HrefHelper.GetPlayerInfoPath(player.Id ?? 0));
+    }, map =>
+    {
+        _navigationManager.NavigateTo(HrefHelper.GetPlayerInfoPath(map.Name));
+    });
+
+    private string ToStringFunc(OneOf<ServerPlayerModel, MapInfo> arg) => arg.Value?.ToString();
+}

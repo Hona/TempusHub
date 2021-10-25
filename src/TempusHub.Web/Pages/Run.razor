@@ -1,0 +1,79 @@
+﻿@page "/run/{RunId}"
+@using TempusHub.Application.Services
+@using TempusHub.Core.Constants
+@using TempusHub.Core.Utilities
+@using TempusApi
+@using TempusApi.Models.Responses
+
+@inject TempusCacheService _tempusCacheService
+@inject Tempus _tempusDataService
+
+@if (RunInfo == null || Server == null)
+{
+    <MudProgressCircular Color="Color.Info" Indeterminate="true" />
+}
+else
+{
+    <MudText Typo="Typo.h4">
+        <MudLink Href="@HrefHelper.GetServerInfoPath(Server.ServerInfo.Shortname)">
+            @Server.ServerInfo.Shortname
+        </MudLink>
+        ·
+        <MudLink Href="@HrefHelper.GetMapInfoPath(RunInfo.MapInfo.Name)">
+            @RunInfo.MapInfo.Name
+        </MudLink>
+    </MudText>
+
+    <MudTable Items="@(new[] {RunInfo})"
+              Breakpoint="Breakpoint.Sm">
+        <HeaderContent>
+            <MudTh>Class</MudTh>
+            <MudTh>Player</MudTh>
+            <MudTh>Zone</MudTh>
+            <MudTh>Time</MudTh>
+            <MudTh>Date</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Class">
+                <img width="24" height="24" src="@(RunInfo.RecordInfo.Class == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)"/>
+            </MudTd>
+            <MudTd DataLabel="Player">
+                <MudLink Href="@HrefHelper.GetPlayerInfoPath(RunInfo.Player.Id ?? 0)">
+                    @(_tempusCacheService.GetRealName(RunInfo.Player.Id ?? 0) ?? RunInfo.Player.Name)
+                </MudLink>
+            </MudTd>
+            <MudTd DataLabel="Zone">
+                @(RunInfo.RecordZoneInfo.Type.ToLower() == "map" ? "Map" : RunInfo.RecordZoneInfo.Type.ToStandardCasing() + " " + RunInfo.RecordZoneInfo.ZoneIndex)
+            </MudTd>
+            <MudTd DataLabel="Time">
+                #@RunInfo.RecordInfo.Rank: @(TempusUtilities.FormattedDuration(RunInfo.RecordInfo.Duration))
+            </MudTd>
+            <MudTd DataLabel="Date">
+                @TempusUtilities.GetDateFromSeconds(RunInfo.RecordInfo.Date).GetTimeStringSinceDateTime()
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+
+@code 
+{
+    [Parameter]
+    public string RunId { get; set; }
+    public RunInfoModel RunInfo { get; set; }
+    public ServerStatusModel Server { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (int.TryParse(RunId, out var parsedRunId))
+        {
+            RunInfo = await _tempusDataService.GetRunInfoAsync(parsedRunId);
+            Server = _tempusCacheService.ServerStatusList.First(x => x.ServerInfo.Id == RunInfo.RecordInfo.ServerId);
+        }
+        else
+        {
+            RunInfo = null;
+        }
+    }
+
+    protected override async Task OnParametersSetAsync() => await OnInitializedAsync();
+}

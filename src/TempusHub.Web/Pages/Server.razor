@@ -1,0 +1,122 @@
+﻿@page "/server/{ServerParam}"
+@using TempusHub.Application.Services
+@using TempusHub.Core.Constants
+@using TempusHub.Core.Models
+@using TempusHub.Core.Utilities
+@using TempusApi
+@using TempusApi.Models.Responses
+
+@inject Tempus _tempusDataService
+@inject TempusCacheService _tempusCacheService
+
+<MudText Typo="Typo.h4">@(ServerInfo?.ServerInfo.Name ?? "No Server found")</MudText>
+<span>
+    <MudLink Href="@HrefHelper.GetMapInfoPath(ServerInfo.GameInfo.CurrentMap)">
+        @ServerInfo.GameInfo.CurrentMap
+    </MudLink> (@(ServerInfo.GameInfo.PlayerCount)/@ServerInfo.GameInfo.MaxPlayers)
+</span>
+
+<MudText Typo="Typo.h5">Players</MudText>
+
+<MudTable Items="RankedPlayers"
+          Breakpoint="Breakpoint.Sm">
+    <HeaderContent>
+        <MudTh>Rank</MudTh>
+        <MudTh>Player</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        @if (context.Rank.HasValue)
+        {
+            <MudTd DataLabel="Rank">
+                <div>
+                    <img class="rank-icon" width="24" height="24" src="@(context.Class == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)"/>
+                    @(context.Rank.Value.ToString())
+                </div>
+            </MudTd>
+        }
+        else
+        {
+            <MudTd DataLabel="Rank">Unranked</MudTd>
+        }
+        <MudTd DataLabel="Player">
+            <MudLink Href="@HrefHelper.GetPlayerInfoPath(context.Player.Id ?? 0)">
+                @(_tempusCacheService.GetRealName(context.Player.Id ?? 0) ?? context.Player.Name)
+            </MudLink>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+<MudDivider Style="margin: 1rem 0 1rem 0" />
+
+@if (Demos is null)
+{
+    <MudProgressCircular Color="Color.Info" Indeterminate="true" />
+}
+else 
+{ 
+    <MudText Typo="Typo.h4">
+        Demos
+    </MudText>
+    <MudTable Items="Demos">
+        <HeaderContent>
+            <MudTh>Map</MudTh>
+            <MudTh>Date</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd>
+                @(context.Recording ? "Recording · " : "")
+                <MudLink Href="@HrefHelper.GetDemoInfoPath(context.DemoId)">
+                    @context.MapName
+                </MudLink>
+            </MudTd>
+            <MudTd>
+                @(TempusUtilities.GetDateFromSeconds(context.Date).GetTimeStringSinceDateTime())
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+@code {
+    [Parameter]
+    public string ServerParam { get; set; }
+    public List<RankedServerPlayerModel> RankedPlayers { get; set; } = new();
+    public ServerStatusModel ServerInfo { get; set; }
+    public List<ServerDemoModel> Demos { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        RankedPlayers = new List<RankedServerPlayerModel>();
+        if (int.TryParse(ServerParam, out var serverId))
+        {
+            ServerInfo = _tempusCacheService.ServerStatusList.FirstOrDefault(x => x.ServerInfo.Id == serverId);
+        }
+        else
+        {
+            ServerInfo = _tempusCacheService.ServerStatusList.FirstOrDefault(x => string.Equals(x.ServerInfo.Shortname, ServerParam, StringComparison.CurrentCultureIgnoreCase)) ?? _tempusCacheService.ServerStatusList.FirstOrDefault(x => x.ServerInfo.Name.ToLower().Contains(ServerParam.ToLower()));
+        }
+
+        if (ServerInfo?.GameInfo.Users != null && ServerInfo.GameInfo.Users.Count > 0)
+        {
+            foreach (var user in ServerInfo.GameInfo.Users)
+            {
+                var rankedUser = _tempusCacheService.TopPlayersOnline.FirstOrDefault(x => x.Id == user.Id || x.SteamId == user.SteamId);
+                RankedPlayers.Add(new RankedServerPlayerModel
+                {
+                    Player = user,
+                    Rank = rankedUser?.Rank ?? (int?)int.MaxValue,
+                    Class = rankedUser?.RankClass ?? 0
+                });
+            }
+            RankedPlayers = RankedPlayers
+                .OrderBy(x => x.Rank)
+                .ToList();
+
+            // Replace temporary rank for sorting back to null
+            foreach (var rankedPlayer in RankedPlayers.Where(rankedPlayer => rankedPlayer.Rank.HasValue && rankedPlayer.Rank == int.MaxValue))
+            {
+                rankedPlayer.Rank = null;
+            }
+        }
+
+        Demos = await _tempusDataService.GetServerDemosAsync(ServerInfo.ServerInfo.Id);
+    }
+}

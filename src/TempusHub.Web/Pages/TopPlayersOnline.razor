@@ -1,0 +1,152 @@
+﻿@page "/topplayersonline"
+@page "/topplayersonline/{DisplayType}" 
+@using TempusHub.Application.Services
+@using TempusHub.Core.Constants
+@using TempusHub.Core.Models
+@using TempusHub.Core.Utilities
+@using TempusApi
+
+@inject Tempus _tempusDataService
+@inject TempusCacheService _tempusCacheService
+
+@implements IDisposable
+@inject NavigationManager _navigationManager
+
+<MudText Typo="Typo.h4" 
+         Style="display: flex; justify-content: space-between; align-items: center"
+         Class="page-header-dropdown">
+    Top Players Online
+    
+    <MudSelect T="string"
+               Label="View"
+               Strict="true"
+               Variant="Variant.Outlined"
+               AnchorOrigin="Origin.BottomCenter"
+               Value="DisplayType"
+               ValueChanged="@(x => { _navigationManager.NavigateTo("/topplayersonline/" + x); })"
+               ToStringFunc="@(x => x is null ? "List" : x.ToStandardCasing())"
+               Style="max-width: 150px; width: 150px">
+        <MudSelectItem T="string" Value='@("list")'/>
+        <MudSelectItem T="string" Value='@("server")'/>
+    </MudSelect>
+</MudText>
+
+@if (string.IsNullOrWhiteSpace(DisplayType) || string.Equals(DisplayType, "list", StringComparison.InvariantCultureIgnoreCase))
+{
+    <MudTable Items="_topPlayerOnline" 
+              Hover 
+              Breakpoint="Breakpoint.Sm" 
+              Loading="_topPlayerOnline == null"
+              LoadingProgressColor="Color.Info">
+        <HeaderContent>
+            <MudTh>Rank</MudTh>
+            <MudTh>Player</MudTh>
+            <MudTh>Map</MudTh>
+            <MudTh>Server</MudTh>
+            <MudTh></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Rank">
+                <div style="display: flex; align-items: center">
+                    <img class="rank-icon" width="24" height="24" src="@(context.RankClass == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)"/>
+                    @context.Rank
+                </div>
+            </MudTd>
+            <MudTd DataLabel="Player">
+                <MudLink Href="@HrefHelper.GetPlayerInfoPath(context.Id)">
+                    @(_tempusCacheService.GetRealName(context.Id) ?? context.Name)
+                </MudLink>
+            </MudTd>
+            <MudTd DataLabel="Map">
+                <MudLink Href="@HrefHelper.GetMapInfoPath(context.Server.GameInfo.CurrentMap)">
+                    @context.Server.GameInfo.CurrentMap
+                </MudLink>
+            </MudTd>
+            <MudTd DataLabel="Server">
+                <MudLink Href="@HrefHelper.GetServerInfoPath(context.Server.ServerInfo.Shortname)">
+                    @context.Server.ServerInfo.Shortname
+                </MudLink>
+            </MudTd>
+            <MudTh>
+                <MudButton Link="@($"steam://connect/{context.Server.ServerInfo.Addr}:{context.Server.ServerInfo.Port}")">Connect</MudButton>
+            </MudTh>
+        </RowTemplate>
+    </MudTable>
+}
+else if (string.Equals(DisplayType, "server", StringComparison.InvariantCultureIgnoreCase))
+{
+    <MudGrid Spacing="2">
+        @foreach (var serverGroup in _topPlayerOnline.GroupBy(x => x.Server))
+        {
+            <MudItem>
+                <MudCard>
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h6">
+                                @serverGroup.Key.ServerInfo.Name
+                            </MudText>
+                        </CardHeaderContent>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudText Typo="Typo.overline">
+                            @serverGroup.Key.GameInfo.CurrentMap
+                        </MudText>
+                        <MudDivider Style="margin: 0.5rem 0 0.5rem 0"/>
+                        <MudList>
+                            @foreach (var player in serverGroup)
+                            {
+                                <MudListItem Style="display: flex; justify-content: space-between; align-items: center">
+                                    <img class="rank-icon" width="24" height="24" src="@(player.RankClass == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /> @player.Rank 
+                                    <MudLink Href="@HrefHelper.GetPlayerInfoPath(player.Id)">
+                                        @(_tempusCacheService.GetRealName(player.Id) ?? player.Name)
+                                    </MudLink>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton Href="@($"steam://connect/{serverGroup.First().Server.ServerInfo.Addr}:{@serverGroup.First().Server.ServerInfo.Port}")">
+                            Connect
+                        </MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
+}
+else
+{
+    <MudText Color="Color.Warning">How did you get here..?</MudText>
+}
+
+@code {
+
+    [Parameter]
+    public string DisplayType { get; set; } = "list";
+    List<TopPlayerOnline> _topPlayerOnline = new();
+
+    protected override void OnInitialized()
+    {
+        _tempusCacheService.DataUpdated += OnDataUpdated;
+
+        LoadData();
+    }
+
+    void LoadData()
+    {
+        _topPlayerOnline = _tempusCacheService.TopPlayersOnline;
+    }
+
+    private void OnDataUpdated(object sender, EventArgs e)
+    {
+        LoadData();
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        _tempusCacheService.DataUpdated -= OnDataUpdated;
+    }
+
+    protected override void OnParametersSet() => LoadData();
+}

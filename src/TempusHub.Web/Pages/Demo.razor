@@ -1,0 +1,89 @@
+﻿@page "/demo/{DemoId}"
+@using TempusHub.Application.Services
+@using TempusHub.Core.Constants
+@using TempusHub.Core.Utilities
+@using TempusApi
+@using TempusApi.Models.Responses
+
+@inject TempusCacheService _tempusCacheService
+@inject Tempus _tempusDataService
+@if (DemoInfo == null)
+{
+    <MudProgressCircular Color="Color.Info" Indeterminate="true" />
+}
+else
+{
+    <MudText Typo="Typo.h4">
+        <MudLink Href="@HrefHelper.GetServerInfoPath(DemoInfo.ServerInfo.Shortname)">
+            @(DemoInfo.ServerInfo.Shortname)
+        </MudLink>
+        <MudLink Href="@HrefHelper.GetMapInfoPath(DemoInfo.Overview.MapName)">
+            @DemoInfo.Overview.MapName
+        </MudLink>
+    </MudText>
+
+    <MudTable Items="DemoInfo.Runs">
+        <HeaderContent>
+            <MudTh>Class</MudTh>
+            <MudTh>Player</MudTh>
+            <MudTh>Run Type</MudTh>
+            <MudTh>Zone</MudTh>
+            <MudTh>Time</MudTh>
+            <MudTh>Date</MudTh>
+            <MudTh>Ticks</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Class">
+                <img width="24" height="24" src="@(context.RunInfo.PlayerClass == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)"/>
+            </MudTd>
+            <MudTd DataLabel="Player">
+                <MudLink Href="@HrefHelper.GetPlayerInfoPath(context.PlayerInfo.Id ?? 0)">
+                    @(_tempusCacheService.GetRealName(context.PlayerInfo.Id ?? 0) ?? context.PlayerInfo.Name)
+                </MudLink>
+            </MudTd>
+            <MudTd DataLabel="Run Type">
+                @(context.RunType.ToUpper() == "TOP" 
+                    ? "Top" 
+                    : context.RunType.ToUpper())
+            </MudTd>
+            <MudTd DataLabel="Zone">
+                @(context.RecordZoneInfo.Type.ToLower() == "map" 
+                    ? "Map" 
+                    : context.RecordZoneInfo.Type.ToStandardCasing() + " " + context.RecordZoneInfo.ZoneIndex)
+            </MudTd>
+            <MudTd DataLabel="Time">
+                <MudLink Href="@HrefHelper.GetRunInfoPath(context.RunInfo.Id)">
+                    @(TempusUtilities.FormattedDuration(context.RunInfo.Duration))
+                </MudLink>
+            </MudTd>
+            <MudTd DataLabel="Date">
+                @TempusUtilities.GetDateFromSeconds(context.RunInfo.Date).GetTimeStringSinceDateTime()
+            </MudTd>
+            <MudTd DataLabel="Ticks">
+                @context.RunInfo.StartTick - @context.RunInfo.EndTick
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+
+@code 
+{
+    [Parameter]
+    public string DemoId { get; set; }
+    
+    public ServerDemoFullOverview DemoInfo { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (int.TryParse(DemoId, out var parsedDemoId))
+        {
+            DemoInfo = await _tempusDataService.GetDemoInfoAsync(parsedDemoId);
+        }
+        else
+        {
+            DemoInfo = null;
+        }
+    }
+
+    protected override async Task OnParametersSetAsync() => await OnInitializedAsync();
+}

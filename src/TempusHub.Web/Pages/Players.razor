@@ -1,0 +1,83 @@
+﻿@page "/players"
+@page "/players/{RankType}"
+@using TempusHub.Application.Services
+@using TempusHub.Core.Utilities
+@using TempusApi.Models.Responses
+
+@inject TempusCacheService _tempusCacheService
+@inject NavigationManager _navigationManager
+
+<MudText Typo="Typo.h4" 
+         Style="display: flex; justify-content: space-between; align-items: center"
+         Class="page-header-dropdown">
+    @RankType.ToStandardCasing() Leaderboard
+    
+    <MudSelect T="string"
+               Label="View"
+               Strict="true"
+               Variant="Variant.Outlined"
+               AnchorOrigin="Origin.BottomCenter"
+               Value="RankType"
+               ValueChanged="@(x => { _navigationManager.NavigateTo("/players/" + x); })"
+               ToStringFunc="@(x => x is null ? "Overall" : x.ToStandardCasing())"
+               Style="max-width: 150px; width: 150px">
+        <MudSelectItem T="string" Value="@null"/>
+        <MudSelectItem T="string" Value='@("soldier")'/>
+        <MudSelectItem T="string" Value='@("demoman")'/>
+    </MudSelect>
+</MudText>
+
+<MudTable Items="RanksOverview.TopPlayers" 
+          Loading="RanksOverview is null"
+          LoadingProgressColor="Color.Info"
+          Breakpoint="Breakpoint.Sm"
+          Hover>
+    <HeaderContent>
+        <MudTh>Rank</MudTh>
+        <MudTh>Player</MudTh>
+        <MudTh>Points</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Rank">
+            @context.Rank
+        </MudTd>
+        <MudTd DataLabel="Player">
+            <MudLink Href="@HrefHelper.GetPlayerInfoPath(context.Id)">
+                @(_tempusCacheService.GetRealName(context.Id) ?? context.Name)
+            </MudLink>
+        </MudTd>
+        <MudTd DataLabel="Points">
+            @context.Points
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code
+{
+    [Parameter]
+    public string RankType { get; set; }
+
+    public RanksOverviewModel RanksOverview { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (string.IsNullOrWhiteSpace(RankType))
+        {
+            RankType = "overall";
+        }
+
+        RanksOverview = RankType.ToLower() switch
+        {
+            "overall" => _tempusCacheService.PlayerLeaderboards?.Overall,
+            "soldier" => _tempusCacheService.PlayerLeaderboards?.Soldier,
+            "demoman" => _tempusCacheService.PlayerLeaderboards?.Demoman,
+            _ => throw new Exception("No rank for that type")
+        };
+    }
+
+    protected override void OnParametersSet()
+    {
+        OnInitialized();
+        base.OnParametersSet();
+    }
+}
