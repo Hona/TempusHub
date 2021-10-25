@@ -13,18 +13,20 @@ public class TempusRecordCacheService
 {
     private readonly Tempus _tempusDataService;
     private readonly TempusHubMySqlService _mySql;
+    private readonly ILogger _log;
     
-    public TempusRecordCacheService(Tempus tempusDataService, TempusHubMySqlService mySql)
+    public TempusRecordCacheService(Tempus tempusDataService, TempusHubMySqlService mySql, ILogger log)
     {
         _tempusDataService = tempusDataService;
         _mySql = mySql;
+        _log = log;
     }
     
     public async Task CacheAllRecordsAsync()
     {
         var detailedMapList = await _tempusDataService.GetDetailedMapListAsync(allowCached: false);
         
-        Log.Information("Caching all {Count} maps", detailedMapList.Count);
+        _log.Information("Caching all {Count} maps", detailedMapList.Count);
         foreach (var map in detailedMapList)
         {
             await CacheAllRecordsOnMapAsync(map).ConfigureAwait(false);
@@ -60,7 +62,7 @@ public class TempusRecordCacheService
                 }
                 catch (Exception e)
                 {
-                    Log.Error(e, "Unhandled exception while caching course records");
+                    _log.Error(e, "Unhandled exception while caching course records");
                 }
             }
 
@@ -76,13 +78,13 @@ public class TempusRecordCacheService
                 }
                 catch (Exception e)
                 {
-                    Log.Error(e, "Unhandled exception while caching bonus records");
+                    _log.Error(e, "Unhandled exception while caching bonus records");
                 }
             }
         }
         catch (Exception e)
         {
-            Log.Error(e, "Unhandled exception while caching class records");
+            _log.Error(e, "Unhandled exception while caching class records");
         }
     }
     private async Task CacheRecordAsync(int mapId, int classId, double duration, string zoneType, int zoneIndex) =>

@@ -1,4 +1,5 @@
 ﻿using Dapper.FluentMap;
+using Serilog;
 using TempusHub.Core.Models;
 using TempusHub.Infrastructure.Mapping;
 
@@ -6,7 +7,7 @@ namespace TempusHub.Infrastructure;
 
 public class TempusHubMySqlService : MySqlDataAccessBase
 {
-    public TempusHubMySqlService(string connectionString) : base(connectionString) 
+    public TempusHubMySqlService(ILogger log) : base(Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING"), log)
     {
         FluentMapper.Initialize(config =>
         {

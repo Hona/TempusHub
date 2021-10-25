@@ -10,6 +10,7 @@ using Serilog.Events;
 using TempusApi;
 using TempusHub.Application.Services;
 using TempusHub.Infrastructure;
+using TempusHub.Web.HostedServices;
 
 var loggerConfiguration = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
@@ -44,15 +45,15 @@ var forwardedHeaderOptions = new ForwardedHeadersOptions
 };
 forwardedHeaderOptions.KnownNetworks.Clear();
 forwardedHeaderOptions.KnownProxies.Clear();
-
 services.AddSingleton(forwardedHeaderOptions);
 
-var tempusHubMySqlService = new TempusHubMySqlService(Environment.GetEnvironmentVariable("MYSQL_CONNECTION_STRING"));
-services.AddSingleton(tempusHubMySqlService);
+services.AddSingleton<TempusHubMySqlService>();
 services.AddSingleton<Tempus>();
 services.AddSingleton<TempusCacheService>();
 services.AddSingleton<TempusRecordCacheService>();
 services.AddSingleton<YoutubeApiService>();
+services.AddHostedService<CacheHostedService>();
+services.AddSingleton(Log.Logger);
 
 services.AddMudServices();
         

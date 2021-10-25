@@ -9,7 +9,6 @@ using TempusHub.Core.Constants;
 using TempusHub.Core.Models;
 using TempusHub.Core.Models.Demystify;
 using TempusHub.Core.Utilities;
-using TempusHub.Infrastructure;
 
 namespace TempusHub.Application.Services;
 
@@ -17,9 +16,7 @@ public sealed class TempusCacheService : IDisposable
 {
     private readonly Timer _updateTimer;
     private readonly Tempus _tempusDataService;
-
-    private readonly TempusHubMySqlService _mySql;
-    
+    private readonly ILogger _log;
     public event EventHandler? DataUpdated;
     public RecentActivityModel RecentActivity { get; private set; }
     public RecentActivityWithZonedData RecentActivityWithZonedData { get; private set; } = new();
@@ -31,11 +28,11 @@ public sealed class TempusCacheService : IDisposable
     public List<TempusRankColor> TempusRankColors { get; set; }
 
 
-    public TempusCacheService(Tempus tempusDataService, TempusHubMySqlService mySql)
+    public TempusCacheService(Tempus tempusDataService, ILogger log)
     {
         _tempusDataService = tempusDataService;
-        _mySql = mySql;
-        
+        _log = log;
+
         _updateTimer = new Timer(async _ => await UpdateAllCachedDataAsync().ConfigureAwait(false), null, TimeSpan.FromMinutes(1.5), TimeSpan.FromMinutes(1.5));
     }
 
@@ -67,7 +64,7 @@ public sealed class TempusCacheService : IDisposable
         }
         catch (Exception e)
         {
-            Log.Error(e, "Unhandled exception while caching all data");
+            _log.Error(e, "Unhandled exception while caching all data");
         }
     }
     private async Task UpdateRecentActivityAsync()
@@ -93,7 +90,7 @@ public sealed class TempusCacheService : IDisposable
 
         if (ServerStatusList.Count == 0)
         {
-            Log.Error("Could not get any server status's");
+            _log.Error("Could not get any server status's");
             return;
         }
 
@@ -173,7 +170,7 @@ public sealed class TempusCacheService : IDisposable
             var matchedDetailedMapInfo = DetailedMapList.FirstOrDefault(x => string.Equals(x.Name, mapName, StringComparison.InvariantCultureIgnoreCase));
             if (matchedDetailedMapInfo == null)
             {
-                Log.Warning("Could not find map data for: {MapName}", mapName);
+                _log.Warning("Could not find map data for: {MapName}", mapName);
             }
             else
             {
@@ -185,7 +182,7 @@ public sealed class TempusCacheService : IDisposable
         var noClassDataMaps = DetailedMapList.Where(x => x.IntendedClass == default).ToArray();
         foreach (var noClassDataMap in noClassDataMaps)
         {
-            Log.Warning("No class data for {MapName}", noClassDataMap.Name);
+            _log.Warning("No class data for {MapName}", noClassDataMap.Name);
             noClassDataMap.IntendedClass = 'B';
         }
     }

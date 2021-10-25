@@ -11,16 +11,18 @@ public class MySqlDataAccessBase : IDisposable
     private readonly SemaphoreSlim _queryLock = new(1, 1);
     private readonly string _connectionString;
     private MySqlConnection _connection;
-
-    internal MySqlDataAccessBase(string connectionString)
+    private readonly ILogger _log;
+    
+    internal MySqlDataAccessBase(string connectionString, ILogger log)
     {
         _connectionString = connectionString;
+        _log = log;
         CheckConnectionAsync().GetAwaiter().GetResult();
     }
 
     private async Task OpenConnectionAsync()
     {
-        Log.Information("Opening MySQL connection");
+        _log.Information("Opening MySQL connection");
         _connection ??= new MySqlConnection(_connectionString);
         await _connection.OpenAsync().ConfigureAwait(false);
     }
@@ -43,7 +45,7 @@ public class MySqlDataAccessBase : IDisposable
         }
         catch (Exception e)
         {
-            Log.Error(e, "Unhandled exception while running a MySQL query");
+            _log.Error(e, "Unhandled exception while running a MySQL query");
             return null;
         }
         finally
@@ -62,7 +64,7 @@ public class MySqlDataAccessBase : IDisposable
         }
         catch (Exception e)
         {
-            Log.Error(e, "Unhandled exception while running a MySQL command");
+            _log.Error(e, "Unhandled exception while running a MySQL command");
         }
         finally
         {
