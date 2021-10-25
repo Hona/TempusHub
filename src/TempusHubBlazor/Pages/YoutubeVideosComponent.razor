@@ -5,7 +5,7 @@
 @inject YoutubeApiService _youtubeApiService
 @if (Videos == null || Videos.Count == 0)
 {
-    <span>No videos found</span>
+    <MudText Color="Color.Warning">No videos found</MudText>
 }
 else
 {
