@@ -1,0 +1,151 @@
+﻿@page "/servers"
+@page "/servers/{ServerDisplayType}"
+
+@using TempusHub.Application.Services
+@using TempusHub.Core.Utilities
+@using TempusApi.Models.Responses
+
+@inject TempusCacheService _tempusCacheService
+@inject NavigationManager _navigationManager
+
+@implements IDisposable
+
+<MudText Typo="Typo.h4" 
+         Style="display: flex; justify-content: space-between; align-items: center"
+         Class="page-header-dropdown">
+    Servers
+    
+    <MudSelect T="string"
+               Label="View"
+               Strict="true"
+               Variant="Variant.Outlined"
+               AnchorOrigin="Origin.BottomCenter"
+               Value="ServerDisplayType"
+               ValueChanged="@(x => { _navigationManager.NavigateTo("/servers/" + x); })"
+               ToStringFunc="@(x => x is null ? "List" : x.ToStandardCasing())"
+               Style="max-width: 150px; width: 150px">
+        <MudSelectItem T="string" Value='@("country")'/>
+        <MudSelectItem T="string" Value='@("list")'/>
+    </MudSelect>
+</MudText>
+
+@if (string.Equals(ServerDisplayType, "List", StringComparison.InvariantCultureIgnoreCase))
+{
+    <MudTable Items="ServerStatusList"
+              Loading="ServerStatusList is null"
+              LoadingProgressColor="Color.Inherit"
+              Hover
+              Breakpoint="Breakpoint.Sm">
+        <HeaderContent>
+            <MudTh>Name</MudTh>
+            <MudTh>Map</MudTh>
+            <MudTh>Players</MudTh>
+            <MudTh></MudTh>        
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Name">
+                <MudLink Href="@HrefHelper.GetServerInfoPath(context.ServerInfo.Shortname)">
+                    @context.ServerInfo.Shortname · @context.ServerInfo.Name
+                </MudLink>
+            </MudTd>
+            <MudTd DataLabel="Map">
+                <MudLink Href="@HrefHelper.GetMapInfoPath(context.GameInfo.CurrentMap)">
+                    @context.GameInfo.CurrentMap
+                </MudLink> 
+                @if (context.GameInfo.NextMap != null)
+                {
+                    <MudLink Href="@HrefHelper.GetMapInfoPath(context.GameInfo.NextMap.ToString())">
+                        (@context.GameInfo.NextMap.ToString())
+                    </MudLink>
+                }
+            </MudTd>
+            <MudTd DataLabel="Players">
+                @(context.GameInfo.PlayerCount)/@context.GameInfo.MaxPlayers
+            </MudTd>
+            <MudTd>
+                <MudButton Link="@($"steam://connect/{context.ServerInfo.Addr}:{context.ServerInfo.Port}")">
+                    Connect
+                </MudButton>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+}
+else if (string.IsNullOrWhiteSpace(ServerDisplayType) || string.Equals(ServerDisplayType, "country", StringComparison.InvariantCultureIgnoreCase))
+{
+    <MudGrid Spacing="2">
+        @foreach (var countryGroup in ServerStatusList.GroupBy(x => x.ServerInfo.Country))
+        {
+            <MudItem>
+                <MudCard>
+                    <MudCardHeader>
+                        <MudText Typo="Typo.h6">
+                            @countryGroup.Key
+                        </MudText>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudList>
+                            @foreach (var server in countryGroup)
+                            {
+                                <MudListItem>
+                                    <div>
+                                        <MudLink Href="@HrefHelper.GetServerInfoPath(server.ServerInfo.Shortname)">
+                                            @server.ServerInfo.Name
+                                        </MudLink>
+                                        ·
+                                        <MudLink Href="@HrefHelper.GetMapInfoPath(server.GameInfo.CurrentMap)">
+                                            @server.GameInfo.CurrentMap
+                                        </MudLink> ·
+                                        @(server.GameInfo.PlayerCount)/@(server.GameInfo.MaxPlayers)
+                                    </div>
+                                    <MudButton Link="@($"steam://connect/{server.ServerInfo.Addr}:{server.ServerInfo.Port}")">
+                                        Connect
+                                    </MudButton>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
+    
+}
+else
+{
+    <MudText Color="Color.Warning">
+        How did you get here..?
+    </MudText>
+}
+
+@code {
+
+    [Parameter]
+    public string ServerDisplayType { get; set; } = "Country";
+    public List<ServerStatusModel> ServerStatusList { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _tempusCacheService.DataUpdated += OnDataUpdated;
+
+        if (_tempusCacheService.ServerStatusList == null || _tempusCacheService.ServerStatusList.Count == 0)
+        {
+            return;
+        }
+
+        ServerStatusList = _tempusCacheService.ServerStatusList
+            .Where(x => x?.ServerInfo != null && x.GameInfo != null && !x.ServerInfo.Hidden)
+            .OrderByDescending(x => x.GameInfo.PlayerCount).ToList();
+    }
+
+    protected override void OnParametersSet() => OnInitialized();
+      
+    private void OnDataUpdated(object sender, EventArgs e)
+    {
+        ServerStatusList = _tempusCacheService.ServerStatusList;
+    }
+
+    public void Dispose()
+    {
+        _tempusCacheService.DataUpdated -= OnDataUpdated;
+    }
+}

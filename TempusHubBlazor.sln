@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31815.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F7E0E517-A381-430A-8E53-1B5F352C8177}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TempusHubBlazor", "src\TempusHubBlazor\TempusHubBlazor.csproj", "{CBCA8F51-10D4-4996-B1A5-D0BB7606D758}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TempusHub.Web", "src\TempusHub.Web\TempusHub.Web.csproj", "{CBCA8F51-10D4-4996-B1A5-D0BB7606D758}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A019F0EB-8681-48AE-AFCD-172FD117CDE9}"
 	ProjectSection(SolutionItems) = preProject
@@ -17,6 +17,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TempusHub.Core", "src\TempusHub.Core\TempusHub.Core.csproj", "{5BA4CA69-0A3F-4DE6-A58D-79831A5D0D0E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TempusHub.Application", "src\TempusHub.Application\TempusHub.Application.csproj", "{77465985-4E22-4296-83A5-B72D15BE3C26}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TempusHub.Infrastructure", "src\TempusHub.Infrastructure\TempusHub.Infrastructure.csproj", "{83ECFA2C-14E2-4BD0-A1F0-4BFB72E611A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,12 +33,27 @@ Global
 		{CBCA8F51-10D4-4996-B1A5-D0BB7606D758}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CBCA8F51-10D4-4996-B1A5-D0BB7606D758}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CBCA8F51-10D4-4996-B1A5-D0BB7606D758}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5BA4CA69-0A3F-4DE6-A58D-79831A5D0D0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5BA4CA69-0A3F-4DE6-A58D-79831A5D0D0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5BA4CA69-0A3F-4DE6-A58D-79831A5D0D0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5BA4CA69-0A3F-4DE6-A58D-79831A5D0D0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77465985-4E22-4296-83A5-B72D15BE3C26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77465985-4E22-4296-83A5-B72D15BE3C26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77465985-4E22-4296-83A5-B72D15BE3C26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77465985-4E22-4296-83A5-B72D15BE3C26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83ECFA2C-14E2-4BD0-A1F0-4BFB72E611A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83ECFA2C-14E2-4BD0-A1F0-4BFB72E611A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83ECFA2C-14E2-4BD0-A1F0-4BFB72E611A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83ECFA2C-14E2-4BD0-A1F0-4BFB72E611A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{CBCA8F51-10D4-4996-B1A5-D0BB7606D758} = {F7E0E517-A381-430A-8E53-1B5F352C8177}
+		{5BA4CA69-0A3F-4DE6-A58D-79831A5D0D0E} = {F7E0E517-A381-430A-8E53-1B5F352C8177}
+		{77465985-4E22-4296-83A5-B72D15BE3C26} = {F7E0E517-A381-430A-8E53-1B5F352C8177}
+		{83ECFA2C-14E2-4BD0-A1F0-4BFB72E611A9} = {F7E0E517-A381-430A-8E53-1B5F352C8177}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7CD2703F-B314-40D5-B1B3-49DA1E49C490}
