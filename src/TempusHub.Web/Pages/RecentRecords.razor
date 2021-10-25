@@ -34,11 +34,7 @@
         <MudSelectItem T="string" Value='@("map_top")'/>
     </MudSelect>
 </MudText>
-
-
-
-
-    <MudTable Items="@_recordsWithZonedData"
+<MudTable Items="@_recordsWithZonedData"
               Hover
               Breakpoint="Breakpoint.Sm"
               Loading="@(_recordsWithZonedData == null)"

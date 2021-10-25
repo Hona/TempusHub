@@ -4,12 +4,13 @@
 
 @inject Blazored.LocalStorage.ILocalStorageService _localStorage
 
+<MudThemeProvider Theme="CurrentTheme"/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+
 <MudLayout>
     <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(_ => DrawerToggle())" />
-        <MudLink Color="Color.Inherit" Href="/" Typo="Typo.h5" Style="@(_themeToggled ? "margin-left: 1rem" : "margin-left: 1rem; color: #fff")" Underline="Underline.None">
-            Tempus Hub
-        </MudLink>
         <MudSpacer />
         <SearchBar />
         <div>
@@ -31,7 +32,10 @@
             </MudButton>
         </div>
     </MudAppBar>
-    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
+    <MudDrawer @bind-Open="_drawerOpen" Elevation="2">
+        <MudDrawerHeader>
+            <MudText Typo="Typo.h5">Tempus Hub</MudText>
+        </MudDrawerHeader>
         <NavMenu />
     </MudDrawer>
     <MudMainContent >
@@ -40,8 +44,6 @@
         </MudContainer>
     </MudMainContent>
 </MudLayout>
-
-<MudThemeProvider Theme="CurrentTheme"/>
 
 @code 
 {
