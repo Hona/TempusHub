@@ -7,16 +7,19 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["src/TempusHubBlazor/TempusHubBlazor.csproj", "src/TempusHubBlazor/"]
-RUN dotnet restore "src/TempusHubBlazor/TempusHubBlazor.csproj"
+COPY ["src/TempusHub.Web/TempusHub.Web.csproj", "src/TempusHub.Web/"]
+COPY ["src/TempusHub.Application/TempusHub.Application.csproj", "src/TempusHub.Application/"]
+COPY ["src/TempusHub.Core/TempusHub.Core.csproj", "src/TempusHub.Core/"]
+COPY ["src/TempusHub.Infrastructure/TempusHub.Infrastructure.csproj", "src/TempusHub.Infrastructure/"]
+RUN dotnet restore "src/TempusHub.Web/TempusHub.Web.csproj"
 COPY . .
-WORKDIR "/src/src/TempusHubBlazor"
-RUN dotnet build "TempusHubBlazor.csproj" -c Release -o /app/build
+WORKDIR "/src/src/TempusHub.Web"
+RUN dotnet build "TempusHub.Web.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "TempusHubBlazor.csproj" -c Release -o /app/publish
+RUN dotnet publish "TempusHub.Web.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "TempusHubBlazor.dll"]
+ENTRYPOINT ["dotnet", "TempusHub.Web.dll"]
