@@ -36,11 +36,10 @@ public sealed class TempusCacheService : IDisposable
         _tempusDataService = tempusDataService;
         _mySql = mySql;
         
-        UpdateAllCachedDataAsync().GetAwaiter().GetResult();
         _updateTimer = new Timer(async _ => await UpdateAllCachedDataAsync().ConfigureAwait(false), null, TimeSpan.FromMinutes(1.5), TimeSpan.FromMinutes(1.5));
     }
 
-    private async Task UpdateAllCachedDataAsync()
+    public async Task UpdateAllCachedDataAsync()
     {
         try
         {
