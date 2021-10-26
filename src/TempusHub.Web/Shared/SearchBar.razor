@@ -73,14 +73,4 @@
         _searchResults = await _tempusDataService.GetSearchResultAsync(debouncedText);
         _showSearchResults = true;
     }
-
-    private void HandleValueClicked(OneOf<ServerPlayerModel, MapInfo> value) => value.Switch(player =>
-    {
-        _navigationManager.NavigateTo(HrefHelper.GetPlayerInfoPath(player.Id ?? 0));
-    }, map =>
-    {
-        _navigationManager.NavigateTo(HrefHelper.GetPlayerInfoPath(map.Name));
-    });
-
-    private string ToStringFunc(OneOf<ServerPlayerModel, MapInfo> arg) => arg.Value?.ToString();
 }
