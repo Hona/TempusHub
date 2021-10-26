@@ -12,25 +12,43 @@
     <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(_ => DrawerToggle())" />
         <MudSpacer />
-        <SearchBar />
-        <div>
-            <MudButton Link="https://github.com/sponsors/Hona?o=esb" 
-                       Target="_blank" 
-                       Variant="Variant.Filled" 
-                       Color="Color.Secondary" 
-                       StartIcon="@Icons.Material.Filled.Favorite">
-                Sponsor Hona
-            </MudButton>
-            <MudToggleIconButton Title="Dark Mode" Icon="@Icons.Material.Filled.DarkMode"
-                                 ToggledTitle="Light Mode" ToggledIcon="@Icons.Material.Filled.LightMode"
-                                 @bind-Toggled="_themeToggled"
-                                 Color="Color.Inherit"/>
-            <MudIconButton Color="Color.Inherit" Icon="@Icons.Custom.Brands.Discord" Title="Discord" Link="https://discordapp.com/invite/q2F6kTK" Target="_blank"/>
-            <MudIconButton Color="Color.Inherit" Icon="@Icons.Custom.Brands.GitHub" Title="GitHub" Link="https://github.com/Hona/TempusHub" Target="_blank"/>
-            <MudButton Color="Color.Inherit" Link="https://tempus.xyz" Target="_blank">
-                Tempus.xyz
-            </MudButton>
-        </div>
+        <MudHidden Breakpoint="Breakpoint.MdAndDown">
+            <SearchBar />
+            <MudSpacer />
+            <div>
+                <SponsorButton />
+                @ThemeToggleButton
+                <DiscordButton />
+                <GitHubButton />
+                <MudButton Color="Color.Inherit" Link="https://tempus.xyz" Target="_blank">
+                    Tempus.xyz
+                </MudButton>
+            </div>
+        </MudHidden>
+        <MudHidden Invert Breakpoint="Breakpoint.MdAndDown">
+            <MudIconButton Icon="@Icons.Material.Filled.MoreVert" 
+                           Color="Color.Inherit" 
+                           Edge="Edge.End" 
+                           OnClick="() => _breakpointDrawerOpen = true"/>
+            
+            <MudDrawer @bind-Open="@_breakpointDrawerOpen"
+                       Anchor="@Anchor.End"
+                       Elevation="1"
+                       Variant="@DrawerVariant.Temporary">
+                <MudText Typo="Typo.h6" 
+                         Color="Color.Inherit">
+                    Menu
+                </MudText>
+                <SearchBar/>
+                <SponsorButton/>
+                @ThemeToggleButton
+                <DiscordButton/>
+                <GitHubButton/>
+                <MudButton Color="Color.Inherit" Link="https://tempus.xyz" Target="_blank">
+                    Tempus.xyz
+                </MudButton>
+            </MudDrawer>
+        </MudHidden>
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" Elevation="2">
         <MudDrawerHeader>
@@ -47,6 +65,8 @@
 
 @code 
 {
+    private bool _breakpointDrawerOpen;
+    
     private bool _themeToggled;
     private bool _themeToggledOnLocalStorage;
     
@@ -82,6 +102,11 @@
     };
     
     bool _drawerOpen = true;
+
+    private RenderFragment ThemeToggleButton => @<MudToggleIconButton Title="Dark Mode" Icon="@Icons.Material.Filled.DarkMode"
+                                                                      ToggledTitle="Light Mode" ToggledIcon="@Icons.Material.Filled.LightMode"
+                                                                      @bind-Toggled="_themeToggled"
+                                                                      Color="Color.Inherit"/>;
 
     void DrawerToggle()
     {

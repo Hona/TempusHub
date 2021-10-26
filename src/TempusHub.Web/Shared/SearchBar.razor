@@ -21,56 +21,57 @@
                       Variant="Variant.Filled"
                       Margin="Margin.Dense"/>
     </MudPaper>
-
-    <MudPopover @onfocusout="() => _searchResults = null"
-                Paper
-                RelativeWidth
-                Open="@(_searchResults is not null)"
-                TransformOrigin="Origin.TopCenter"
-                AnchorOrigin="Origin.BottomCenter"
-                MaxHeight="500"
-                OverflowBehavior="OverflowBehavior.FlipNever">
-        <MudList Clickable>
-            <MudListSubheader>
-                Maps
-            </MudListSubheader>
-            @foreach (var map in _searchResults.Maps)
-            {
-                <MudListItem OnClick="() => { _searchResults = null; _navigationManager.NavigateTo(HrefHelper.GetMapInfoPath(map.Name)); }">
-                    🗺️ @(map.Name)
-                </MudListItem>
-            }
-            <MudListSubheader>
-                Players
-            </MudListSubheader>
-            @foreach (var player in _searchResults.Players)
-            {
-                <MudListItem OnClick="() => { _searchResults = null; _navigationManager.NavigateTo(HrefHelper.GetPlayerInfoPath(player.Id ?? 0)); }">
-                    🧑 @(player.Name)
-                </MudListItem>
-            }
-        </MudList>
-    </MudPopover>
+    <MudOverlay AutoClose
+                @bind-Visible="@_showSearchResults">
+        <MudPopover Paper
+                    Open="_showSearchResults"
+                    TransformOrigin="Origin.TopCenter"
+                    AnchorOrigin="Origin.BottomCenter"
+                    MaxHeight="500"
+                    OverflowBehavior="OverflowBehavior.FlipNever">
+            <MudList Clickable>
+                <MudListSubheader>
+                    Maps
+                </MudListSubheader>
+                @foreach (var map in _searchResults.Maps)
+                {
+                    <MudListItem OnClick="() => { _searchResults = null; _navigationManager.NavigateTo(HrefHelper.GetMapInfoPath(map.Name)); }">
+                        🗺️ @(map.Name)
+                    </MudListItem>
+                }
+                <MudListSubheader>
+                    Players
+                </MudListSubheader>
+                @foreach (var player in _searchResults.Players)
+                {
+                    <MudListItem OnClick="() => { _searchResults = null; _navigationManager.NavigateTo(HrefHelper.GetPlayerInfoPath(player.Id ?? 0)); }">
+                        🧑 @(player.Name)
+                    </MudListItem>
+                }
+            </MudList>
+        </MudPopover>
+    </MudOverlay>
 </div>
-
-
-
 
 @code 
 {
     private string _searchText;
     
-    private PlayerMapSearchResult _searchResults; 
+    private PlayerMapSearchResult _searchResults;
+
+    private bool _showSearchResults;
 
     private async Task HandleIntervalElapsed(string debouncedText)
     {
         if (string.IsNullOrWhiteSpace(debouncedText))
         {
             _searchResults = null;
+            _showSearchResults = false;
             return;
         }
 
         _searchResults = await _tempusDataService.GetSearchResultAsync(debouncedText);
+        _showSearchResults = true;
     }
 
     private void HandleValueClicked(OneOf<ServerPlayerModel, MapInfo> value) => value.Switch(player =>

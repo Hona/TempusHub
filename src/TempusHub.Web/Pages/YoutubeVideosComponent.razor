@@ -16,9 +16,7 @@ else
     
     <MudGrid Spacing="2" Justify="Justify.Center">
 
-        @foreach (var video in Videos.OrderByDescending(x => x.Snippet.PublishedAt != null 
-            ? DateTime.Parse(x.Snippet.PublishedAt, null, System.Globalization.DateTimeStyles.RoundtripKind) 
-            : DateTime.MinValue)
+        @foreach (var video in Videos.OrderByDescending(x => x.Snippet.PublishedAt ?? DateTime.MinValue)
             .Take(VideoCount)
             .ToArray())
         {
@@ -33,7 +31,7 @@ else
                                 @(video.Snippet.Description[..50])...
                             </MudText>
                             <MudText Typo="Typo.caption">
-                                @DateTime.Parse(video.Snippet.PublishedAt, null, System.Globalization.DateTimeStyles.RoundtripKind).GetTimeStringSinceDateTime()
+                                @video.Snippet.PublishedAt?.GetTimeStringSinceDateTime()
                             </MudText>
                         </CardHeaderContent>
                     </MudCardHeader>
