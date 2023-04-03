@@ -104,7 +104,11 @@ public sealed class TempusCacheService : IDisposable
 
 
         // Get the user IDs as strings
-        var userIdStrings = usersWithId.Where(user => user?.Id != null).Select(user => user.Id.ToString()).ToList().Distinct();
+        var userIdStrings = usersWithId
+            .Where(user => user?.Id != null)
+            // TODO: Use Larry/my player cache to find ID via steam ID, or explore alternatives
+            .Where(user => user.Id is not 0)
+            .Select(user => user.Id.ToString()).ToList().Distinct();
 
         // Query all at once for all users ranks
         var rankTasks = new List<Task<Rank>>();
