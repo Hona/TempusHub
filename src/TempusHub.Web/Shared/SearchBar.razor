@@ -9,7 +9,7 @@
 @inject Tempus _tempusDataService
 @inject NavigationManager _navigationManager
 
-<div class="search-bar" style="padding-right: 1rem">
+<div class="search-bar" style="padding-right: 1rem; position: relative;">
     <MudPaper>
         <MudTextField @bind-Value="_searchText"
                       Label="Search"
@@ -22,6 +22,7 @@
                       Margin="Margin.Dense"/>
     </MudPaper>
     <MudOverlay AutoClose
+                Absolute="true"
                 @bind-Visible="@_showSearchResults">
         <MudPopover Paper
                     Open="_showSearchResults"
@@ -33,21 +34,27 @@
                 <MudListSubheader>
                     Maps
                 </MudListSubheader>
-                @foreach (var map in _searchResults.Maps)
+                @if (_searchResults != null)
                 {
-                    <MudListItem OnClick="() => { _searchResults = null; _navigationManager.NavigateTo(HrefHelper.GetMapInfoPath(map.Name)); }">
-                        🗺️ @(map.Name)
-                    </MudListItem>
+                    foreach (var map in _searchResults.Maps)
+                    {
+                        <MudListItem OnClick="() => { _searchResults = null; _showSearchResults = false; _navigationManager.NavigateTo(HrefHelper.GetMapInfoPath(map.Name)); }">
+                            🗺️ @map.Name
+                        </MudListItem>
+                    }
+
+                    <MudListSubheader>
+                        Players
+                    </MudListSubheader>
+                    foreach (var player in _searchResults.Players)
+                    {
+                        <MudListItem OnClick="() => { _searchResults = null; _showSearchResults = false; _navigationManager.NavigateTo(HrefHelper.GetPlayerInfoPath(player.Id ?? 0)); }">
+                            🧑 @player.Name
+                        </MudListItem>
+                    }
                 }
-                <MudListSubheader>
-                    Players
-                </MudListSubheader>
-                @foreach (var player in _searchResults.Players)
-                {
-                    <MudListItem OnClick="() => { _searchResults = null; _navigationManager.NavigateTo(HrefHelper.GetPlayerInfoPath(player.Id ?? 0)); }">
-                        🧑 @(player.Name)
-                    </MudListItem>
-                }
+
+
             </MudList>
         </MudPopover>
     </MudOverlay>
