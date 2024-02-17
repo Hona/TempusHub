@@ -18,6 +18,7 @@ public sealed class TempusCacheService : IDisposable
     private readonly Timer _updateTimer;
     private readonly ITempusClient _tempusDataService;
     private readonly ILogger _log;
+    private readonly TempusHubConfig _config;
     public event EventHandler? DataUpdated;
     public RecentActivityModel RecentActivity { get; private set; }
     public RecentActivityWithZonedData RecentActivityWithZonedData { get; private set; } = new();
@@ -29,12 +30,14 @@ public sealed class TempusCacheService : IDisposable
     public List<TempusRankColor> TempusRankColors { get; set; }
 
 
-    public TempusCacheService(ITempusClient tempusDataService, ILogger log)
+    public TempusCacheService(ITempusClient tempusDataService, ILogger log, IOptions<TempusHubConfig> config)
     {
         _tempusDataService = tempusDataService;
         _log = log;
+        _config = config.Value;
 
-        _updateTimer = new Timer(async _ => await UpdateAllCachedDataAsync().ConfigureAwait(false), null, TimeSpan.FromMinutes(8), TimeSpan.FromMinutes(8));
+        _updateTimer = new Timer(async _ => await UpdateAllCachedDataAsync().ConfigureAwait(false), null, 
+            TimeSpan.FromMinutes((double)_config.CachePeriodInMinutes), TimeSpan.FromMinutes((double)_config.CachePeriodInMinutes));
     }
 
     public async Task UpdateAllCachedDataAsync()

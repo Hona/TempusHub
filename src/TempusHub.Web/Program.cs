@@ -10,6 +10,7 @@ using Serilog;
 using Serilog.Events;
 using TempusApi;
 using TempusHub.Application.Services;
+using TempusHub.Core.Models;
 using TempusHub.Infrastructure;
 using TempusHub.Web.HostedServices;
 
@@ -55,6 +56,8 @@ services.AddSingleton<TempusRecordCacheService>();
 services.AddSingleton<YoutubeApiService>();
 services.AddHostedService<CacheHostedService>();
 services.AddSingleton(Log.Logger);
+
+services.Configure<TempusHubConfig>(nameof(TempusHubConfig), builder.Configuration);
 
 services.AddMudServices();
         
