@@ -4,9 +4,10 @@
 @using TempusHub.Core.Constants
 @using TempusHub.Core.Models
 @using TempusHub.Core.Utilities
+@using TempusApi.Enums
 @using TempusApi
 
-@inject Tempus _tempusDataService
+@inject ITempusClient _tempusDataService
 @inject TempusCacheService _tempusCacheService
 
 @implements IDisposable
@@ -48,7 +49,7 @@
         <RowTemplate>
             <MudTd DataLabel="Rank">
                 <div style="display: flex; align-items: center">
-                    <img class="rank-icon" width="24" height="24" src="@(context.RankClass == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)"/>
+                    <img class="rank-icon" width="24" height="24" src="@(context.RankClass == Class.Demoman ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)"/>
                     @context.Rank
                 </div>
             </MudTd>
@@ -96,7 +97,7 @@ else if (string.Equals(DisplayType, "server", StringComparison.InvariantCultureI
                             @foreach (var player in serverGroup)
                             {
                                 <MudListItem Style="display: flex; justify-content: space-between; align-items: center">
-                                    <img class="rank-icon" width="24" height="24" src="@(player.RankClass == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /> @player.Rank 
+                                    <img class="rank-icon" width="24" height="24" src="@(player.RankClass == Class.Demoman ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)" /> @player.Rank 
                                     <MudLink Href="@HrefHelper.GetPlayerInfoPath(player.Id)">
                                         @(_tempusCacheService.GetRealName(player.Id) ?? player.Name)
                                     </MudLink>

@@ -3,10 +3,11 @@
 @using TempusHub.Core.Constants
 @using TempusHub.Core.Utilities
 @using TempusApi
+@using TempusApi.Enums
 @using TempusApi.Models.Responses
 
 @inject TempusCacheService _tempusCacheService
-@inject Tempus _tempusDataService
+@inject ITempusClient _tempusDataService
 
 @if (RunInfo == null || Server == null)
 {
@@ -35,7 +36,7 @@ else
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Class">
-                <img width="24" height="24" src="@(RunInfo.RecordInfo.Class == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)"/>
+                <img width="24" height="24" src="@(RunInfo.RecordInfo.Class == Class.Demoman ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)"/>
             </MudTd>
             <MudTd DataLabel="Player">
                 <MudLink Href="@HrefHelper.GetPlayerInfoPath(RunInfo.Player.Id ?? 0)">
@@ -64,9 +65,9 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        if (int.TryParse(RunId, out var parsedRunId))
+        if (long.TryParse(RunId, out var parsedRunId))
         {
-            RunInfo = await _tempusDataService.GetRunInfoAsync(parsedRunId);
+            RunInfo = await _tempusDataService.GetRecordAsync(parsedRunId);
             Server = _tempusCacheService.ServerStatusList.First(x => x.ServerInfo.Id == RunInfo.RecordInfo.ServerId);
         }
         else

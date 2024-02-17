@@ -1,10 +1,11 @@
-﻿using TempusApi.Models;
+﻿using TempusApi.Enums;
+using TempusApi.Models;
 
 namespace TempusHub.Core.Models;
 
 public class ClassRank
 {
-    public int Class { get; set; }
-    public int Rank { get; set; }
+    public Class Class { get; set; }
+    public long Rank { get; set; }
     public ServerPlayerModel Player { get; set; }
 }

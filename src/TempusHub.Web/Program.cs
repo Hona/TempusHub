@@ -1,4 +1,5 @@
 using System;
+using System.Net.Http;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -30,7 +31,7 @@ Log.Logger = loggerConfiguration.CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.WebHost.UseSerilog();
+builder.Host.UseSerilog();
 
 // Add services to the container
 var services = builder.Services;
@@ -48,7 +49,7 @@ forwardedHeaderOptions.KnownProxies.Clear();
 services.AddSingleton(forwardedHeaderOptions);
 
 services.AddSingleton<TempusHubMySqlService>();
-services.AddSingleton<Tempus>();
+services.AddSingleton<ITempusClient, TempusClient>(_ => new TempusClient(new HttpClient()));
 services.AddSingleton<TempusCacheService>();
 services.AddSingleton<TempusRecordCacheService>();
 services.AddSingleton<YoutubeApiService>();

@@ -1,4 +1,5 @@
-﻿using TempusApi.Models.Responses;
+﻿using TempusApi.Enums;
+using TempusApi.Models.Responses;
 using TempusHub.Core.Models;
 
 namespace TempusHub.Core.Utilities;
@@ -31,7 +32,7 @@ public static class TempusUtilities
     /// <param name="cache">The locally stored (MySQL) stored times</param>
     /// <param name="zonedResults">API request for the record</param>
     /// <returns>Formatted string showing the true WR time save</returns>
-    public static string GetWrSplitString(MapRecordCache cache, ZonedRecordsModel zonedResults)
+    public static string GetWrSplitString(MapRecordCache? cache, ZonedRecordsModel zonedResults)
     {
         double slowRecord;
         // If the current wr doesn't have a value, it can be assumed there is no old duration
@@ -39,7 +40,7 @@ public static class TempusUtilities
             TimesEqual(cache.CurrentWrDuration.Value, cache.OldWrDuration.Value))
         {
             // Get #2 time
-            var runs = cache.ClassId == 4 ? zonedResults.Runs.DemomanRuns 
+            var runs = cache.ClassId == Class.Demoman ? zonedResults.Runs.DemomanRuns 
                 : zonedResults.Runs.SoldierRuns;
 
             if (runs.Count == 1)

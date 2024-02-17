@@ -3,10 +3,11 @@
 @using TempusHub.Core.Constants
 @using TempusHub.Core.Utilities
 @using TempusApi
+@using TempusApi.Enums
 @using TempusApi.Models.Responses
 
 @inject TempusCacheService _tempusCacheService
-@inject Tempus _tempusDataService
+@inject ITempusClient _tempusDataService
 @if (DemoInfo == null)
 {
     <MudProgressCircular Color="Color.Info" Indeterminate="true" />
@@ -34,7 +35,7 @@ else
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Class">
-                <img width="24" height="24" src="@(context.RunInfo.PlayerClass == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)"/>
+                <img width="24" height="24" src="@(context.RunInfo.PlayerClass == Class.Demoman ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)"/>
             </MudTd>
             <MudTd DataLabel="Player">
                 <MudLink Href="@HrefHelper.GetPlayerInfoPath(context.PlayerInfo.Id ?? 0)">
