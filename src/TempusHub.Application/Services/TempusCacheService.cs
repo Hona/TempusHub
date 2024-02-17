@@ -34,32 +34,25 @@ public sealed class TempusCacheService : IDisposable
         _tempusDataService = tempusDataService;
         _log = log;
 
-        _updateTimer = new Timer(async _ => await UpdateAllCachedDataAsync().ConfigureAwait(false), null, TimeSpan.FromMinutes(1.5), TimeSpan.FromMinutes(1.5));
+        _updateTimer = new Timer(async _ => await UpdateAllCachedDataAsync().ConfigureAwait(false), null, TimeSpan.FromMinutes(8), TimeSpan.FromMinutes(8));
     }
 
     public async Task UpdateAllCachedDataAsync()
     {
         try
         {
-            var tasks = new List<Task>
-            {
-                Task.Run(async () =>
-                {
-                    await UpdateRecentActivityAsync().ConfigureAwait(false);
-                    await UpdateRecentActivityWithZonedDataAsync().ConfigureAwait(false);
-                }),
-                UpdateDetailedMapListAsync(),
-                UpdatePlayerLeaderboardsAsync(),
-                Task.Run(async () =>
-                {
-                    await UpdateServerStatusListAsync().ConfigureAwait(false);
-                    await UpdateTopOnlinePlayersAsync().ConfigureAwait(false);
-                }),
-                UpdateRealNamesAsync(),
-                UpdateTempusColorsAsync()
-            };
+            await UpdateRecentActivityAsync();
+            await UpdateRecentActivityWithZonedDataAsync();
 
-            await Task.WhenAll(tasks).ConfigureAwait(false);
+            await UpdateDetailedMapListAsync();
+            await UpdatePlayerLeaderboardsAsync();
+            
+            await UpdateServerStatusListAsync();
+            await UpdateTopOnlinePlayersAsync();
+
+            await UpdateRealNamesAsync();
+            await UpdateTempusColorsAsync();
+
             // Refreshes any clients
             OnDataUpdated(EventArgs.Empty);
         }
