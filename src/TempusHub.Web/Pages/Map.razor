@@ -7,16 +7,17 @@
 @using TempusHub.Core.Constants
 @using TempusHub.Core.Utilities
 @using TempusApi
+@using TempusApi.Enums
 @using TempusApi.Models
 @using TempusApi.Models.DetailedMapList
 @using TempusApi.Models.Responses
 
 @inject TempusCacheService _tempusCacheService
-@inject Tempus _tempusDataService
+@inject ITempusClient _tempusDataService
 @inject NavigationManager _navigationManager
 
 <MudText Typo="Typo.h4">
-    @(ParsedMap?.Name ?? MapName)
+    @(FullMapOverView?.MapInfo?.Name ?? MapName)
 </MudText>
 
 @if (string.IsNullOrWhiteSpace(MapName))
@@ -25,21 +26,21 @@
         Invalid map name... (is it blank?)
     </MudText>
 }
-@if (ParsedMap == null || FullMapOverView == null)
+@if (FullMapOverView == null)
 {
     <MudProgressCircular Color="Color.Info" Indeterminate="true" />
 }
 else
 {
     <div style="display: flex; justify-content: flex-start; align-items: center">
-        <img class="rank-icon" width="32" height="32" src="@LocalFileConstants.SoldierIcon"> T@(ParsedMap.TierInfo.Soldier)  
-        <img class="rank-icon" width="32" height="32" src="@LocalFileConstants.DemomanIcon"> T@(ParsedMap.TierInfo.Demoman)
+        <img class="rank-icon" width="32" height="32" src="@LocalFileConstants.SoldierIcon"> T@(FullMapOverView?.TierInfo.Soldier)  
+        <img class="rank-icon" width="32" height="32" src="@LocalFileConstants.DemomanIcon"> T@(FullMapOverView?.TierInfo.Demoman)
     </div>
     <div style="display: flex; justify-content: flex-start; align-items: center">
         <img class="rank-icon" width="32" height="32" src="@LocalFileConstants.SoldierIcon"> 
-        @if (!string.IsNullOrWhiteSpace(ParsedMap.Videos.Soldier))
+        @if (!string.IsNullOrWhiteSpace(FullMapOverView?.Videos.Soldier))
         {
-            <MudLink Href="@(TempusUtilities.GetYoutubeUrl(ParsedMap.Videos.Soldier))">
+            <MudLink Href="@(TempusUtilities.GetYoutubeUrl(FullMapOverView?.Videos.Soldier))">
                 Showcase
             </MudLink>
         }
@@ -50,9 +51,9 @@ else
             </MudText>
         }  
         <img class="rank-icon" width="32" height="32" src="@LocalFileConstants.DemomanIcon"> 
-        @if (!string.IsNullOrWhiteSpace(ParsedMap.Videos.Demoman))
+        @if (!string.IsNullOrWhiteSpace(FullMapOverView?.Videos.Demoman))
         {
-            <MudLink Href="@(TempusUtilities.GetYoutubeUrl(ParsedMap.Videos.Demoman))">
+            <MudLink Href="@(TempusUtilities.GetYoutubeUrl(FullMapOverView?.Videos.Demoman))">
                 Showcase
             </MudLink>
         }
@@ -77,7 +78,7 @@ else
                Variant="Variant.Outlined"
                AnchorOrigin="Origin.BottomCenter"
                Value="ZoneSelector"
-               ValueChanged="@(x => { _navigationManager.NavigateTo("/map/" + (ParsedMap?.Name ?? MapName) + "/" + x); })"
+               ValueChanged="@(x => { _navigationManager.NavigateTo("/map/" + (FullMapOverView?.MapInfo?.Name ?? MapName) + "/" + x); })"
                ToStringFunc="@(x => x is null 
                                  ? "Map" 
                                  : x.StartsWith("b") 
@@ -85,17 +86,17 @@ else
                                      : "Course " + x.Substring(1,x.Length - 1))"
                Style="max-width: 150px; width: 150px">
         <MudSelectItem T="string" Value="@null"/>
-        @if ((FullMapOverView.ZoneCounts.Course ?? 0) > 1)
+        @if ((FullMapOverView?.ZoneCounts?.Course ?? 0) > 1)
         {
-            for (int i = 1; i <= FullMapOverView.ZoneCounts.Course.Value; i++)
+            for (int i = 1; i <= FullMapOverView.ZoneCounts.Course; i++)
             {
                 var index = i;
                 <MudSelectItem T="string" Value="@("c" + index)"/>
             }
         }
-        @if ((FullMapOverView.ZoneCounts.Bonus ?? 0) >= 1)
+        @if ((FullMapOverView?.ZoneCounts?.Bonus ?? 0) >= 1)
         {
-            for (int i = 1; i <= FullMapOverView.ZoneCounts.Bonus.Value; i++)
+            for (int i = 1; i <= FullMapOverView.ZoneCounts.Bonus; i++)
             {
                 var index = i;
                 <MudSelectItem T="string" Value="@("b" + index)"/>
@@ -169,7 +170,6 @@ else
     [Parameter]
     public string MapName { get; set; }
 
-    public DetailedMapOverviewModel ParsedMap { get; set; }
     public MapFullOverviewModel FullMapOverView { get; set; }
     public List<RecordModel> ZonedSoldierRecords { get; set; }
     public List<RecordModel> ZonedDemomanRecords { get; set; }
@@ -179,8 +179,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        ParsedMap = await MapFromPartialNameAsync(MapName);
-        FullMapOverView = await _tempusDataService.GetFullMapOverViewAsync(MapName);
+        FullMapOverView = await _tempusDataService.GetFullMapOverviewAsync(MapName);
 
         if (string.IsNullOrWhiteSpace(ZoneSelector))
         {
@@ -197,24 +196,18 @@ else
         else if (ZoneSelector.Contains("c", StringComparison.InvariantCultureIgnoreCase)
             && int.TryParse(string.Join(string.Empty, ZoneSelector.Skip(1)), out var zoneCourseIndex))
         {
-            var zonedTimes = await _tempusDataService.GetTopZonedTimes(ParsedMap.Name, "course", zoneCourseIndex);
+            var zonedTimes = await _tempusDataService.GetTopZonedTimes(FullMapOverView.MapInfo.Name, ZoneType.Course, zoneCourseIndex);
             ZonedSoldierRecords = zonedTimes.Runs.SoldierRuns.Select(x => x.ToRecordModel()).ToList();
             ZonedDemomanRecords = zonedTimes.Runs.DemomanRuns.Select(x => x.ToRecordModel()).ToList();
         }
         else if (ZoneSelector.Contains("b", StringComparison.InvariantCultureIgnoreCase)
             && int.TryParse(string.Join(string.Empty, ZoneSelector.Skip(1)), out var zoneBonusIndex))
         {
-            var zonedTimes = await _tempusDataService.GetTopZonedTimes(ParsedMap.Name, "bonus", zoneBonusIndex);
+            var zonedTimes = await _tempusDataService.GetTopZonedTimes(FullMapOverView.MapInfo.Name, ZoneType.Bonus, zoneBonusIndex);
             ZonedSoldierRecords = zonedTimes.Runs.SoldierRuns.Select(x => x.ToRecordModel()).ToList();
             ZonedDemomanRecords = zonedTimes.Runs.DemomanRuns.Select(x => x.ToRecordModel()).ToList();
         }
         StateHasChanged();
-    }
-
-    private async Task<DetailedMapOverviewModel> MapFromPartialNameAsync(string partialName)
-    {
-        var parsedMapName = await _tempusDataService.ParseMapNameAsync(partialName);
-        return _tempusCacheService.DetailedMapList.FirstOrDefault(x => x.Name == parsedMapName);
     }
 
     protected override async Task OnParametersSetAsync() => await OnInitializedAsync();

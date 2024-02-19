@@ -5,9 +5,10 @@
 @using TempusHub.Core.Models
 @using TempusHub.Core.Utilities
 @using TempusApi
+@using TempusApi.Enums
 @using TempusApi.Models.Activity
 
-@inject Tempus _tempusDataService
+@inject ITempusClient _tempusDataService
 @inject TempusCacheService _tempusCacheService
 @inject NavigationManager _navigationManager
 
@@ -48,14 +49,14 @@
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Class">
-                <img width="24" height="24" src="@(context.Record.RecordInfo.Class == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)"/>
+                <img width="24" height="24" src="@(context.Record.RecordInfo.Class == Class.Demoman ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)"/>
             </MudTd>
             <MudTd DataLabel="Map">
                 <MudLink Href="@HrefHelper.GetMapInfoPath(context.Record.MapInfo.Name)">
                     @(context.Record.MapInfo.Name + " " + context.Record.ZoneInfo.Type switch
                     {
-                        "course" => "C" + context.Record.ZoneInfo.Zoneindex + " ",
-                        "bonus" => "B" + context.Record.ZoneInfo.Zoneindex,
+                        ZoneType.Course => "C" + context.Record.ZoneInfo.Zoneindex + " ",
+                        ZoneType.Bonus => "B" + context.Record.ZoneInfo.Zoneindex,
                         _ => ""
                     })
                 </MudLink>

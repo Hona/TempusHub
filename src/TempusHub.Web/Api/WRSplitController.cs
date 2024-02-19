@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using TempusApi.Enums;
 using TempusHub.Application.Services;
 using TempusHub.Core.Models;
 using TempusHub.Core.Utilities;
@@ -23,23 +24,18 @@ public class WrSplitController : ControllerBase
 
     // GET api/<WRSplitController>/jabroni/4
     [HttpGet("{mapId:int}/{playerClass:int}/{recordType}/{zoneIndex:int?}")]
-    public ActionResult<string> Get(int mapId, int playerClass, string recordType, int zoneIndex = 1)
+    public ActionResult<string> Get(long mapId, Class playerClass, ZoneType recordType, int zoneIndex = 1)
     {
-        if (recordType is null)
-        {
-            throw new ArgumentNullException(nameof(recordType));
-        }
-
         List<RecordWithZonedData> recentRecords;
-        switch (recordType.ToUpperInvariant())
+        switch (recordType)
         {
-            case "MAP":
+            case ZoneType.Map:
                 recentRecords = _tempusCacheService.RecentActivityWithZonedData.MapWr.ToList();
                 break;
-            case "COURSE":
+            case ZoneType.Course:
                 recentRecords = _tempusCacheService.RecentActivityWithZonedData.CourseWr.ToList();
                 break;
-            case "BONUS":
+            case ZoneType.Bonus:
                 recentRecords = _tempusCacheService.RecentActivityWithZonedData.BonusWr.ToList();
                 break;
             default:

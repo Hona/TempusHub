@@ -4,9 +4,10 @@
 @using TempusHub.Core.Models
 @using TempusHub.Core.Utilities
 @using TempusApi
+@using TempusApi.Enums
 @using TempusApi.Models.Responses
 
-@inject Tempus _tempusDataService
+@inject ITempusClient _tempusDataService
 @inject TempusCacheService _tempusCacheService
 
 <MudText Typo="Typo.h4">@(ServerInfo?.ServerInfo.Name ?? "No Server found")</MudText>
@@ -29,7 +30,7 @@
         {
             <MudTd DataLabel="Rank">
                 <div>
-                    <img class="rank-icon" width="24" height="24" src="@(context.Class == 4 ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)"/>
+                    <img class="rank-icon" width="24" height="24" src="@(context.Class == Class.Demoman ? LocalFileConstants.DemomanIcon : LocalFileConstants.SoldierIcon)"/>
                     @(context.Rank.Value.ToString())
                 </div>
             </MudTd>
@@ -103,7 +104,7 @@ else
                 {
                     Player = user,
                     Rank = rankedUser?.Rank ?? (int?)int.MaxValue,
-                    Class = rankedUser?.RankClass ?? 0
+                    Class = rankedUser?.RankClass ?? null
                 });
             }
             RankedPlayers = RankedPlayers
@@ -117,6 +118,6 @@ else
             }
         }
 
-        Demos = await _tempusDataService.GetServerDemosAsync(ServerInfo.ServerInfo.Id);
+        if (ServerInfo != null) Demos = await _tempusDataService.GetServerDemosAsync(ServerInfo.ServerInfo.Id);
     }
 }

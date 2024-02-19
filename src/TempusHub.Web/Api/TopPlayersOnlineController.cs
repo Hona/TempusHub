@@ -31,7 +31,7 @@ public class TopPlayersOnlineController : ControllerBase
                 Id = x.Server.ServerInfo.Id,
                 CurrentPlayers = x.Server.GameInfo.PlayerCount,
                 MaxPlayers = x.Server.GameInfo.MaxPlayers,
-                Alias = x.Server.ServerInfo.Shortname,
+                Alias = x.Server.ServerInfo.Name,
                 IpAddress = x.Server.ServerInfo.Addr + ":" + x.Server.ServerInfo.Port,
                 Name = x.Server.ServerInfo.Name
             }

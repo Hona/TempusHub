@@ -1,4 +1,4 @@
-﻿@page "/player/{PlayerId}"
+﻿@page "/player/{PlayerId:long}"
 @using TempusHub.Application.Services
 @using TempusHub.Core.Constants
 @using TempusHub.Core.Models.Demystify
@@ -7,7 +7,7 @@
 @using TempusApi.Models.PlayerStats
 @using TempusApi.Models.Rank
 
-@inject Tempus _tempusDataService
+@inject ITempusClient _tempusDataService
 @inject TempusCacheService _tempusCacheService
 
 @if (_playerNotFound)
@@ -96,7 +96,7 @@ else
 @code
 {
     [Parameter]
-    public string PlayerId { get; set; }
+    public long PlayerId { get; set; }
 
     public PlayerStatsModel PlayerStats { get; set; }
     public BaseRank HigherRankInfo { get; set; }
@@ -108,7 +108,7 @@ else
     {
         _playerNotFound = false;       
 
-        var playerStats = await _tempusDataService.GetUserStatsAsync(PlayerId);
+        var playerStats = await _tempusDataService.GetPlayerStatsAsync(PlayerId);
 
         if (playerStats is null)
         {

@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Serilog;
 using TempusApi;
+using TempusApi.Enums;
 using TempusApi.Models.Activity;
 using TempusApi.Models.DetailedMapList;
 using TempusApi.Models.Rank;
@@ -15,8 +17,9 @@ namespace TempusHub.Application.Services;
 public sealed class TempusCacheService : IDisposable
 {
     private readonly Timer _updateTimer;
-    private readonly Tempus _tempusDataService;
+    private readonly ITempusClient _tempusDataService;
     private readonly ILogger _log;
+    private readonly TempusHubConfig _config;
     public event EventHandler? DataUpdated;
     public RecentActivityModel RecentActivity { get; private set; }
     public RecentActivityWithZonedData RecentActivityWithZonedData { get; private set; } = new();
@@ -28,37 +31,32 @@ public sealed class TempusCacheService : IDisposable
     public List<TempusRankColor> TempusRankColors { get; set; }
 
 
-    public TempusCacheService(Tempus tempusDataService, ILogger log)
+    public TempusCacheService(ITempusClient tempusDataService, ILogger log, IOptions<TempusHubConfig> config)
     {
         _tempusDataService = tempusDataService;
         _log = log;
+        _config = config.Value;
 
-        _updateTimer = new Timer(async _ => await UpdateAllCachedDataAsync().ConfigureAwait(false), null, TimeSpan.FromMinutes(1.5), TimeSpan.FromMinutes(1.5));
+        _updateTimer = new Timer(async _ => await UpdateAllCachedDataAsync().ConfigureAwait(false), null, 
+            TimeSpan.FromMinutes((double)_config.CachePeriodInMinutes), TimeSpan.FromMinutes((double)_config.CachePeriodInMinutes));
     }
 
     public async Task UpdateAllCachedDataAsync()
     {
         try
         {
-            var tasks = new List<Task>
-            {
-                Task.Run(async () =>
-                {
-                    await UpdateRecentActivityAsync().ConfigureAwait(false);
-                    await UpdateRecentActivityWithZonedDataAsync().ConfigureAwait(false);
-                }),
-                UpdateDetailedMapListAsync(),
-                UpdatePlayerLeaderboardsAsync(),
-                Task.Run(async () =>
-                {
-                    await UpdateServerStatusListAsync().ConfigureAwait(false);
-                    await UpdateTopOnlinePlayersAsync().ConfigureAwait(false);
-                }),
-                UpdateRealNamesAsync(),
-                UpdateTempusColorsAsync()
-            };
+            await UpdateRecentActivityAsync();
+            await UpdateRecentActivityWithZonedDataAsync();
 
-            await Task.WhenAll(tasks).ConfigureAwait(false);
+            await UpdateDetailedMapListAsync();
+            await UpdatePlayerLeaderboardsAsync();
+            
+            await UpdateServerStatusListAsync();
+            await UpdateTopOnlinePlayersAsync();
+
+            await UpdateRealNamesAsync();
+            await UpdateTempusColorsAsync();
+
             // Refreshes any clients
             OnDataUpdated(EventArgs.Empty);
         }
@@ -108,11 +106,14 @@ public sealed class TempusCacheService : IDisposable
             .Where(user => user?.Id != null)
             // TODO: Use Larry/my player cache to find ID via steam ID, or explore alternatives
             .Where(user => user.Id is not 0)
-            .Select(user => user.Id.ToString()).ToList().Distinct();
+            .Select(user => user.Id)
+            .Cast<long>()
+            .ToList()
+            .Distinct();
 
         // Query all at once for all users ranks
         var rankTasks = new List<Task<Rank>>();
-        rankTasks.AddRange(userIdStrings.Select(_tempusDataService.GetUserRankAsync));
+        rankTasks.AddRange(userIdStrings.Select(x => _tempusDataService.GetPlayerRankAsync(x)));
         var ranks = await Task.WhenAll(rankTasks).ConfigureAwait(false);
 
         // Get the users that actually have a rank (exclude unranks), and select the higher rank
@@ -127,7 +128,7 @@ public sealed class TempusCacheService : IDisposable
             })
             .Select(classRankedUser => new ClassRank
             {
-                Class = classRankedUser.isDemoHigherRank ? 4 : 3,
+                Class = classRankedUser.isDemoHigherRank ? Class.Demoman : Class.Soldier,
                 Player = usersWithId.First(x => x.Id == classRankedUser.rankedUser.PlayerInfo.Id),
                 Rank = classRankedUser.isDemoHigherRank
                     ? classRankedUser.rankedUser.ClassRankInfo.DemoRank.Rank
@@ -194,14 +195,14 @@ public sealed class TempusCacheService : IDisposable
     {
         PlayerLeaderboards = new PlayerLeaderboards
         {
-            Overall = await _tempusDataService.GetOverallRanksOverview().ConfigureAwait(false),
-            Soldier = await _tempusDataService.GetSoldierRanksOverview().ConfigureAwait(false),
-            Demoman = await _tempusDataService.GetDemomanRanksOverview().ConfigureAwait(false)
+            Overall = await _tempusDataService.GetTopOverallRanksAsync().ConfigureAwait(false),
+            Soldier = await _tempusDataService.GetRanksAsync(Class.Soldier).ConfigureAwait(false),
+            Demoman = await _tempusDataService.GetRanksAsync(Class.Demoman).ConfigureAwait(false)
         };
     }
     private async Task UpdateServerStatusListAsync()
     {
-        ServerStatusList = await _tempusDataService.GetServerStatusAsync().ConfigureAwait(false);
+        ServerStatusList = await _tempusDataService.GetServersStatusesAsync().ConfigureAwait(false);
 
         var servers = ServerStatusList.Where(x => x != null).ToList();
 
@@ -240,7 +241,7 @@ public sealed class TempusCacheService : IDisposable
         var jsonText = await File.ReadAllTextAsync(LocalFileConstants.TempusColors).ConfigureAwait(false);
         TempusRankColors = JsonConvert.DeserializeObject<List<TempusRankColor>>(jsonText);
     }
-    public string GetRealName(int tempusId)
+    public string GetRealName(long tempusId)
     {
         return RealNames.FirstOrDefault(x => x.Id == tempusId)?.RealName;
     }
@@ -271,7 +272,7 @@ public sealed class TempusCacheService : IDisposable
             MapId = cacheRecordBase.MapInfo.Id,
             ZoneId = cacheRecordBase.ZoneInfo.Zoneindex,
             ZoneType = cacheRecordBase.ZoneInfo.Type,
-            CurrentWrDuration = cacheRecordBase.RecordInfo.Class == 4 
+            CurrentWrDuration = cacheRecordBase.RecordInfo.Class == Class.Demoman 
                 ? zonedData.Runs.DemomanRuns.OrderByDuration().First().Duration 
                 : zonedData.Runs.SoldierRuns.OrderByDuration().First().Duration
         };

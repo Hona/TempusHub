@@ -8,5 +8,5 @@ public class ServerInfoShortResponse
     public int MaxPlayers { get; set; }
     public string CurrentMap { get; set; }
     public string IpAddress { get; set; }
-    public int Id { get; set; }
+    public long Id { get; set; }
 }
