@@ -40,10 +40,11 @@ namespace Empedo.Discord.Services
             return Task.CompletedTask;
         }
 
+        private const int PeriodMinutes = 5;
         private Task InitializeTimer(DiscordClient discordClient, GuildDownloadCompletedEventArgs e)
         {
             _timer = new Timer(TickAsync, null, TimeSpan.FromMinutes(2),
-                TimeSpan.FromMinutes(5));
+                TimeSpan.FromMinutes(PeriodMinutes));
             
             return Task.CompletedTask;
         }
@@ -72,7 +73,7 @@ namespace Empedo.Discord.Services
         private async Task SendWorldRecordNotificationsAsync()
         {
             var records = _tempusCacheService.RecentActivityWithZonedData.MapWr
-                .Where(x => TempusHelper.GetDateFromTimestamp(x.Record.RecordInfo.Date) > DateTime.Now.AddMinutes(-5))
+                .Where(x => TempusHelper.GetDateFromTimestamp(x.Record.RecordInfo.Date) > DateTimeOffset.UtcNow.AddMinutes(-PeriodMinutes))
                 .ToList();
             
             var channel = await _discordClient.GetChannelAsync(1210787489061806122);
