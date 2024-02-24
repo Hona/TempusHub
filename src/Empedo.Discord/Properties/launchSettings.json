@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Empedo.Discord": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

@@ -1,6 +1,9 @@
 using System;
 using System.Net.Http;
 using Blazored.LocalStorage;
+using Empedo.Discord;
+using Empedo.Discord.Commands;
+using Empedo.Discord.Helpers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.DependencyInjection;
@@ -65,6 +68,8 @@ services.AddBlazoredLocalStorage();
 
 services.AddSwaggerGen();
 
+services.AddEmpedoDiscordBot(builder.Configuration);
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -93,6 +98,8 @@ app.MapControllers();
 try
 {
     Log.Information("Starting web host");
+    
+    app.Services.InitializeMicroservices(typeof(EmpedoModuleBase).Assembly);
     app.Run();
 }
 catch (Exception ex)
