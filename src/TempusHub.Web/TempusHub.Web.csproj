@@ -12,7 +12,7 @@
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="Dapper" Version="2.1.28" />
     <PackageReference Include="Dapper.FluentMap" Version="2.0.0" />
-    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.66.0.3330" />
+    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.67.0.3330" />
     <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.3.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -25,7 +25,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.1" />
-    <PackageReference Include="MudBlazor" Version="6.15.0" />
+    <PackageReference Include="MudBlazor" Version="6.16.0" />
     <PackageReference Include="MySql.Data" Version="8.3.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="OneOf" Version="3.0.263" />
@@ -44,6 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Empedo.Discord\Empedo.Discord.csproj" />
     <ProjectReference Include="..\TempusHub.Application\TempusHub.Application.csproj" />
     <ProjectReference Include="..\TempusHub.Infrastructure\TempusHub.Infrastructure.csproj" />
   </ItemGroup>

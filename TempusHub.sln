@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TempusHub.Application", "sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TempusHub.Infrastructure", "src\TempusHub.Infrastructure\TempusHub.Infrastructure.csproj", "{83ECFA2C-14E2-4BD0-A1F0-4BFB72E611A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Empedo.Discord", "src\Empedo.Discord\Empedo.Discord.csproj", "{42F9635B-0E7E-446E-BED9-FCC86DE510FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{83ECFA2C-14E2-4BD0-A1F0-4BFB72E611A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83ECFA2C-14E2-4BD0-A1F0-4BFB72E611A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{83ECFA2C-14E2-4BD0-A1F0-4BFB72E611A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42F9635B-0E7E-446E-BED9-FCC86DE510FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42F9635B-0E7E-446E-BED9-FCC86DE510FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42F9635B-0E7E-446E-BED9-FCC86DE510FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42F9635B-0E7E-446E-BED9-FCC86DE510FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -54,6 +60,7 @@ Global
 		{5BA4CA69-0A3F-4DE6-A58D-79831A5D0D0E} = {F7E0E517-A381-430A-8E53-1B5F352C8177}
 		{77465985-4E22-4296-83A5-B72D15BE3C26} = {F7E0E517-A381-430A-8E53-1B5F352C8177}
 		{83ECFA2C-14E2-4BD0-A1F0-4BFB72E611A9} = {F7E0E517-A381-430A-8E53-1B5F352C8177}
+		{42F9635B-0E7E-446E-BED9-FCC86DE510FF} = {F7E0E517-A381-430A-8E53-1B5F352C8177}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7CD2703F-B314-40D5-B1B3-49DA1E49C490}
