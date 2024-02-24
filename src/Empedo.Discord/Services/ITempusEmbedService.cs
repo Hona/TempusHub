@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using DSharpPlus.Entities;
+using TempusApi.Models.Activity;
 using TempusApi.Models.Responses;
+using TempusHub.Core.Models;
 
 namespace Empedo.Discord.Services
 {
@@ -15,5 +17,6 @@ namespace Empedo.Discord.Services
         Task<List<DiscordEmbedBuilder>> GetRecentMapTopTimesAsync(RecentActivityModel activity = null, bool decorateAllEmbeds = false);
         Task<List<DiscordEmbedBuilder>> GetServerListAsync(List<ServerStatusModel> servers = null);
         Task<List<DiscordEmbedBuilder>> GetMapOverviewAsync(string mapName);
+        Task<IEnumerable<DiscordMessageBuilder>> GetWorldRecordNotificationsAsync(List<RecordWithZonedData> mapWrs);
     }
 }

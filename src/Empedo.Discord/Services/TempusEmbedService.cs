@@ -12,6 +12,8 @@ using TempusApi.Models.Activity;
 using TempusApi.Models.Rank;
 using TempusApi.Models.Responses;
 using TempusHub.Application.Services;
+using TempusHub.Core.Models;
+using TempusHub.Core.Utilities;
 using MapInfo = TempusApi.Models.Activity.MapInfo;
 
 namespace Empedo.Discord.Services
@@ -21,11 +23,13 @@ namespace Empedo.Discord.Services
     {
         private readonly TempusCacheService _tempusCacheService;
         private readonly ITempusClient _tempusClient;
-
-        public TempusEmbedService(TempusCacheService tempusCacheService, ITempusClient tempusClient)
+        private DiscordClient _discordClient;
+        
+        public TempusEmbedService(TempusCacheService tempusCacheService, ITempusClient tempusClient, DiscordClient discordClient)
         {
             _tempusCacheService = tempusCacheService;
             _tempusClient = tempusClient;
+            _discordClient = discordClient;
         }
 
         public async Task<List<DiscordEmbedBuilder>> GetServerOverviewAsync(List<ServerStatusModel> servers = null, bool decorateAllEmbeds = false)
@@ -217,6 +221,51 @@ namespace Empedo.Discord.Services
             });
 
             return output;
+        }
+
+        public Task<IEnumerable<DiscordMessageBuilder>> GetWorldRecordNotificationsAsync(List<RecordWithZonedData> mapWrs)
+        {
+            mapWrs ??= _tempusCacheService.RecentActivityWithZonedData.MapWr.ToList();
+
+            var output = new List<DiscordMessageBuilder>();
+
+            foreach (var mapWr in mapWrs)
+            {
+                /*
+                 * Replicate the following format from IRC as the embed description
+                 * @"^:: \(([^)]+)\) ([^ ]+) broke ([^ ]+) WR: (\d{2}:\d{2}\.\d{2}) \((?:WR -)?(-?\d{2}:\d{2}\.\d{2})\)!$";
+                 */
+
+                var wrAndSplit = TempusUtilities.FormattedDuration(mapWr.Record.RecordInfo.Duration);
+                
+                if (mapWr.Record is CachedTempusRecordBase cacheRecord2)
+                {
+                    wrAndSplit += " (" + TempusUtilities.GetWrSplitString(cacheRecord2.CachedTime, mapWr.ZonedData);
+                }
+                else
+                {
+                    wrAndSplit += " (N/A";
+                }
+
+                wrAndSplit += ")";
+                
+                var embed = new DiscordEmbedBuilder
+                {
+                    Title = $"Map WR Notification",
+                    Description = $":: ({mapWr.Record.RecordInfo.Class.ToString()}) {mapWr.Record.PlayerInfo.Name} broke {mapWr.Record.MapInfo.Name} WR: {wrAndSplit})!\n" +
+                                  Formatter.MaskedUrl("Link to Record", TempusHelper.GetRecordUrl(mapWr.Record.RecordInfo.Id)),
+                    Timestamp = TempusHelper.GetDateFromTimestamp(mapWr.Record.RecordInfo.Date),
+                };
+                var role = _discordClient.Guilds[559250697879683082].GetRole(1210793936344588368);
+                var msg = new DiscordMessageBuilder()
+                    .WithEmbed(embed)
+                    .WithContent(role.Mention)
+                    .WithAllowedMentions(new IMention[] { new RoleMention(role) });
+
+                output.Add(msg);
+            }
+
+            return Task.FromResult(output.AsEnumerable());
         }
     }
 }

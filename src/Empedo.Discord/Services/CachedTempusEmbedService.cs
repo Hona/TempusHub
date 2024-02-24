@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using DSharpPlus.Entities;
 using Empedo.Discord.Models;
 using TempusApi.Models.Responses;
+using TempusHub.Core.Models;
 
 namespace Empedo.Discord.Services
 {
@@ -74,5 +75,8 @@ namespace Empedo.Discord.Services
 
         public async Task<List<DiscordEmbedBuilder>> GetMapOverviewAsync(string mapName)
             => await _tempusEmbedService.GetMapOverviewAsync(mapName);
+
+        public async Task<IEnumerable<DiscordMessageBuilder>> GetWorldRecordNotificationsAsync(List<RecordWithZonedData> mapWrs)
+            => await _tempusEmbedService.GetWorldRecordNotificationsAsync(mapWrs); 
     }
 }

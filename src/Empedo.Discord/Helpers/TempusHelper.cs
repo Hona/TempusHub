@@ -45,6 +45,14 @@ namespace Empedo.Discord.Helpers
             
             return output.ToString();
         }
+        
+        public static DateTime GetDateFromTimestamp(double timestamp)
+        {
+            // Convert the timestamp to milliseconds and then to long
+            var milliseconds = (long)(timestamp * 1000);
+
+            return DateTimeOffset.FromUnixTimeMilliseconds(milliseconds).DateTime;
+        }
 
         public static TimeSpan TicksToTimeSpan(long ticks) => new(ticks * 149998);
         public static Uri GetMapUrl(string name) => new($"{TempusUrl}/maps/" + name);

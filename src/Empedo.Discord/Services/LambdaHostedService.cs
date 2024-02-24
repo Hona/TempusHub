@@ -42,7 +42,7 @@ namespace Empedo.Discord.Services
 
         private Task InitializeTimer(DiscordClient discordClient, GuildDownloadCompletedEventArgs e)
         {
-            _timer = new Timer(TickAsync, null, TimeSpan.Zero, 
+            _timer = new Timer(TickAsync, null, TimeSpan.FromMinutes(2),
                 TimeSpan.FromMinutes(5));
             
             return Task.CompletedTask;
@@ -62,10 +62,27 @@ namespace Empedo.Discord.Services
             {
                 UpdateOverviewsAsync(),
                 UpdateRecentActivityAsync(),
-                UpdateServerListAsync()
+                UpdateServerListAsync(),
+                SendWorldRecordNotificationsAsync()
             };
 
             await Task.WhenAll(tasks);
+        }
+        
+        private async Task SendWorldRecordNotificationsAsync()
+        {
+            var records = _tempusCacheService.RecentActivityWithZonedData.MapWr
+                .Where(x => TempusHelper.GetDateFromTimestamp(x.Record.RecordInfo.Date) > DateTime.Now.AddMinutes(-5))
+                .ToList();
+            
+            var channel = await _discordClient.GetChannelAsync(1210787489061806122);
+            
+            var messages = await _tempusEmbedService.GetWorldRecordNotificationsAsync(records);
+
+            foreach (var message in messages)
+            {
+                await message.SendAsync(channel);
+            }
         }
 
         private async Task WipeChannelAsync(DiscordChannel discordChannel)
