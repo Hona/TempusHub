@@ -60,7 +60,7 @@ services.AddSingleton<YoutubeApiService>();
 services.AddHostedService<CacheHostedService>();
 services.AddSingleton(Log.Logger);
 
-services.Configure<TempusHubConfig>(nameof(TempusHubConfig), builder.Configuration);
+services.Configure<TempusHubConfig>(builder.Configuration.GetSection("TempusHub"));
 
 services.AddMudServices();
         

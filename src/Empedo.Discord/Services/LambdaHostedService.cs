@@ -22,7 +22,7 @@ namespace Empedo.Discord.Services
         private readonly IConfiguration _configuration;
         private readonly DiscordClient _discordClient;
         private readonly TempusCacheService _tempusCacheService;
-        private Timer _timer;
+        private DateTimeOffset _lastUpdate = DateTimeOffset.UtcNow;
 
         public LambdaHostedService(ILogger<LambdaHostedService> logger, ITempusEmbedService tempusEmbedService, IConfiguration configuration, DiscordClient discordClient, TempusCacheService tempusCacheService)
         {
@@ -40,23 +40,26 @@ namespace Empedo.Discord.Services
             return Task.CompletedTask;
         }
 
-        private const int PeriodMinutes = 5;
         private Task InitializeTimer(DiscordClient discordClient, GuildDownloadCompletedEventArgs e)
         {
-            _timer = new Timer(TickAsync, null, TimeSpan.FromMinutes(2),
-                TimeSpan.FromMinutes(PeriodMinutes));
+            _tempusCacheService.DataUpdated += OnDataUpdated; 
             
             return Task.CompletedTask;
         }
 
+        private void OnDataUpdated(object sender, EventArgs e)
+        {
+            TickAsync();
+        }
+
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _timer?.Change(Timeout.Infinite, 0);
-
+            _tempusCacheService.DataUpdated -= OnDataUpdated;
+            
             return Task.CompletedTask;
         }
         
-        private async void TickAsync(object state)
+        private async void TickAsync()
         {
             _logger.LogInformation("Updating...");
             var tasks = new List<Task>
@@ -68,12 +71,13 @@ namespace Empedo.Discord.Services
             };
 
             await Task.WhenAll(tasks);
+            _lastUpdate = DateTimeOffset.UtcNow;
         }
         
         private async Task SendWorldRecordNotificationsAsync()
         {
             var records = _tempusCacheService.RecentActivityWithZonedData.MapWr
-                .Where(x => TempusHelper.GetDateFromTimestamp(x.Record.RecordInfo.Date) > DateTimeOffset.UtcNow.AddMinutes(-PeriodMinutes))
+                .Where(x => TempusHelper.GetDateFromTimestamp(x.Record.RecordInfo.Date) > _lastUpdate)
                 .ToList();
             
             var channel = await _discordClient.GetChannelAsync(1210787489061806122);
@@ -154,7 +158,7 @@ namespace Empedo.Discord.Services
 
         public void Dispose()
         {
-            _timer?.Dispose();
+            _tempusCacheService.DataUpdated -= OnDataUpdated;
         }
     }
 }
