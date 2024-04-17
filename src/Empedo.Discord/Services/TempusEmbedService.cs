@@ -249,17 +249,12 @@ namespace Empedo.Discord.Services
 
                 wrAndSplit += ")";
                 
-                var embed = new DiscordEmbedBuilder
-                {
-                    Title = $"Map WR Notification",
-                    Description = $":: ({mapWr.Record.RecordInfo.Class.ToString()}) {mapWr.Record.PlayerInfo.Name} broke {mapWr.Record.MapInfo.Name} WR: {wrAndSplit})!\n" +
-                                  Formatter.MaskedUrl("Link to Record", TempusHelper.GetRecordUrl(mapWr.Record.RecordInfo.Id)),
-                    Timestamp = TempusHelper.GetDateFromTimestamp(mapWr.Record.RecordInfo.Date),
-                };
+                // TODO: Move to config
                 var role = _discordClient.Guilds[559250697879683082].GetRole(1210793936344588368);
                 var msg = new DiscordMessageBuilder()
-                    .WithEmbed(embed)
-                    .WithContent(role.Mention)
+                    .WithContent($":: ({mapWr.Record.RecordInfo.Class.ToString()}) {mapWr.Record.PlayerInfo.Name} broke {mapWr.Record.MapInfo.Name} WR: {wrAndSplit})!" +
+                                 "\n" + 
+                                 role.Mention)
                     .WithAllowedMentions(new IMention[] { new RoleMention(role) });
 
                 output.Add(msg);
