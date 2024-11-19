@@ -46,7 +46,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Empedo.Discord\Empedo.Discord.csproj" />
     <ProjectReference Include="..\TempusHub.Application\TempusHub.Application.csproj" />
-    <ProjectReference Include="..\TempusHub.Infrastructure\TempusHub.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

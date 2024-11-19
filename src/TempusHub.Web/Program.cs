@@ -14,7 +14,6 @@ using Serilog.Events;
 using TempusApi;
 using TempusHub.Application.Services;
 using TempusHub.Core.Models;
-using TempusHub.Infrastructure;
 using TempusHub.Web.HostedServices;
 
 var loggerConfiguration = new LoggerConfiguration()
@@ -52,10 +51,8 @@ forwardedHeaderOptions.KnownNetworks.Clear();
 forwardedHeaderOptions.KnownProxies.Clear();
 services.AddSingleton(forwardedHeaderOptions);
 
-services.AddSingleton<TempusHubMySqlService>();
 services.AddSingleton<ITempusClient, TempusClient>(_ => new TempusClient(new HttpClient()));
 services.AddSingleton<TempusCacheService>();
-services.AddSingleton<TempusRecordCacheService>();
 services.AddSingleton<YoutubeApiService>();
 services.AddHostedService<CacheHostedService>();
 services.AddSingleton(Log.Logger);

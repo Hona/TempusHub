@@ -8,7 +8,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\TempusHub.Core\TempusHub.Core.csproj" />
-      <ProjectReference Include="..\TempusHub.Infrastructure\TempusHub.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
